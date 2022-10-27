@@ -1,0 +1,6 @@
+# Playbook for installing masternodes
+- hosts: controller-nodes
+  name: Controller-node configs
+
+  roles:
+    - common

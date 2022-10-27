@@ -1,0 +1,22 @@
+# Default values for GBIF Zookeeper cluster using Stackable Zookeeper operator.
+
+# Override name of the cluster
+nameOverride: ""
+# Override fullname of the cluster
+fullnameOverride: ""
+
+# Stackable tag to override the version of the Spark component.
+sparkTag: ""
+
+# Number of instances
+replicas: 2
+
+ressources:
+  # CPU allocation in milicores for each instance
+  cpu:
+    min: '1000m'
+    max: '150m'
+  # Memory allocation for each instance
+  memory: '4Gi'
+  # Storage allocation for each instance
+  storage: '5Gi'

@@ -1,0 +1,52 @@
+apiVersion: hdfs.stackable.tech/v1alpha1
+kind: HdfsCluster
+metadata:
+  name: {{ include "hdfs-cluster.name" . }}
+spec:
+  version: {{ default .Chart.AppVersion .Values.sparkTag}}
+  zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}
+  dfsReplication: {{ .Values.dataReplication }}
+  log4j: |-
+    {{- .Files.Get "files/log4j.properties" | nindent 4}}
+  nameNodes:
+    roleGroups:
+      default:
+        replicas: {{ .Values.nodes.name.replicas }}
+        config:
+          resources:
+            cpu:
+              max: {{ .Values.nodes.name.cpu.max }}
+              min: {{ .Values.nodes.name.cpu.min }}
+            storage:
+              data:
+                capacity: {{ .Values.nodes.name.storage.capacity }}
+            memory:
+              limit: {{ .Values.nodes.name.memory }}
+  dataNodes:
+    roleGroups:
+      default:
+        replicas: {{ .Values.nodes.data.replicas }}
+        config:
+          resources:
+            cpu:
+              max: {{ .Values.nodes.data.cpu.max }}
+              min: {{ .Values.nodes.data.cpu.min }}
+            storage:
+              data:
+                storageClass: {{ .Values.nodes.data.storage.class }}
+            memory:
+              limit: {{ .Values.nodes.data.memory }}
+  journalNodes:
+    roleGroups:
+      default:
+        replicas: {{ .Values.nodes.journal.replicas }}
+        config:
+          resources:
+            cpu:
+              max: {{ .Values.nodes.journal.cpu.max }}
+              min: {{ .Values.nodes.journal.cpu.min }}
+            storage:
+              data:
+                capacity: {{ .Values.nodes.journal.storage.capacity }}
+            memory:
+              limit: {{ .Values.nodes.journal.memory }}

@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "vectortile-server.name" . }}-configuration
+data:
+  application.yml: |
+    hbase:
+      zookeeperQuorum: {{ .Values.zookeeper.quorum }}
+      tilesTableName: {{ .Values.tiles.tableName }}
+      pointsTableName: {{ .Values.points.tableName }}
+      tileSize: {{ .Values.tiles.tileSize }}
+      bufferSize: {{ .Values.tiles.tileBuffer }}
+      saltModulus: {{ .Values.hbase.regions }}
+    server:
+      servlet:
+        context-path: /map/
+      compression:
+        enabled: true
+        min-response-size: 1
+        mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/javascript,text/css,image/jpeg,application/x-protobuf,application/gzip
+        excluded-user-agents:
+    spring:
+      resources:
+        static-locations: classpath:/static/
+      liquibase:
+        enabled: false
+      mvc:
+        static-path-pattern: /debug/**
+
