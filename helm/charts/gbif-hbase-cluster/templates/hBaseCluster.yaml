@@ -1,0 +1,22 @@
+apiVersion: hbase.stackable.tech/v1alpha1
+kind: HbaseCluster
+metadata:
+  name: {{ include "hdfs-cluster.fullname" . }}
+spec:
+  version: {{ default .Chart.AppVersion .Values.sparkTag}}
+  hdfsConfigMapName: {{ .Values.hdfsClusterName }}
+  zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}
+  config:
+    hbaseRootdir: {{ .Values.hbaseRoot }}
+  masters:
+    roleGroups:
+      default:
+        replicas: {{ .Values.nodes.master.replicas }}
+  regionServers:
+    roleGroups:
+      default:
+        replicas: {{ .Values.nodes.region.replicas }}
+  restServers:
+    roleGroups:
+      default:
+        replicas: {{ .Values.nodes.rest.replicas }}

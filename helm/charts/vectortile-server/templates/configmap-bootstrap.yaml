@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "vectortile-server.name" . }}-bootstrap
+data:
+  bootstrap.yml: |
+    spring:
+      cloud:
+        zookeeper:
+          connect-string: {{ .Values.zookeeper.quorum }}
+          enabled: true
+          discovery:
+            enabled: true
+            root: {{ .Values.zookeeper.root }}

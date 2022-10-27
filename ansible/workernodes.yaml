@@ -1,0 +1,10 @@
+# Playbook for installing workernodes
+- hosts: worker-nodes
+  name: Worker-nodes config
+  remote_user: anilsson
+  become: true
+  become_method: sudo
+
+  roles:
+    - common
+    # - worker

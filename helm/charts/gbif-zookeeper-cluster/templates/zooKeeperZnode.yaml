@@ -1,0 +1,7 @@
+apiVersion: zookeeper.stackable.tech/v1alpha1
+kind: ZookeeperZnode
+metadata:
+  name: {{ include "zookeeper-cluster.name" . }}-znode
+spec:
+  clusterRef:
+    name: {{ include "zookeeper-cluster.name" . }}

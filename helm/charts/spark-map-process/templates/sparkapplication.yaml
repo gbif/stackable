@@ -1,0 +1,54 @@
+apiVersion: spark.stackable.tech/v1alpha1
+kind: SparkApplication
+metadata:
+  name: {{ include "spark-map-process.fullname" . }}
+  labels:
+    {{- include "spark-map-process.labels" . | nindent 4 }}
+spec:
+  version: {{ default .Chart.AppVersion .Values.image.tag}}
+  image: {{ default "docker.gbif.org/" .Values.image.repository }}{{ default .Chart.Name .Values.appName }}:{{ default .Chart.AppVersion .Values.image.tag}}
+  sparkImage: "docker.stackable.tech/stackable/spark-k8s:{{ required "Specific which spark / operator version to use" .Values.sparkTag }}"
+  mode: {{ .Values.mode }}
+  mainApplicationFile: local:///stackable/spark/jobs/{{ default .Chart.Name .Values.appName }}.jar
+  mainClass: {{ .Values.appClass }}
+  args:
+    - "all"
+    - "/gbif/configurations/config.yaml"
+  sparkConf:
+     "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+     "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+     "spark.broadcast.compress": "true"
+     "spark.checkpoint.compress": "true"
+     "spark.io.compression.codec": "lz4"
+     "spark.rdd.compress": "true"
+  volumes:
+    - name: map-env
+      configMap:
+        name: {{ include "spark-map-process.name" . }}-configuration
+    - name: spark-env
+      configMap:
+        name: {{ include "spark-map-process.name" . }}-spark-env
+    - name: hadoop-env
+      configMap:
+        name: {{ .Values.hdfs.cluserName }}
+  driver:
+    cores: {{ .Values.driver.core }}
+    memory: {{ .Values.driver.mem }}
+    volumeMounts:
+      - name: map-env
+        mountPath: /gbif/configurations
+      - name: spark-env
+        mountPath: /stackable/spark/conf
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf
+  executor:
+    cores: {{ .Values.executor.core }}
+    instances: {{ .Values.executor.instances }}
+    memory: {{ .Values.executor.mem }}
+    volumeMounts:
+      - name: map-env
+        mountPath: /gbif/configurations
+      - name: spark-env
+        mountPath: /stackable/spark/conf
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf

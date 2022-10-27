@@ -1,0 +1,20 @@
+apiVersion: zookeeper.stackable.tech/v1alpha1
+kind: ZookeeperCluster
+metadata:
+  name: {{ include "zookeeper-cluster.name" . }}
+spec:
+  version: {{ default .Chart.AppVersion .Values.sparkTag}}
+  servers:
+    roleGroups:
+      default:
+        replicas: {{ .Values.replicas }}
+        config:
+          resources:
+            cpu:
+              max: {{ .Values.ressources.cpu.max }}
+              min: {{ .Values.ressources.cpu.min }}
+            storage:
+              data:
+                capacity: {{ .Values.ressources.storage }}
+            memory:
+              limit: {{ .Values.ressources.memory }}

@@ -1,0 +1,61 @@
+# Default values for vectortile-server.
+# This is a YAML-formatted file.
+
+replicaCount: 1
+
+image:
+  repository: docker.gbif.org/vectortile-server
+  pullPolicy: ifnotpresent
+  tag: ""
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+# Service for the web application for exposing port internally in the cluster
+service:
+  type: ClusterIP
+  port: 8080
+
+# Ressources for the web application
+resources:
+  limits:
+    cpu: "1000m"
+    memory: 2048Mi
+  requests:
+    cpu: "100m"
+    memory: 2048Mi
+
+nodeSelector: {}
+
+zookeeper:
+  # Quorum needs to point to the quorum string. Take from discovery map for your Stackable zookeeper cluster in the desired namespace.
+  quorum: default-zookeeper-default-0.default-namespace.svc.cluster.local:2282
+  # Path to the root directory in zookeeper. Take from discovery map for your Stackable zookeeper cluster in the desired namespace.
+  root: /
+
+# Number of minimum entries before it is created as a tile
+tileThreshold: 1000
+
+hbase:
+  # Number of regions in Hbase
+  regions: 10
+
+points:
+  # Table name in HBase, needs to be created first with the correct number of regions
+  tableName: KUBE
+  # Number of partitions to process data in
+  sparkPartitions: 200
+  # Number of HFiles to create
+  numberOfHFiles: 32
+
+tiles:
+  # Table name in HBase, needs to be created first with the correct number of regions
+  tableName: KUBE
+  # Number of partitions to process data in
+  sparkPartitions: 200
+  # Number of HFiles to create
+  numberOfHFiles: 100
+  tileBuffer: 64
+  tileSize: 512

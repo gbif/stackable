@@ -1,0 +1,41 @@
+# Default values for GBIF HDFS cluster using Stackable HDFS operator.
+
+# Override name of the cluster
+nameOverride: ""
+# Override fullname of the cluster
+fullnameOverride: ""
+
+# Stackable tag to override the version of the Spark component.
+sparkTag: ""
+
+# Name of the zookeeper cluster
+zookeeperClusterName: "gbif-zookeeper"
+
+# Number of times data should be replicated in the HDFS cluster
+dataReplication: 2
+
+nodes:
+  name:
+    replicas: 2
+    cpu:
+      min: '100m'
+      max: '2000m'
+    memory: '4Gi'
+    storage:
+      capacity: '10Gi'
+  data:
+    replicas: 4
+    cpu:
+      min: '100m'
+      max: '2000m'
+    memory: '8Gi'
+    storage:
+      class: hdfs-datanode-storage
+  journal:
+    replicas: 3
+    cpu:
+      min: '100m'
+      max: '2000m'
+    memory: '3Gi'
+    storage:
+      capacity: '10Gi'

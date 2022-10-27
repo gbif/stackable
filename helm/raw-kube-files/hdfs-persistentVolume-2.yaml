@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: worker-2-pv-a
+spec:
+  capacity:
+    storage: 300Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: hdfs-datanode-storage
+  local:
+    path: /data/a/temp_kube_dir
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: gbif.org/node
+          operator: In
+          values:
+          - datanode-2
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: worker-2-pv-b
+spec:
+  capacity:
+    storage: 300Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: hdfs-datanode-storage
+  local:
+    path: /data/b/temp_kube_dir
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: gbif.org/node
+          operator: In
+          values:
+          - datanode-2
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: worker-2-pv-c
+spec:
+  capacity:
+    storage: 300Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: hdfs-datanode-storage
+  local:
+    path: /data/c/temp_kube_dir
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: gbif.org/node
+          operator: In
+          values:
+          - datanode-2
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: worker-2-pv-d
+spec:
+  capacity:
+    storage: 300Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: hdfs-datanode-storage
+  local:
+    path: /data/d/temp_kube_dir
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: gbif.org/node
+          operator: In
+          values:
+          - datanode-2

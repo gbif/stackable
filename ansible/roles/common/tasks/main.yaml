@@ -1,0 +1,157 @@
+# Main file for common tasks including adding kubeneteres repo and ensuring the needed software is installed
+
+# Work on yum installation
+- name: Install Kubernetes components for CentOS
+  when: ansible_facts['distribution'] == 'CentOS'
+  become: true
+  become_user: root
+  block:
+  - name: Update the system
+    ansible.builtin.yum:
+      name: '*'
+      state: present
+  - name: Ensure configuration files are present on the machine
+    block:
+      - name: Add libcontainers repo file
+        ansible.builtin.copy:
+          src: ./roles/common/files/libcontainers-stable.repo
+          dest: /etc/yum.repos.d/libcontainers-stable.repo
+          owner: root
+          group: root
+          mode: '0644'
+      - name: Add cri-o repo file
+        ansible.builtin.copy:
+          src: ./roles/common/files/cri-o.repo
+          dest: /etc/yum.repos.d/cri-o.repo
+          owner: root
+          group: root
+          mode: '0644'
+      - name: Add kube conf for module load
+        ansible.builtin.copy:
+          src: ./roles/common/files/k8s-modules.conf
+          dest: /etc/modules-load.d/k8s-modules.conf
+          owner: root
+          group: root
+          mode: '0644'
+      - name: Add kube conf for params load
+        ansible.builtin.copy:
+          src: ./roles/common/files/k8s-params.conf
+          dest: /etc/sysctl.d/k8s-params.conf
+          owner: root
+          group: root
+          mode: '0644'
+  - name: Install CRI-O
+    ansible.builtin.yum:
+      name: cri-o
+      state: present
+      enablerepo: "devel_kubic_libcontainers_stable,devel_kubic_libcontainers_stable_cri-o_1.24_1.24.2"
+  - name: "Enable cri-o service"
+    ansible.builtin.systemd:
+      name: crio
+      enabled: true
+      state: started
+  - name: Add Kubernetes yum repository
+    ansible.builtin.yum_repository:
+      name: kubernetes
+      description: Kubernetes Repository
+      baseurl: http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
+      enabled: false
+      gpgcheck: true
+      gpgkey:
+        - https://packages.cloud.google.com/yum/doc/yum-key.gpg
+        - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+  - name: Install Kubernetes tools
+    ansible.builtin.yum:
+      name:
+        - kubelet
+        - kubectl
+        - kubeadm
+      state: present
+      enablerepo: "kubernetes"
+  - name: "Enable kubelet service"
+    ansible.builtin.systemd:
+      name: kubelet
+      enabled: true
+      state: started
+
+# Work on Ubuntu installation for testing Ansible script
+- name: Install Kubernetes components for Ubuntu
+  when: ansible_facts['distribution'] == 'Ubuntu'
+  become: true
+  become_user: root
+  block:
+    - name: Update general packages
+      ansible.builtin.apt:
+        upgrade: dist
+
+    # Proper setup key dearmoring so it can be added properly - done manually for now
+    # - name: Add libcontainer apt-key
+    #  ansible.builtin.apt_key:
+    #    url: https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_22.04/Release.gpg
+    #    keyring: /etc/apt/trusted.gpg.d/libcontainers-archive-keyring.gpg
+    #    state: present
+
+    # - name: Add CRI-o apt-key
+    #  ansible.builtin.apt_key:
+    #    url: https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.25/xUbuntu_22.04/Release.gpg
+    #    keyring: /etc/apt/trusted.gpg.d/libcontainers-crio-archive-keyring.gpg
+    #    state: present
+
+    - name: Add CRI-O dependency libcontainers stable
+      ansible.builtin.apt_repository:
+        repo: "deb \
+        [signed-by=/etc/apt/trusted.gpg.d/libcontainers-archive-keyring.gpg] \
+        https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_22.04 /"
+        state: present
+        filename: libcontainers
+
+    - name: Add CRI-O stable
+      ansible.builtin.apt_repository:
+        repo: "deb \
+        [signed-by=/etc/apt/trusted.gpg.d/libcontainers-crio-archive-keyring.gpg] \
+        https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.25/xUbuntu_22.04 /"
+        state: present
+        filename: crio
+
+    - name: Add Kubernetes apt-key
+      ansible.builtin.apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+    - name: Add Kubernetes repository to apt source list
+      ansible.builtin.apt_repository:
+        repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+        state: present
+        filename: kubernetes
+
+    - name: Add CRI-O tools
+      ansible.builtin.apt:
+        pkg:
+          - cri-o
+          - cri-o-runc
+        state: present
+        update_cache: true
+
+    # Install all three components needed to create a Kubernetes cluster. They are required on earch machine.
+    - name: Add Kubernetes tools
+      ansible.builtin.apt:
+        pkg:
+          - kubelet
+          - kubectl
+          - kubeadm
+        state: present
+        update_cache: true
+
+    - name: Prevent kubelet to be upgraded by default
+      ansible.builtin.dpkg_selections:
+        name: kubelet
+        selection: hold
+
+    - name: Prevent kubectl to be upgraded by default
+      ansible.builtin.dpkg_selections:
+        name: kubectl
+        selection: hold
+
+    - name: Prevent kubeadm to be upgraded by default
+      ansible.builtin.dpkg_selections:
+        name: kubeadm
+        selection: hold
