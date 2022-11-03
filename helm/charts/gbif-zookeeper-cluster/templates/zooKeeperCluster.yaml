@@ -3,7 +3,7 @@ kind: ZookeeperCluster
 metadata:
   name: {{ include "zookeeper-cluster.name" . }}
 spec:
-  version: {{ default .Chart.AppVersion .Values.sparkTag}}
+  version: {{ default .Chart.AppVersion .Values.stackTag}}
   servers:
     roleGroups:
       default:

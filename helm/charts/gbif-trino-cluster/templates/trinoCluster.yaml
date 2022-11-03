@@ -1,0 +1,35 @@
+apiVersion: trino.stackable.tech/v1alpha1
+kind: TrinoCluster
+metadata:
+  name: {{ include "trino-cluster.name" . }}
+spec:
+  version: {{ default .Chart.AppVersion .Values.stackTag }}
+  catalogLabelSelector:
+    matchLabels:
+{{ include "trino-cluster.selectorLabels" . | indent 6}}
+  coordinators:
+    roleGroups:
+      default:
+        replicas: {{ .Values.nodes.coordinator.replicas }}
+        config:
+          resources:
+            cpu:
+              min: {{ .Values.nodes.coordinator.cpu.min }}
+              max: {{ .Values.nodes.coordinator.cpu.max }}
+            memory:
+              limit: {{ .Values.nodes.coordinator.memory }}
+            storage:
+              capacity: {{ .Values.nodes.coordinator.storage.capacity }}
+  workers:
+    roleGroups:
+      default:
+        replicas: {{ .Values.nodes.worker.replicas }}
+        config:
+          resources:
+            cpu:
+              min: {{ .Values.nodes.worker.cpu.min }}
+              max: {{ .Values.nodes.worker.cpu.max }}
+            memory:
+              limit: {{ .Values.nodes.worker.memory }}
+            storage:
+              capacity: {{ .Values.nodes.worker.storage.capacity }}

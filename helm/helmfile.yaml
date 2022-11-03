@@ -1,6 +1,10 @@
 repositories:
   - name: stackable-stable
     url: https://repo.stackable.tech/repository/helm-stable/
+  - name: stackable-dev
+    url: https://repo.stackable.tech/repository/helm-dev/
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami/
 
 releases:
 - name: commons-operator
@@ -25,6 +29,20 @@ releases:
   disableValidationOnInstall: true
   needs:
   - commons-operator
+- name: hive-postgres
+  namespace: stack-demo
+  chart: bitnami/postgresql
+  version: 12.0.0
+  installed: true
+  atomic: true
+  wait: true
+  # Remember to set the auth node values when running the helmfile.
+  values:
+  - image:
+      tag: 10.22.0-debian-11-r36
+  set: 
+  - name: 'global.postgresql.auth.postgresPassword'
+    value: test-password
 - name: zookeeper-operator
   namespace: stackable-operators
   chart: stackable-stable/zookeeper-operator
@@ -56,4 +74,20 @@ releases:
   installed: true
   atomic: true
   needs:
-  - secret-operator
+  - hdfs-operator
+- name: hive-operator
+  namespace: stackable-operators
+  chart: stackable-dev/hive-operator
+  version: 0.8.0-nightly
+  installed: true
+  atomic: true
+  needs:
+  - hdfs-operator
+- name: trino-operator
+  namespace: stackable-operators
+  chart: stackable-stable/trino-operator
+  version: 0.7.0
+  installed: true
+  atomic: true
+  needs:
+  - hive-operator

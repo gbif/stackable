@@ -3,7 +3,7 @@ kind: HdfsCluster
 metadata:
   name: {{ include "hdfs-cluster.name" . }}
 spec:
-  version: {{ default .Chart.AppVersion .Values.sparkTag}}
+  version: {{ default .Chart.AppVersion .Values.stackTag}}
   zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}
   dfsReplication: {{ .Values.dataReplication }}
   log4j: |-

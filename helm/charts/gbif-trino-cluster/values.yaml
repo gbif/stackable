@@ -8,28 +8,31 @@ fullnameOverride: ""
 # Stackable tag to override the version of the Stack component.
 stackTag: ""
 
-# Name of the zookeeper cluster
-zookeeperClusterName: "gbif-zookeeper"
+# Name of the hive metastore
+hiveMetastoreName: "gbif-hive-metastore"
 
 # Name of the HDFS cluster
 hdfsClusterName: "gbif-hdfs"
 
 nodes:
-  master:
+  coordinator:
     replicas: 2
     cpu:
       min: '100m'
       max: '2000m'
-    memory: '4Gi'
-  region:
+    memory: '2Gi'
+    storage:
+      data:
+        capacity: '4Gi'
+
+  worker:
     replicas: 3
     cpu:
       min: '100m'
-      max: '2000m'
-    memory: '8Gi'
-  rest:
-    replicas: 1
-    cpu:
-      min: '100m'
-      max: '2000m'
-    memory: '3Gi'
+      max: '4000m'
+    memory: '4Gi'
+    storage:
+      data:
+        capacity: '8Gi'
+  
+nodeSelector: {}

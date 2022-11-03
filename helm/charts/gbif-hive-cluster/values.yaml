@@ -1,0 +1,20 @@
+# Default values for GBIF Hive metastore using Stackable hive operator.
+
+# Override name of the cluster
+nameOverride: ""
+# Override fullname of the cluster
+fullnameOverride: ""
+
+# Stackable tag to override the version of the Stack component.
+stackTag: ""
+
+# Name of the HDFS cluster
+hdfsClusterName: "simple-hdfs"
+
+metastore:
+  cpu:
+    min: '100m'
+    max: '2000m'
+  memory: '3Gi'
+  storage:
+    capacity: '5Gi'

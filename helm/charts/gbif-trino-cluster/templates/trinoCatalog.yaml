@@ -1,0 +1,14 @@
+apiVersion: trino.stackable.tech/v1alpha1
+kind: TrinoCatalog
+metadata:
+  name: {{ include "trino-cluster.name" . }}-hadoop
+  labels:
+{{ include "trino-cluster.selectorLabels" . | indent 4}}
+spec:
+  connector:
+    hive:
+      metastore:
+        #Currently a hack as the hive operator seems to append -metastore-default to the correct configmap while leaving the normal named configmap empty
+        configMap: {{ .Values.hiveMetastoreName }}-nodeport
+      hdfs:
+        configMap: {{ .Values.hdfsClusterName }}

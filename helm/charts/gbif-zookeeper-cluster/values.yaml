@@ -5,8 +5,8 @@ nameOverride: ""
 # Override fullname of the cluster
 fullnameOverride: ""
 
-# Stackable tag to override the version of the Spark component.
-sparkTag: ""
+# Stackable tag to override the version of the Stack component.
+stackTag: ""
 
 # Number of instances
 replicas: 2
