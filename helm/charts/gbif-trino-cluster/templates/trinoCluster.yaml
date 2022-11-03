@@ -19,7 +19,8 @@ spec:
             memory:
               limit: {{ .Values.nodes.coordinator.memory }}
             storage:
-              capacity: {{ .Values.nodes.coordinator.storage.capacity }}
+              data:
+                capacity: {{ .Values.nodes.coordinator.storage.capacity }}
   workers:
     roleGroups:
       default:
@@ -32,4 +33,5 @@ spec:
             memory:
               limit: {{ .Values.nodes.worker.memory }}
             storage:
-              capacity: {{ .Values.nodes.worker.storage.capacity }}
+              data:
+                capacity: {{ .Values.nodes.worker.storage.capacity }}

@@ -9,7 +9,10 @@ fullnameOverride: ""
 stackTag: ""
 
 # Name of the HDFS cluster
-hdfsClusterName: "simple-hdfs"
+hdfsClusterName: "gbif-hdfs"
+
+# BUG Trino can't connect to hive cluster with more than 1 replicas
+replicas: 1
 
 metastore:
   cpu:

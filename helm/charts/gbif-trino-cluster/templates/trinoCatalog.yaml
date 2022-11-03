@@ -8,7 +8,6 @@ spec:
   connector:
     hive:
       metastore:
-        #Currently a hack as the hive operator seems to append -metastore-default to the correct configmap while leaving the normal named configmap empty
-        configMap: {{ .Values.hiveMetastoreName }}-nodeport
+        configMap: {{ .Values.hiveMetastoreName }}
       hdfs:
         configMap: {{ .Values.hdfsClusterName }}

@@ -22,8 +22,7 @@ nodes:
       max: '2000m'
     memory: '2Gi'
     storage:
-      data:
-        capacity: '4Gi'
+      capacity: '4Gi'
 
   worker:
     replicas: 3
@@ -32,7 +31,6 @@ nodes:
       max: '4000m'
     memory: '4Gi'
     storage:
-      data:
-        capacity: '8Gi'
+      capacity: '8Gi'
   
 nodeSelector: {}
