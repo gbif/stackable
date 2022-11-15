@@ -14,8 +14,8 @@ replicas: 2
 ressources:
   # CPU allocation in milicores for each instance
   cpu:
-    min: '1000m'
-    max: '150m'
+    min: '100m'
+    max: '2000m'
   # Memory allocation for each instance
   memory: '4Gi'
   # Storage allocation for each instance

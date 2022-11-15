@@ -51,8 +51,7 @@ In order for Helm to be able to communicate with the Kubernetes cluster, the loc
 ## TODOs
 This helm repository is still **under construction** so here is a list of tasks that still needs to be implemented for it to completed:
 
-- [] Implement a better way to configure and deploy a number of predefined volumes
-- [] Write charts for the raw Kubernetes manifest files
-- [] Implement helmfile environment directory for value overwriting
-- [] Create chart for Trino
-- [] Create move helmfile.d to own repository to keep env specifc variables hidden
+- [X] Implement a better way to configure and deploy a number of predefined volumes
+- [X] Write charts for the raw Kubernetes manifest files
+- [X] Create chart for Trino
+- [] Create move helmfile.d to own repository to keep env specific variables hidden

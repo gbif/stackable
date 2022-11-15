@@ -30,7 +30,7 @@ spec:
         name: {{ include "spark-map-process.name" . }}-spark-env
     - name: hadoop-env
       configMap:
-        name: {{ .Values.hdfs.cluserName }}
+        name: {{ .Values.hdfs.clusterName }}
   driver:
     cores: {{ .Values.driver.core }}
     memory: {{ .Values.driver.mem }}

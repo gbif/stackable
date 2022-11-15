@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "hive-metastore.name" . }}-hive-env
-data:
-  hive-env.sh: |
-    #!/bin/bash
-    export HADOOP_CONF_DIR=/etc/hadoop/conf
-    export HADOOP_HEAPSIZE=1638

@@ -16,20 +16,26 @@ hdfsClusterName: "gbif-hdfs"
 
 nodes:
   master:
-    replicas: 2
-    cpu:
-      min: '100m'
-      max: '2000m'
-    memory: '4Gi'
-  region:
-    replicas: 3
-    cpu:
-      min: '100m'
-      max: '2000m'
-    memory: '8Gi'
-  rest:
     replicas: 1
     cpu:
       min: '100m'
       max: '2000m'
-    memory: '3Gi'
+    memory: '4Gi'
+    storage:
+      capacity: '4Gi'
+  region:
+    replicas: 3
+    cpu:
+      min: '100m'
+      max: '3000m'
+    memory: '8Gi'
+    storage:
+      capacity: '16Gi'
+  rest:
+    replicas: 1
+    cpu:
+      min: '100m'
+      max: '1000m'
+    memory: '2Gi'
+    storage:
+      capacity: '2Gi'

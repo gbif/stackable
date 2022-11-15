@@ -4,7 +4,14 @@ metadata:
   name: {{ include "hive-metastore.name" . }}
 spec:
   version: {{ default .Chart.AppVersion .Values.stackTag }}
+  hdfs:
+    configMap: {{ .Values.hdfsClusterName }}
   metastore:
+    configOverrides:
+      hive-site.xml:
+        metastore.storage.schema.reader.impl: "org.apache.hadoop.hive.metastore.SerDeStorageSchemaReader"
+      hive-metastore-site.xml:
+        metastore.storage.schema.reader.impl: "org.apache.hadoop.hive.metastore.SerDeStorageSchemaReader"
     roleGroups:
       default:
         replicas: {{ .Values.replicas }}
@@ -18,22 +25,8 @@ spec:
                 capacity: {{ .Values.metastore.storage.capacity }}
             memory:
               limit: {{ .Values.metastore.memory }}
-          # Volumes disabled until clarifications on possibility is in
-          #volumeMounts:
-          #- name: hive-env
-          #  mountPath: /stackable/spark/conf
-          #- name: hadoop-env
-          #  mountPath: /etc/hadoop/conf
           database:
             connString: jdbc:postgresql://hive-postgres-postgresql/hive
             user: test-user
             password: test-password
             dbType: postgres
-    # Volumes disabled until clarifications on possibility is in
-    #volumes:
-    #- name: hive-env
-    #  configMap:
-    #    name: {{ include "hive-metastore.name" . }}-hive-env
-    #- name: hadoop-env
-    #  configMap:
-    #    name: {{ .Values.hdfsClusterName }}

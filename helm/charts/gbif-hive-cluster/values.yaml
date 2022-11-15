@@ -17,7 +17,7 @@ replicas: 1
 metastore:
   cpu:
     min: '100m'
-    max: '2000m'
-  memory: '3Gi'
+    max: '4000m'
+  memory: '4Gi'
   storage:
-    capacity: '5Gi'
+    capacity: '10Gi'
