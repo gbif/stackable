@@ -1,0 +1,13 @@
+apiVersion: trino.stackable.tech/v1alpha1
+kind: TrinoCatalog
+metadata:
+  name: {{ include "trino-cluster.name" . }}-hadoop
+  labels:
+{{ include "trino-cluster.selectorLabels" . | indent 4}}
+spec:
+  connector:
+    hive:
+      metastore:
+        configMap: {{ .Values.hiveMetastoreName }}
+      hdfs:
+        configMap: {{ .Values.hdfsClusterName }}

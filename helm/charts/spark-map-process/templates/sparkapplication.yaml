@@ -7,7 +7,7 @@ metadata:
 spec:
   version: {{ default .Chart.AppVersion .Values.image.tag}}
   image: {{ default "docker.gbif.org/" .Values.image.repository }}{{ default .Chart.Name .Values.appName }}:{{ default .Chart.AppVersion .Values.image.tag}}
-  sparkImage: "docker.stackable.tech/stackable/spark-k8s:{{ required "Specific which spark / operator version to use" .Values.sparkTag }}"
+  sparkImage: "docker.stackable.tech/stackable/spark-k8s:{{ required "Specific which spark / operator version to use" .Values.stackTag }}"
   mode: {{ .Values.mode }}
   mainApplicationFile: local:///stackable/spark/jobs/{{ default .Chart.Name .Values.appName }}.jar
   mainClass: {{ .Values.appClass }}
@@ -30,7 +30,7 @@ spec:
         name: {{ include "spark-map-process.name" . }}-spark-env
     - name: hadoop-env
       configMap:
-        name: {{ .Values.hdfs.cluserName }}
+        name: {{ .Values.hdfs.clusterName }}
   driver:
     cores: {{ .Values.driver.core }}
     memory: {{ .Values.driver.mem }}

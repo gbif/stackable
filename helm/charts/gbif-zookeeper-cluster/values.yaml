@@ -5,8 +5,8 @@ nameOverride: ""
 # Override fullname of the cluster
 fullnameOverride: ""
 
-# Stackable tag to override the version of the Spark component.
-sparkTag: ""
+# Stackable tag to override the version of the Stack component.
+stackTag: ""
 
 # Number of instances
 replicas: 2
@@ -14,8 +14,8 @@ replicas: 2
 ressources:
   # CPU allocation in milicores for each instance
   cpu:
-    min: '1000m'
-    max: '150m'
+    min: '100m'
+    max: '2000m'
   # Memory allocation for each instance
   memory: '4Gi'
   # Storage allocation for each instance
