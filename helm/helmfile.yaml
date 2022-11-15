@@ -44,9 +44,6 @@ releases:
   values:
   - image:
       tag: 10.22.0-debian-11-r36
-  set: 
-  - name: 'global.postgresql.auth.postgresPassword'
-    value: test-password
 - name: zookeeper-operator
   namespace: stackable-operators
   chart: stackable-stable/zookeeper-operator
