@@ -1,25 +1,25 @@
 # Comparison of Trino to Hive
-As part of the migration, we needed to determine if Trino was suited to cover the existing usage of Hive as a query engine. The comparison test was done against the POC Kubernetes cluster and the GBIF Dev cluster. As the resources are managed differently, one by YARN and the other by allocated number of workers, our setup isn't one-to-one but an approximation.
+As part of the migration, we have to determine if Trino is suited to cover the existing usage of Hive as a query engine. The comparison test was performed against the POC Kubernetes cluster and the GBIF Dev cluster. As the resources are managed differently, one by YARN and the other by allocated number of workers, our setup isn't one-to-one but an approximation.
 
 ## Resource Configuration
 Below is sections describing how the resources were configured.
 
 ### GBIF Dev Cluster
-As the Dev cluster is configured and managed through Cloudera stack, the resources are allocated to processes through YARN. For the comparison test we used the root.default resource group which is able to allocate:
+As the Dev cluster is configured and managed through the Cloudera stack, the resources are allocated to processes through YARN. For the comparison test we used the root.default resource group which is able to allocate:
 - CPU: 48 VCores max
 - Memory: 72 GB max
 
 **Note:** The cluster was in an idle state so the query should be able to allocate all the resources it would need.
 
 ### POC Kubenetes Cluster
-The Kubernetes cluster relies on the Trino-operator from **Stackable** which creates a coordinator and n number of workers of user defined dimensions. As to get as close to a compariable state, we decided to create 6 workers total of the size:
+The Kubernetes cluster relies on the Trino-operator from **Stackable** which creates a coordinator and n number of workers of user defined dimensions. As we are trying to get as close to a comparable state with the Dev cluster, we decided to create 6 workers total of the size:
 - CPU: 8 VCores max
 - Memory: 12 GB max
 
-This results in a total resource pool similar to the GBIF Dev Cluster.
+This totals a resource pool similar to the GBIF Dev Cluster.
 
 ## Queries for Comparison
-We ran two queries; one select with aggregation and one create table stored as TEXTFILE. We let YARN and Trino do their own resource allocation within the resource pools, as to minimize misconfiguration during the execution. **However** it was necessary to configure the following three options for hive:
+We ran two queries; one select with aggregation and one create table stored as TEXTFILE. We let YARN and Trino do their own resource allocation within the resource pools, as to minimize misconfiguration during the execution. **However** it was necessary to configure the following two options for hive:
 ``` Bash
 spark.yarn.executor.memory = 12000
 hive.execution.engine = spark
