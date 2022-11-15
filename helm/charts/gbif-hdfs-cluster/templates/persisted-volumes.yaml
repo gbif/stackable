@@ -1,0 +1,27 @@
+{{- range $label := .Values.nodes.data.storage.labels }}
+{{- range $drive := $.Values.nodes.data.storage.drives }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ $label }}-drive-{{ $drive }}-pv
+spec:
+  capacity:
+    storage: {{ $.Values.nodes.data.storage.capacity }}
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: {{ $.Values.nodes.data.storage.class }}
+  local:
+    path: /data/{{ $drive }}/kube-hdfs-storage
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: gbif.org/node
+          operator: In
+          values:
+          - {{ $label }}
+---
+{{- end }}
+{{- end }}

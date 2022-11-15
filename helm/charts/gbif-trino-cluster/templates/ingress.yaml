@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: trino-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "for.bar.org"
+    http:
+      paths:
+      - path: /trino-ui
+        pathType: Prefix
+        backend:
+          service:
+            name: gbif-trino-coordinator-default
+            port:
+              number: 8443

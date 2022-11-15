@@ -1,0 +1,32 @@
+apiVersion: hive.stackable.tech/v1alpha1
+kind: HiveCluster
+metadata:
+  name: {{ include "hive-metastore.name" . }}
+spec:
+  version: {{ default .Chart.AppVersion .Values.stackTag }}
+  hdfs:
+    configMap: {{ .Values.hdfsClusterName }}
+  metastore:
+    configOverrides:
+      hive-site.xml:
+        metastore.storage.schema.reader.impl: "org.apache.hadoop.hive.metastore.SerDeStorageSchemaReader"
+      hive-metastore-site.xml:
+        metastore.storage.schema.reader.impl: "org.apache.hadoop.hive.metastore.SerDeStorageSchemaReader"
+    roleGroups:
+      default:
+        replicas: {{ .Values.replicas }}
+        config:
+          resources:
+            cpu:
+              max: {{ .Values.metastore.cpu.max }}
+              min: {{ .Values.metastore.cpu.min }}
+            storage:
+              data:
+                capacity: {{ .Values.metastore.storage.capacity }}
+            memory:
+              limit: {{ .Values.metastore.memory }}
+          database:
+            connString: jdbc:postgresql://hive-postgres-postgresql/hive
+            user: test-user
+            password: test-password
+            dbType: postgres

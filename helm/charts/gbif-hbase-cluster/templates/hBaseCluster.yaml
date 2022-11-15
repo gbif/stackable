@@ -1,9 +1,9 @@
 apiVersion: hbase.stackable.tech/v1alpha1
 kind: HbaseCluster
 metadata:
-  name: {{ include "hdfs-cluster.fullname" . }}
+  name: {{ include "hbase-cluster.name" . }}
 spec:
-  version: {{ default .Chart.AppVersion .Values.sparkTag}}
+  version: {{ default .Chart.AppVersion .Values.stackTag}}
   hdfsConfigMapName: {{ .Values.hdfsClusterName }}
   zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}
   config:
@@ -12,11 +12,41 @@ spec:
     roleGroups:
       default:
         replicas: {{ .Values.nodes.master.replicas }}
+        config:
+          resources:
+            cpu:
+              max: {{ .Values.nodes.master.cpu.max }}
+              min: {{ .Values.nodes.master.cpu.min }}
+            storage:
+              data:
+                capacity: {{ .Values.nodes.master.storage.capacity }}
+            memory:
+              limit: {{ .Values.nodes.master.memory }}
   regionServers:
     roleGroups:
       default:
         replicas: {{ .Values.nodes.region.replicas }}
+        config:
+          resources:
+            cpu:
+              max: {{ .Values.nodes.region.cpu.max }}
+              min: {{ .Values.nodes.region.cpu.min }}
+            storage:
+              data:
+                capacity: {{ .Values.nodes.region.storage.capacity }}
+            memory:
+              limit: {{ .Values.nodes.region.memory }}
   restServers:
     roleGroups:
       default:
         replicas: {{ .Values.nodes.rest.replicas }}
+        config:
+          resources:
+            cpu:
+              max: {{ .Values.nodes.rest.cpu.max }}
+              min: {{ .Values.nodes.rest.cpu.min }}
+            storage:
+              data:
+                capacity: {{ .Values.nodes.rest.storage.capacity }}
+            memory:
+              limit: {{ .Values.nodes.rest.memory }}

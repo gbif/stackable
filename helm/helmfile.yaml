@@ -1,6 +1,14 @@
 repositories:
   - name: stackable-stable
     url: https://repo.stackable.tech/repository/helm-stable/
+  - name: stackable-dev
+    url: https://repo.stackable.tech/repository/helm-dev/
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami/
+  - name: prometheus-community
+    url: https://prometheus-community.github.io/helm-charts/
+  - name: nginx-stable
+    url: https://helm.nginx.com/stable/
 
 releases:
 - name: commons-operator
@@ -25,6 +33,17 @@ releases:
   disableValidationOnInstall: true
   needs:
   - commons-operator
+- name: hive-postgres
+  namespace: stack-demo
+  chart: bitnami/postgresql
+  version: 12.0.0
+  installed: true
+  atomic: true
+  wait: true
+  # Remember to set the auth node values when running the helmfile.
+  values:
+  - image:
+      tag: 10.22.0-debian-11-r36
 - name: zookeeper-operator
   namespace: stackable-operators
   chart: stackable-stable/zookeeper-operator
@@ -56,4 +75,80 @@ releases:
   installed: true
   atomic: true
   needs:
-  - secret-operator
+  - hdfs-operator
+- name: hive-operator
+  namespace: stackable-operators
+  chart: stackable-dev/hive-operator
+  version: 0.9.0-nightly
+  installed: true
+  atomic: true
+  needs:
+  - hdfs-operator
+- name: trino-operator
+  namespace: stackable-operators
+  chart: stackable-stable/trino-operator
+  version: 0.7.0
+  installed: true
+  atomic: true
+  needs:
+  - hive-operator
+- name: nginx-ingress
+  namespace: nginx-system
+  chart: nginx-stable/nginx-ingress
+  version: 0.15.1
+  installed: true
+- name: prometheus-stack
+  namespace: metric-system
+  chart: prometheus-community/kube-prometheus-stack
+  version: 41.7.3
+  installed: true
+  atomic: true
+  wait: true
+# GBIF specifc deployments with homeconfigured charts for stackable components
+# Very simple configured based on the charts defaults so far
+# TODO: needs an environement specific folder for values
+- name: gbif-zookeeper
+  namespace: stack-demo
+  chart: ./charts/gbif-zookeeper-cluster
+  version: 0.1.0
+  installed: true
+  wait: true
+  waitForJobs: true
+- name: gbif-hadoop-hdfs
+  namespace: stack-demo
+  chart: ./charts/gbif-hdfs-cluster
+  version: 0.1.0
+  installed: true
+  wait: true
+  waitForJobs: true
+  needs:
+    - gbif-zookeeper
+- name: gbif-hbase
+  namespace: stack-demo
+  version: 0.1.0
+  chart: ./charts/gbif-hbase-cluster
+  installed: true
+  wait: true
+  waitForJobs: true
+  needs:
+    - gbif-hadoop-hdfs
+- name: gbif-hive
+  namespace: stack-demo
+  version: 0.1.0
+  chart: ./charts/gbif-hive-cluster
+  installed: true
+  wait: true
+  waitForJobs: true
+  needs:
+    - gbif-hadoop-hdfs
+  #values:
+  #  - replicas: 2
+- name: gbif-trino
+  namespace: stack-demo
+  version: 0.1.0
+  chart: ./charts/gbif-trino-cluster
+  installed: true
+  wait: true
+  waitForJobs: true
+  needs:
+    - gbif-hive
