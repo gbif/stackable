@@ -40,10 +40,20 @@ releases:
   installed: true
   atomic: true
   wait: true
-  # Remember to set the auth node values when running the helmfile.
-  values:
-  - image:
-      tag: 10.22.0-debian-11-r36
+- name: airflow-postgres
+  namespace: stack-demo
+  chart: bitnami/postgresql
+  version: 11.0.0
+  installed: true
+  atomic: true
+  wait: true
+- name: airflow-redis
+  namespace: stack-demo
+  chart: bitnami/redis
+  version: 16.8.7
+  installed: true
+  atomic: true
+  wait: true
 - name: zookeeper-operator
   namespace: stackable-operators
   chart: stackable-stable/zookeeper-operator
@@ -92,6 +102,14 @@ releases:
   atomic: true
   needs:
   - hive-operator
+- name: airflow-operator
+  namespace: stackable-operators
+  chart: stackable-stable/airflow-operator
+  version: 0.6.0
+  installed: true
+  atomic: true
+  needs:
+    - secret-operator
 - name: nginx-ingress
   namespace: nginx-system
   chart: nginx-stable/nginx-ingress
@@ -106,7 +124,6 @@ releases:
   wait: true
 # GBIF specifc deployments with homeconfigured charts for stackable components
 # Very simple configured based on the charts defaults so far
-# TODO: needs an environement specific folder for values
 - name: gbif-zookeeper
   namespace: stack-demo
   chart: ./charts/gbif-zookeeper-cluster
@@ -116,8 +133,8 @@ releases:
   waitForJobs: true
 - name: gbif-hadoop-hdfs
   namespace: stack-demo
-  chart: ./charts/gbif-hdfs-cluster
   version: 0.1.0
+  chart: ./charts/gbif-hdfs-cluster
   installed: true
   wait: true
   waitForJobs: true
@@ -141,8 +158,7 @@ releases:
   waitForJobs: true
   needs:
     - gbif-hadoop-hdfs
-  #values:
-  #  - replicas: 2
+    - hive-postgres
 - name: gbif-trino
   namespace: stack-demo
   version: 0.1.0
@@ -152,3 +168,13 @@ releases:
   waitForJobs: true
   needs:
     - gbif-hive
+- name: gbif-airflow
+  namespace: stack-demo
+  version: 0.1.0
+  chart: ./charts/gbif-airflow-cluster
+  installed: true
+  wait: true
+  waitForJobs: true
+  needs:
+    - airflow-postgres
+    - airflow-redis

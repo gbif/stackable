@@ -1,0 +1,23 @@
+apiVersion: airflow.stackable.tech/v1alpha1
+kind: AirflowCluster
+metadata:
+  name: {{ include "airflow-cluster.name" . }}
+spec:
+  version: {{ default .Chart.AppVersion .Values.stackTag }}
+  statsdExporterVersion: v{{ .Values.statsdVersion }}
+  executor: {{ .Values.executor }}
+  loadExamples: {{ .Values.examples }}
+  exposeConfig: {{ .Values.exposeConfigs }}
+  credentialsSecret: {{ include "airflow-cluster.name" . }}-credentials
+  webservers:
+    roleGroups:
+      default:
+        replicas: {{ .Values.nodes.webservers.replicas }}
+  workers:
+    roleGroups:
+      default:
+        replicas: {{ .Values.nodes.workers.replicas }}
+  schedulers:
+    roleGroups:
+      default:
+        replicas: {{ .Values.nodes.schedulers.replicas }}

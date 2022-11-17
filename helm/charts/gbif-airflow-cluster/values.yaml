@@ -1,0 +1,68 @@
+# Default values for GBIF HDFS cluster using Stackable HDFS operator.
+
+# Override name of the cluster
+nameOverride: ""
+# Override fullname of the cluster
+fullnameOverride: ""
+
+# Stackable tag to override the version of the Stack component.
+stackTag: ""
+
+# Executor airflow should use
+executor: CeleryExecutor
+
+# Version of statsd exporter to use
+statsdVersion: 0.22.4
+
+# Should load examples
+examples: false
+
+# Expose configs
+exposeConfigs: false
+
+#Admin user for Airflow
+admin:
+  firstName: ""
+  lastName: ""
+  email: ""
+  user: ""
+  password: ""
+  secret: ""
+
+#Database information for Airflows state database
+airflowDB:
+  name: ""
+  user: ""
+  pass: ""
+  db: airflow
+
+#Redis information for Airflows queue system
+airflowRedis:
+  name: airflow-redis
+  pass: ""
+
+nodes:
+  webservers:
+    replicas: 1
+    cpu:
+      min: '100m'
+      max: '2000m'
+    memory: '4Gi'
+    storage:
+      capacity: '4Gi'
+  workers:
+    replicas: 3
+    cpu:
+      min: '100m'
+      max: '3000m'
+    memory: '8Gi'
+    storage:
+      capacity: '16Gi'
+  schedulers:
+    replicas: 1
+    cpu:
+      min: '100m'
+      max: '1000m'
+    memory: '2Gi'
+    storage:
+      capacity: '2Gi'

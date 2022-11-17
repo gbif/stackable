@@ -21,3 +21,10 @@ metastore:
   memory: '4Gi'
   storage:
     capacity: '10Gi'
+
+# Connection to Hive's postgres DB
+hiveDB:
+  db: ""
+  name: ""
+  user: ""
+  password: ""
