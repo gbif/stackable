@@ -1,4 +1,4 @@
-# Default values for GBIF HDFS cluster using Stackable HDFS operator.
+# Default values for GBIF airflow cluster using Stackable airflow operator.
 
 # Override name of the cluster
 nameOverride: ""
@@ -66,3 +66,5 @@ nodes:
     memory: '2Gi'
     storage:
       capacity: '2Gi'
+
+storageCapacity: '2Gi'

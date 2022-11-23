@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "airflow-cluster.name" . }}-dag
+  labels:
+    gbif-app: airflow-dags-containers
+spec:
+  accessModes:
+  - ReadWriteOnce
+  - ReadOnlyMany
+  storageClassName: nfs-client
+  resources:
+    requests: 
+      storage: {{ .Values.storageCapacity }}

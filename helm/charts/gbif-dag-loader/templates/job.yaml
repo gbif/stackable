@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "dag-loader.name" .}}
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: "OnRootMismatch"
+      volumes:
+        - name: dags-storage
+          persistentVolumeClaim:
+            claimName: gbif-airflow-dag
+            readOnly: false
+      containers:
+        - name: populate-with-dags
+          securityContext:
+            runAsUser: 50000
+            runAsGroup: 1000
+          image: docker.gbif.org/airflow-dags:0.1.0
+          env:
+            - name: DEST_DIR
+              value: "/stackable/externals"
+          command:
+            [
+              "bash",
+              "-x",
+              "-c",
+              "mkdir -p ${DEST_DIR} && cp -R /gbif/DAGs/. ${DEST_DIR}"
+            ]
+          volumeMounts:
+          - name: dags-storage
+            mountPath: /stackable/externals
