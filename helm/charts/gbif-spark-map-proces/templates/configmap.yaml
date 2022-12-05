@@ -1,3 +1,4 @@
+{{- if or (eq (lower .Values.installMode) "all") (eq (lower .Values.installMode) "config")  }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -37,4 +38,5 @@ data:
       lockingPath: {{ .Values.hdfs.lockPath }}
       lockName: {{ .Values.hdfs.lockName }}
       sleepTimeMs: {{ .Values.hdfs.sleepMs }}
-      maxRetries: {{ .Values.hdfs.retriers }}
+      maxRetries: {{ .Values.hdfs.retries }}
+{{- end }}

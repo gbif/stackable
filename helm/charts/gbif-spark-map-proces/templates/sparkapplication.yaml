@@ -1,3 +1,4 @@
+{{- if or (eq (lower .Values.installMode) "all") (eq (lower .Values.installMode) "app")  }}
 apiVersion: spark.stackable.tech/v1alpha1
 kind: SparkApplication
 metadata:
@@ -52,3 +53,4 @@ spec:
         mountPath: /stackable/spark/conf
       - name: hadoop-env
         mountPath: /etc/hadoop/conf
+{{- end }}

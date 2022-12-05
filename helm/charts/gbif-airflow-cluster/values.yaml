@@ -43,28 +43,28 @@ airflowRedis:
 
 nodes:
   webservers:
-    replicas: 1
+    replicas: '1'
     cpu:
       min: '100m'
       max: '2000m'
     memory: '4Gi'
-    storage:
-      capacity: '4Gi'
   workers:
-    replicas: 3
+    replicas: '3'
     cpu:
       min: '100m'
       max: '3000m'
     memory: '8Gi'
-    storage:
-      capacity: '16Gi'
   schedulers:
-    replicas: 1
+    replicas: '1'
     cpu:
       min: '100m'
       max: '1000m'
     memory: '2Gi'
-    storage:
-      capacity: '2Gi'
 
 storageCapacity: '2Gi'
+
+airflowEnvOverrides:
+  AIRFLOW__CORE__DAGS_FOLDER: "/gbif/airflow/dags"
+  AIRFLOW__CORE__PLUGINS_FOLDER: "/gbif/airflow/plugins"
+  AIRFLOW__CORE__EXECUTE_TASKS_NEW_PYTHON_INTERPRETER: "True"
+  AIRFLOW_CONN_KUBERNETES_IN_CLUSTER: "kubernetes://?__extra__=%7B%22extra__kubernetes__in_cluster%22%3A+true%2C+%22extra__kubernetes__kube_config%22%3A+%22%22%2C+%22extra__kubernetes__kube_config_path%22%3A+%22%22%2C+%22extra__kubernetes__namespace%22%3A+%22%22%7D"

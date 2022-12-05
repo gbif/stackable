@@ -32,6 +32,13 @@ executor:
 nameOverride: ""
 fullnameOverride: ""
 
+#Mode for installing. This is a implemtantion for selecting which objects to install.
+## all: Installs both spark application and configmaps
+## config: Installs the configmaps maps into a namespace
+## app: Installs the spark application
+# The use case is for enabling templating only the application for use in Airflows or start an instance of spark within necessary updating the configsmaps
+installMode: all
+
 hdfs:
   # Name of the Stackabl HdfsCluster in the namespace.
   clusterName: gbif-hdfs

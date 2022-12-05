@@ -21,14 +21,16 @@ spec:
             runAsGroup: 1000
           image: docker.gbif.org/airflow-dags:0.1.0
           env:
-            - name: DEST_DIR
-              value: "/stackable/externals"
+            - name: DAG_DIR
+              value: "/gbif/airflow/dags"
+            - name: PLUGIN_DIR
+              value: "/gbif/airflow/plugins"
           command:
             [
               "bash",
               "-x",
               "-c",
-              "mkdir -p ${DEST_DIR} && cp -R /gbif/DAGs/. ${DEST_DIR}"
+              "mkdir -p ${DAG_DIR} && cp -R /gbif/DAGs/. ${DAG_DIR} && mkdir -p ${PLUGIN_DIR} %% cp -R /gbif/plugins/. ${PLUGIN_DIR}"
             ]
           volumeMounts:
           - name: dags-storage

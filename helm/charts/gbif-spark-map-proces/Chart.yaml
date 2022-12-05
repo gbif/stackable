@@ -1,5 +1,5 @@
 apiVersion: v2
-name: spark-process
+name: gbif-spark-map-process
 description: Chart for deploying a Stackable Spark application running the map builder spark process.
 
 # A chart can be either an 'application' or a 'library' chart.
