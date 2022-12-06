@@ -57,5 +57,6 @@ This helm repository is still **under construction** so here is a list of tasks 
 - [X] Implement a better way to configure and deploy a number of predefined volumes
 - [X] Write charts for the raw Kubernetes manifest files
 - [X] Create chart for Trino
-- [ ] Create chart for Airflow
+- [X] Create chart for Airflow
+- [X] Create added custom DAGs and way of loading them in
 - [ ] Create move helmfile.d to own repository to keep env specific variables hidden

@@ -1,19 +1,20 @@
-from datetime import datetime, timedelta, timezone
+import pendulum
+from datetime import timedelta
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 
 with DAG(
     dag_id='gbif_test_dag',
     schedule_interval='0 0 * * *',
-    start_date=datetime(year=2022, month=1, day=1, tzinfo=timezone.utc),
+    start_date=pendulum.datetime(2022, 5, 1, tz="Europa/Copenhagen"),
     catchup=False,
     dagrun_timeout=timedelta(minutes=60),
     tags=['what', 'is', 'this'],
-    params={"my_var": "my_value"}
+    params={"my_var": "gbif"}
 ) as dag:
     stage_1 = BashOperator(
         task_id='stage_1',
-        bash_command='echo "I am at stage one"'
+        bash_command='echo "I am at stage one and hello {{ params.my_var }}"'
     )
 
     stage_2 = BashOperator(

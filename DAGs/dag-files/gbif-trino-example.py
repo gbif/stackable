@@ -1,9 +1,10 @@
 import pendulum
 
 from airflow import DAG
+from datetime import timedelta
 from airflow.operators.python_operator import PythonOperator
 
-from trino_operator import TrinoOperator
+from operators.trino_operator import TrinoOperator
 
 ## This method is called by task2 (below) to retrieve and print to the logs the return value of task1
 def print_command(**kwargs):
@@ -16,7 +17,8 @@ with DAG(
     },
     dag_id='my_first_trino_dag',
     schedule_interval='0 8 * * *',
-    start_date=pendulum.datetime(2022, 5, 1, tz="US/Central"),
+    start_date=pendulum.datetime(2022, 5, 1, tz="Europe/Copenhagen"),
+    dagrun_timeout=timedelta(minutes=60),
     catchup=False,
     tags=['example'],
 ) as dag:
@@ -26,7 +28,7 @@ with DAG(
     task1 = TrinoOperator(
       task_id='task_1',
       trino_conn_id='trino_connection',
-      sql="select count(1) from \"gbif-trino-hadoop\".test2")
+      sql="select count(1) from alex.new_table")
 
     ## Task 2 is a Python Operator that runs the print_command method above 
     task2 = PythonOperator(
@@ -35,21 +37,20 @@ with DAG(
       provide_context = True,
       dag = dag)
 
-    ## Task 3 demonstrates how you can use results from previous statements in new SQL statements
+    ## Task 3 demonstrates templating sql
     task3 = TrinoOperator(
       task_id='task_3',
       trino_conn_id='trino_connection',
-      sql="select ")
+      sql="select * FROM {{ params.VARONE }}.{{ params.TABLE }}",
+      params={"VARONE": "alex", "TABLE": "new_table"})
 
-    ## Task 4 demonstrates how you can run multiple statements in a single session.  
-    ## Best practice is to run a single statement per task however statements that change session 
-    ## settings must be run in a single task.  The set time zone statements in this example will 
-    ## not affect any future tasks but the two now() functions would timestamps for the time zone 
-    ## set before they were run.
+    ## Task 4 demostrates parametized queries
     task4 = TrinoOperator(
       task_id='task_4',
       trino_conn_id='trino_connection',
-      sql="set time zone 'America/Chicago'; select now(); set time zone 'UTC' ; select now()")
+      sql="select * FROM {{ params.VARONE }}.{{ params.TABLE }} where id = ?",
+      params={"VARONE": "alex", "TABLE": "new_table"},
+      parameters={"Something to look for"})
 
     ## The following syntax determines the dependencies between all the DAG tasks.
     ## Task 1 will have to complete successfully before any other tasks run.

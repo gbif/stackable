@@ -2,7 +2,7 @@ from airflow.models.baseoperator import BaseOperator
 from airflow.utils.decorators import apply_defaults
 import logging
 from typing import Sequence
-from hooks.trino_hook import TrinoCustomHook
+from hooks.trino.custom_hook import TrinoCustomHook
 
 # This piece of python code for the Trino provider is original from Trino blog: https://trino.io/blog/2022/07/13/how-to-use-airflow-to-schedule-trino-jobs.html
 """Trino operator for interacting with the Trino cluster"""

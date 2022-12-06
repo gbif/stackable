@@ -15,7 +15,7 @@ hiveMetastoreName: "gbif-hive-metastore"
 hdfsClusterName: "gbif-hdfs"
 
 # Name of catalog used in GBIF
-catalog: "gbif.hive"
+catalog: "gbif"
 
 nodes:
   coordinator:
