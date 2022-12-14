@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hadoop-java-example
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      volumes:
+      - name: hadoop-env
+        configMap:
+          name: gbif-hdfs
+      containers:
+        - name: java-application
+          image: docker.gbif.org/hadoop-integration-example:0.1.8
+          imagePullPolicy: Always
+          volumeMounts:
+          - name: hadoop-env
+            mountPath: /app/conf

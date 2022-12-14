@@ -4,6 +4,8 @@ metadata:
   name: {{ include "airflow-cluster.name" . }}-dag
   labels:
     gbif-app: airflow-dags-containers
+  annotations:
+    "helm.sh/resource-policy": keep
 spec:
   accessModes:
   - ReadWriteOnce

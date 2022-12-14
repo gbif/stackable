@@ -19,19 +19,19 @@ spec:
           securityContext:
             runAsUser: 50000
             runAsGroup: 1000
-          image: docker.gbif.org/airflow-dags:0.1.0
+          image: docker.gbif.org/airflow-dags:0.4.5
           env:
             - name: DAG_DIR
-              value: "/gbif/airflow/dags"
+              value: "/gbif_external/airflow/dags"
             - name: PLUGIN_DIR
-              value: "/gbif/airflow/plugins"
+              value: "/gbif_external/airflow/plugins"
           command:
             [
               "bash",
               "-x",
               "-c",
-              "mkdir -p ${DAG_DIR} && cp -R /gbif/DAGs/. ${DAG_DIR} && mkdir -p ${PLUGIN_DIR} %% cp -R /gbif/plugins/. ${PLUGIN_DIR}"
+              "mkdir -p ${DAG_DIR} && cp -R /gbif/DAGs/. ${DAG_DIR} && mkdir -p ${PLUGIN_DIR} && cp -R /gbif/plugins/. ${PLUGIN_DIR}"
             ]
           volumeMounts:
           - name: dags-storage
-            mountPath: /stackable/externals
+            mountPath: /gbif_external

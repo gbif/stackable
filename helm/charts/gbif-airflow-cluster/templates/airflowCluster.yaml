@@ -16,13 +16,13 @@ spec:
         readOnly: true
   volumeMounts:
     - name: external-dags
-      mountPath: /gbif/airflow
+      mountPath: {{ .Values.externalData }}
   webservers:
     roleGroups:
       default:
 {{- if .Values.airflowEnvOverrides }}
 {{- "envOverrides:" | nindent 8 }}
-{{- .Values.airflowEnvOverrides | toYaml | nindent 10 }}
+{{- tpl (.Values.airflowEnvOverrides | toYaml) . | nindent 10 }}
 {{- end }}
         replicas: {{ .Values.nodes.webservers.replicas }}
   workers:
@@ -30,7 +30,7 @@ spec:
       default:
 {{- if .Values.airflowEnvOverrides }}
 {{- "envOverrides:" | nindent 8 }}
-{{- .Values.airflowEnvOverrides | toYaml | nindent 10 }}
+{{- tpl (.Values.airflowEnvOverrides | toYaml) . | nindent 10 }}
 {{- end }}
         replicas: {{ .Values.nodes.workers.replicas }}
   schedulers:
@@ -38,6 +38,6 @@ spec:
       default:
 {{- if .Values.airflowEnvOverrides }}
 {{- "envOverrides:" | nindent 8 }}
-{{- .Values.airflowEnvOverrides | toYaml | nindent 10 }}
+{{- tpl (.Values.airflowEnvOverrides | toYaml) . | nindent 10 }}
 {{- end }}
         replicas: {{ .Values.nodes.schedulers.replicas }}
