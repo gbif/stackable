@@ -17,6 +17,12 @@ hdfsClusterName: "gbif-hdfs"
 # Name of catalog used in GBIF
 catalog: "gbif"
 
+# limit for per-node usage for queries
+memPerNode: "6GB"
+# limit for headroom per node
+# headroom + limit per-node shouldn't exceed the total memory set per worker.
+memHeadroom: "2GB"
+
 nodes:
   coordinator:
     replicas: 1

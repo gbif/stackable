@@ -5,9 +5,21 @@ metadata:
 rules:
 - apiGroups:
   - spark.stackable.tech
+  - ""
   resources:
   - sparkapplications
+  - pods
   verbs:
   - create
   - get
+  - list
+- apiGroups: [""]
+  resources:
+  - pods
+  - pods/log
+  - pods/exec
+  verbs:
+  - create
+  - get
+  - list
   - delete
