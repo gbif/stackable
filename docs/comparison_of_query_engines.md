@@ -25,7 +25,7 @@ spark.yarn.executor.memory = 12000
 hive.execution.engine = spark
 ```
 
-As there are variance in name convention from the authors side and the language between Hive and Trino, all the specific queries will be listed.
+As there are variance in name convention from the authors side and the language between Hive and Trino, all the specific queries used will be listed.
 
 <details>
 
@@ -54,7 +54,6 @@ Create TABLE birds_text_from_avro WITH (format = 'TEXTFILE') AS (SELECT v_modifi
 <details>
 <summary>Hive Specific Queries</summary>
 
-### Hive Specific Queries
 **Hive Select from Parquet data**
 ```SQL
 SELECT v_countryCode, count(*) FROM occurrence_parquet_aln WHERE v_basisofrecord='HumanObservation' GROUP BY v_countryCode;

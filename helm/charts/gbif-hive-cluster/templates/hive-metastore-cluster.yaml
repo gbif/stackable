@@ -26,7 +26,7 @@ spec:
             memory:
               limit: {{ .Values.metastore.memory }}
           database:
-            connString: jdbc:postgresql://hive-postgres-postgresql/hive
-            user: test-user
-            password: test-password
+            connString: jdbc:postgresql://{{ .Values.hiveDB.name }}/{{ .Values.hiveDB.db}}
+            user: {{ .Values.hiveDB.user }}
+            password: {{ .Values.hiveDB.password }}
             dbType: postgres

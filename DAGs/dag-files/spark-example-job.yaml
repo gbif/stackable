@@ -1,0 +1,67 @@
+apiVersion: spark.stackable.tech/v1alpha1
+kind: SparkApplication
+spec:
+  version: 0.1.1
+  image: docker.gbif.org/spark-integration-example:0.1.14
+  sparkImage: docker.stackable.tech/stackable/spark-k8s:3.3.0-stackable0.1.0
+  mode: cluster
+  mainApplicationFile: local:///stackable/spark/jobs/SparkIntegrationExample.jar
+  mainClass: org.gbif.examples.SparkIntegrationExample
+  args:
+    - "thrift://gbif-hive-metastore-metastore-default-0.gbif-hive-metastore-metastore-default.stack-demo.svc.cluster.local:9083"
+  sparkConf:
+     "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+     "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+     "spark.broadcast.compress": "true"
+     "spark.checkpoint.compress": "true"
+     "spark.io.compression.codec": "lz4"
+     "spark.rdd.compress": "true"
+  volumes:
+    - name: spark-env
+      configMap:
+        name: spark-example-env
+    - name: hadoop-env
+      configMap:
+        name: gbif-hdfs
+        items:
+        - key: core-site.xml
+          path: core-site.xml
+        - key: hdfs-site.xml
+          path: hdfs-site.xml
+    - name: hive-env
+      configMap:
+        name: gbif-hive-metastore-metastore-default
+        items:
+        - key: hive-site.xml
+          path: hive-site.xml
+  driver:
+    cores: 1
+    memory: 1024m
+    volumeMounts:
+      - name: spark-env
+        mountPath: /stackable/spark/conf
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf/core-site.xml
+        subPath: core-site.xml
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf/hdfs-site.xml
+        subPath: hdfs-site.xml
+      - name: hive-env
+        mountPath: /etc/hadoop/conf/hive-site.xml
+        subPath: hive-site.xml
+  executor:
+    cores: 2
+    instances: 6
+    memory: 4096m
+    volumeMounts:
+      - name: spark-env
+        mountPath: /stackable/spark/conf
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf/core-site.xml
+        subPath: core-site.xml
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf/hdfs-site.xml
+        subPath: hdfs-site.xml
+      - name: hive-env
+        mountPath: /etc/hadoop/conf/hive-site.xml
+        subPath: hive-site.xml

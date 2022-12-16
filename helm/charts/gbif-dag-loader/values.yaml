@@ -1,0 +1,8 @@
+# Default values for GBIF HDFS cluster using Stackable HDFS operator.
+
+# Override name of the cluster
+nameOverride: ""
+# Override fullname of the cluster
+fullnameOverride: ""
+
+storageCapacity: '2Gi'

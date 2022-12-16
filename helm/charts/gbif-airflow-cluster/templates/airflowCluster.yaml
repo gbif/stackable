@@ -1,0 +1,43 @@
+apiVersion: airflow.stackable.tech/v1alpha1
+kind: AirflowCluster
+metadata:
+  name: {{ include "airflow-cluster.name" . }}
+spec:
+  version: {{ default .Chart.AppVersion .Values.stackTag }}
+  statsdExporterVersion: v{{ .Values.statsdVersion }}
+  executor: {{ .Values.executor }}
+  loadExamples: {{ .Values.examples }}
+  exposeConfig: {{ .Values.exposeConfigs }}
+  credentialsSecret: {{ include "airflow-cluster.name" . }}-credentials
+  volumes:
+    - name: external-dags
+      persistentVolumeClaim:
+        claimName: {{ include "airflow-cluster.name" .}}-dag
+        readOnly: true
+  volumeMounts:
+    - name: external-dags
+      mountPath: {{ .Values.externalData }}
+  webservers:
+    roleGroups:
+      default:
+{{- if .Values.airflowEnvOverrides }}
+{{- "envOverrides:" | nindent 8 }}
+{{- tpl (.Values.airflowEnvOverrides | toYaml) . | nindent 10 }}
+{{- end }}
+        replicas: {{ .Values.nodes.webservers.replicas }}
+  workers:
+    roleGroups:
+      default:
+{{- if .Values.airflowEnvOverrides }}
+{{- "envOverrides:" | nindent 8 }}
+{{- tpl (.Values.airflowEnvOverrides | toYaml) . | nindent 10 }}
+{{- end }}
+        replicas: {{ .Values.nodes.workers.replicas }}
+  schedulers:
+    roleGroups:
+      default:
+{{- if .Values.airflowEnvOverrides }}
+{{- "envOverrides:" | nindent 8 }}
+{{- tpl (.Values.airflowEnvOverrides | toYaml) . | nindent 10 }}
+{{- end }}
+        replicas: {{ .Values.nodes.schedulers.replicas }}

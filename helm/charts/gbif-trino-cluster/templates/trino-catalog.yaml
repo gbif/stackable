@@ -1,7 +1,7 @@
 apiVersion: trino.stackable.tech/v1alpha1
 kind: TrinoCatalog
 metadata:
-  name: {{ include "trino-cluster.name" . }}-hadoop
+  name: {{ .Values.catalog }}
   labels:
 {{ include "trino-cluster.selectorLabels" . | indent 4}}
 spec:

@@ -22,6 +22,10 @@ spec:
               data:
                 capacity: {{ .Values.nodes.coordinator.storage.capacity }}
   workers:
+    configOverrides:
+      config.properties:
+        query.max-memory-per-node: {{ .Values.memPerNode }}
+        memory.heap-headroom-per-node: {{ .Values.memHeadroom }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.worker.replicas }}

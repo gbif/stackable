@@ -1,3 +1,4 @@
+{{- if or (eq (lower .Values.installMode) "all") (eq (lower .Values.installMode) "config")  }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -6,3 +7,4 @@ data:
   spark-env.sh: |
     #!/bin/bash
     export HADOOP_CONF_DIR=/etc/hadoop/conf
+{{- end }}

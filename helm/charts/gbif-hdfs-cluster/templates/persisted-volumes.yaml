@@ -4,6 +4,8 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: {{ $label }}-drive-{{ $drive }}-pv
+  annotations:
+    "helm.sh/resource-policy": keep
 spec:
   capacity:
     storage: {{ $.Values.nodes.data.storage.capacity }}
