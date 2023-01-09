@@ -20,26 +20,32 @@ nodes:
     cpu:
       min: '100m'
       max: '2000m'
-    memory: '2Gi'
+    memory: '3Gi'
     storage:
-      capacity: '25Gi'
+      capacity: '15Gi'
   data:
-    replicas: 4
+    replicas: 32
     cpu:
       min: '100m'
-      max: '2000m'
-    memory: '4Gi'
+      max: '1000m'
+    memory: '2Gi'
     storage:
       drives:
-        - a
-        - b
-        - c
+        - data_volume_1
+        - data_volume_2
+        - data_volume_3
+        - data_volume_4
+        - data_volume_5
+        - data_volume_6
+        - data_volume_7
+        - data_volume_8
       labels:
         - datanode-1
         - datanode-2
         - datanode-3
+        - datanode-4
       class: hdfs-datanode-storage
-      capacity: '800Gi'
+      capacity: '925Gi'
   journal:
     replicas: 3
     cpu:
@@ -47,4 +53,4 @@ nodes:
       max: '2000m'
     memory: '2Gi'
     storage:
-      capacity: '25Gi'
+      capacity: '15Gi'
