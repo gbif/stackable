@@ -1,0 +1,41 @@
+# Override name of the cluster
+nameOverride: ""
+# Override fullname of the cluster
+fullnameOverride: ""
+
+memoryPagingAllow: true
+
+nodes:
+  manager:
+    replicas: 3
+    cpu:
+      min: '500m'
+      max: '2000m'
+    memory: 3072
+    storage:
+      class: local-path
+      capacity: '25Gi'
+  worker:
+    replicas: 3
+    cpu:
+      min: '1000m'
+      max: '4000m'
+    memory: 4096
+    storage:
+      drives:
+        - elastic_volume_1
+        - elastic_volume_2
+      labels:
+        # Datanode one is disabled as we don't want Elastic to run on control plane
+        #- datanode-1
+        - datanode-2
+        - datanode-3
+        - datanode-4
+      class: elastic-storage
+      capacity: '925Gi'
+  kibana:
+    replicas: 1
+    cpu:
+      min: '500m'
+      max: '2000m'
+    memory: 2048

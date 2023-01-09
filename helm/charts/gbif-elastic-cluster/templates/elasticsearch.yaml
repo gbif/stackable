@@ -1,0 +1,73 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: {{ include "elastic-search-cluster.name" . }}
+spec:
+  version: {{ .Chart.AppVersion | default 8.5.3 | quote }}
+  nodeSets:
+  - name: managers
+    count: {{ .Values.nodes.worker.replicas }}
+    config:
+      node:
+        store:
+          allow_mmap: {{ .Values.memoryPagingAllow }}
+        roles: ["master"]
+    podTemplate:
+      spec:
+        containers:
+        - name: elasticsearch
+          securityContext:
+            runAsUser: 1000 # Sets to the gbif user
+          env:
+          - name: ES_JAVA_OPTS
+            value: -Xms{{ sub .Values.nodes.manager.memory 512 }}m -Xmx{{ sub .Values.nodes.manager.memory 512 }}m
+          resources:
+            requests:
+              memory: {{ .Values.nodes.manager.memory }}Mi
+              cpu: {{ .Values.nodes.manager.cpu.min }}
+            limits:
+              memory: {{ .Values.nodes.manager.memory }}Mi
+              cpu: {{ .Values.nodes.manager.cpu.max }}
+    volumeClaimTemplates:
+    - metadata:
+        name: elasticsearch-data # Points to standard mount directory
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ $.Values.nodes.manager.storage.capacity }}
+        storageClassName: {{ $.Values.nodes.manager.storage.class }}
+  - name: workers
+    count: {{ .Values.nodes.worker.replicas }}
+    config:
+      node:
+        store:
+          allow_mmap: {{ .Values.memoryPagingAllow }}
+        roles: ["data", "ingest", "transform"]
+    podTemplate:
+      spec:
+        containers:
+        - name: elasticsearch
+          securityContext:
+            runAsUser: 1000 # Sets to the gbif user
+          env:
+          - name: ES_JAVA_OPTS
+            value: -Xms{{ sub .Values.nodes.worker.memory 512 }}m -Xmx{{ sub .Values.nodes.worker.memory 512 }}m
+          resources:
+            requests:
+              memory: {{ .Values.nodes.worker.memory }}Mi
+              cpu: {{ .Values.nodes.worker.cpu.min }}
+            limits:
+              memory: {{ .Values.nodes.worker.memory }}Mi
+              cpu: {{ .Values.nodes.worker.cpu.max }}
+    volumeClaimTemplates:
+    - metadata:
+        name: elasticsearch-data # Points to standard mount directory
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ $.Values.nodes.worker.storage.capacity }}
+        storageClassName: {{ $.Values.nodes.worker.storage.class }}
