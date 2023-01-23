@@ -5,8 +5,9 @@ nameOverride: ""
 # Override fullname of the cluster
 fullnameOverride: ""
 
-# Stackable tag to override the version of the Stack component.
-stackTag: ""
+# Stackable versioning to override the version of the Stack component.
+stackProduct: "3.3.4"
+stackVersion: "0.3.0"
 
 # Name of the zookeeper cluster
 zookeeperClusterName: "gbif-zookeeper"
@@ -24,7 +25,7 @@ nodes:
     storage:
       capacity: '15Gi'
   data:
-    replicas: 32
+    replicas: 4
     cpu:
       min: '100m'
       max: '1000m'
@@ -46,6 +47,7 @@ nodes:
         - datanode-4
       class: hdfs-datanode-storage
       capacity: '925Gi'
+      type: "Disk"
   journal:
     replicas: 3
     cpu:

@@ -1,19 +1,21 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: trino-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: gbif-dev-ingress
 spec:
+  tls:
+  - hosts:
+    - "cluster.gbif-dev2.org"
+    secretName: ingress-tls # manually deployed
   ingressClassName: nginx
   rules:
-  - host: "for.bar.org"
+  - host: "cluster.gbif-dev2.org"
     http:
       paths:
-      - path: /trino-ui
+      - path: /ui
         pathType: Prefix
         backend:
           service:
             name: gbif-trino-coordinator-default
             port:
-              number: 8443
+              number: 8080

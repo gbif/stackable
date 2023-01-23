@@ -18,10 +18,10 @@ hdfsClusterName: "gbif-hdfs"
 catalog: "gbif"
 
 # limit for per-node usage for queries
-memPerNode: "6GB"
+memPerNode: "5GB"
 # limit for headroom per node
 # headroom + limit per-node shouldn't exceed the total memory set per worker.
-memHeadroom: "2GB"
+memHeadroom: "1GB"
 
 nodes:
   coordinator:
@@ -37,8 +37,8 @@ nodes:
     replicas: 6
     cpu:
       min: '100m'
-      max: '8000m'
-    memory: '12Gi'
+      max: '6000m'
+    memory: '8Gi'
     storage:
       capacity: '8Gi'
   

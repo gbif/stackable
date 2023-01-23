@@ -3,7 +3,7 @@ kind: Elasticsearch
 metadata:
   name: {{ include "elastic-search-cluster.name" . }}
 spec:
-  version: {{ .Chart.AppVersion | default 8.5.3 | quote }}
+  version: {{ .Chart.AppVersion | default "8.5.3" | quote }}
   nodeSets:
   - name: managers
     count: {{ .Values.nodes.worker.replicas }}
