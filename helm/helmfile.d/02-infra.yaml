@@ -38,13 +38,13 @@ releases:
 - name: gbif-zookeeper
   namespace: gbif-develop
   chart: ../charts/gbif-zookeeper-cluster
-  version: 0.1.0
+  version: 0.2.0
   installed: true
   wait: true
   waitForJobs: true
 - name: gbif-hadoop-hdfs
   namespace: gbif-develop
-  version: 0.1.0
+  version: 0.2.0
   chart: ../charts/gbif-hdfs-cluster
   installed: true
   wait: true
@@ -53,7 +53,7 @@ releases:
     - gbif-zookeeper
 - name: gbif-hbase
   namespace: gbif-develop
-  version: 0.1.0
+  version: 0.2.0
   chart: ../charts/gbif-hbase-cluster
   installed: true
   wait: true
@@ -62,7 +62,7 @@ releases:
     - gbif-hadoop-hdfs
 - name: gbif-hive
   namespace: gbif-develop
-  version: 0.1.0
+  version: 0.2.0
   chart: ../charts/gbif-hive-cluster
   installed: true
   wait: true
@@ -73,7 +73,7 @@ releases:
 
 - name: gbif-trino
   namespace: gbif-develop
-  version: 0.1.1
+  version: 0.2.0
   chart: ../charts/gbif-trino-cluster
   installed: true
   wait: true
@@ -82,7 +82,7 @@ releases:
     - gbif-hive
 - name: gbif-airflow
   namespace: gbif-develop
-  version: 0.1.1
+  version: 0.2.0
   chart: ../charts/gbif-airflow-cluster
   installed: true
   wait: true
