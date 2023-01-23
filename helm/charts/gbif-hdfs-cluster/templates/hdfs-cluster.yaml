@@ -3,11 +3,11 @@ kind: HdfsCluster
 metadata:
   name: {{ include "hdfs-cluster.name" . }}
 spec:
-  version: {{ default .Chart.AppVersion .Values.stackTag}}
+  image:
+    productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
+    stackableVersion: {{ default "0.3.0" .Values.stackVersion }}
   zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}
   dfsReplication: {{ .Values.dataReplication }}
-  log4j: |-
-    {{- .Files.Get "files/log4j.properties" | nindent 4}}
   nameNodes:
     roleGroups:
       default:
@@ -33,7 +33,12 @@ spec:
               min: {{ .Values.nodes.data.cpu.min }}
             storage:
               data:
+                count: 0 # Setting count to 0 disables the default PVCs
+              hard-disks:
+                count: {{ len .Values.nodes.data.storage.drives }}
+                capacity: {{ .Values.nodes.data.storage.capacity }} # Currently the same for all disks but in the future it could easily be different for different types of disks
                 storageClass: {{ .Values.nodes.data.storage.class }}
+                hdfsStorageType: {{ .Values.nodes.data.storage.type }}
             memory:
               limit: {{ .Values.nodes.data.memory }}
   journalNodes:

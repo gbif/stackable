@@ -46,8 +46,8 @@ releases:
   - secret-operator
 - name: hdfs-operator
   namespace: stackable-system
-  chart: stackable-stable/hdfs-operator
-  version: 0.6.0
+  chart: stackable-dev/hdfs-operator
+  version: 0.7.0-nightly
   installed: true
   atomic: true
   needs:
