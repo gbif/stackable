@@ -32,7 +32,6 @@ nodes:
     memory: '2Gi'
     storage:
       capacity: '4Gi'
-
   worker:
     replicas: 6
     cpu:

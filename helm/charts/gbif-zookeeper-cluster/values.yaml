@@ -11,6 +11,9 @@ stackTag: ""
 # Number of instances
 replicas: 2
 
+appPort: 2
+nodePort: 3
+
 ressources:
   # CPU allocation in milicores for each instance
   cpu:
