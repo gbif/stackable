@@ -5,7 +5,9 @@
 The Helm repository contains the charts and templates to provision the components into a given Kubernetes cluster. The charts are utilizing charts from [Stackable](https://stackable.tech/) organization which provides a wide selection of operators to work with technologies: **Hadoop HDFS**, **Trino**, **Hbase**, **Zookeeper**, etc. **Stackable's** operators provide a convenient and packaged solution for configuring  and organization the technology stack within the range of technologies they support.
 
 ## Migration in phases
-As the transition from bare-metal hosting of infrastructure to on-site Kubernetes cluster is a complicated and large operation, it is done through an iterative process. 
+As the transition from bare-metal hosting of infrastructure to on-site Kubernetes cluster is a complicated and large operation, it is done through an iterative process.
+
+**NOTE:** The helmfile files have moved to its own repository to protect environment specific values. The example will stay for now.
 
 An example of how to use the helmfile to deploy to a given namespace:
 
@@ -40,12 +42,12 @@ Current components deployed via Helm charts:
 - Redis (Used by Airflow)
 - Stackable Operators (Mainly uses Stackable provided charts)
 
-It is possible to use the helmfile.yaml to install the whole cluster. **BEWARE** if you chooses to uninstall or reinstall the common-operator, the CRDs will be removed and thereby all the deployed components. The option currently kept for testing purposes.
+~~It is possible to use the helmfile.yaml to install the whole cluster.~~ **BEWARE** if you chooses to uninstall or reinstall the common-operator, the CRDs will be removed and thereby all the deployed components. The option currently kept for testing purposes.
 ## Requirements
 
 In order to work with Helm charts you need the following tools: 
 - [Helm](https://helm.sh/)
-- [Helmfile](https://github.com/helmfile/helmfile)
+- ~~[Helmfile](https://github.com/helmfile/helmfile)~~
 
 The following plug-in is required:
 - [Helm-diff](https://github.com/databus23/helm-diff)
@@ -59,4 +61,6 @@ This helm repository is still **under construction** so here is a list of tasks 
 - [X] Create chart for Trino
 - [X] Create chart for Airflow
 - [X] Create added custom DAGs and way of loading them in
-- [ ] Create move helmfile.d to own repository to keep env specific variables hidden
+- [X] Create move helmfile.d to own repository to keep env specific variables hidden
+
+The dev cluster is currently being tested together with the remaining infrastructure for the develop environment. Findings from the tests could lead to more development.
