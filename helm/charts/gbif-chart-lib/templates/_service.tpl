@@ -13,7 +13,8 @@ spec:
   selector:
     app.kubernetes.io/name: {{ include "gbif-chart-lib.name" . }}
   ports:
-  - protocol: TCP
+  - name: gbif
+    protocol: TCP
     port: {{ .Values.appPort }}
     targetPort: {{ .Values.appPort }}
     nodePort: {{ .Values.nodePort }}

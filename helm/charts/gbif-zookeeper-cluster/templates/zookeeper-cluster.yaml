@@ -1,7 +1,7 @@
 apiVersion: zookeeper.stackable.tech/v1alpha1
 kind: ZookeeperCluster
 metadata:
-  name: {{ include "zookeeper-cluster.name" . }}
+  name: {{ include "gbif-chart-lib.name" . }}
 spec:
   version: {{ default .Chart.AppVersion .Values.stackTag}}
   servers:

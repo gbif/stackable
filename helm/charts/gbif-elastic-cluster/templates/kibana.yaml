@@ -1,12 +1,12 @@
 apiVersion: kibana.k8s.elastic.co/v1
 kind: Kibana
 metadata:
-  name: {{ include "elastic-search-cluster.name" . }}
+  name: {{ include "gbif-chart-lib.name" . }}
 spec:
   version: {{ default "8.5.3" .Chart.AppVersion }}
   count: {{ .Values.nodes.kibana.replicas }}
   elasticsearchRef:
-    name: {{ include "elastic-search-cluster.name" . }}
+    name: {{ include "gbif-chart-lib.name" . }}
   podTemplate:
     spec:
       containers:

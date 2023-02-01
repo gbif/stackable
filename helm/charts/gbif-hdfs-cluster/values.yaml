@@ -18,10 +18,14 @@ dataReplication: 2
 #GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
 #Differs from the other charts as, we want to keep the active/passive nodes separated when accessing them.
 nodePorts: 
-  - appPort: 9870
-    nodePort: 31870
-  - appPort: 9870
-    nodePort: 31871
+  - tcpPort: 9870
+    ntcpPort: 31870
+    rcpPort: 8020
+    nrcpPort: 31871
+  - tcpPort: 9870
+    ntcpPort: 31872
+    rcpPort: 8020
+    nrcpPort: 31873
 
 nodes:
   name:

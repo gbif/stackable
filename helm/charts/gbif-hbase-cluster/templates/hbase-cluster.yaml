@@ -1,7 +1,7 @@
 apiVersion: hbase.stackable.tech/v1alpha1
 kind: HbaseCluster
 metadata:
-  name: {{ include "hbase-cluster.name" . }}
+  name: {{ include "gbif-chart-lib.name" . }}
 spec:
   version: {{ default .Chart.AppVersion .Values.stackTag}}
   hdfsConfigMapName: {{ .Values.hdfsClusterName }}
