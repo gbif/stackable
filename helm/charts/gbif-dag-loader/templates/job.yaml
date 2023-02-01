@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "dag-loader.name" .}}
+  name: {{ include "gbif-chart-lib.name" .}}
 spec:
   template:
     spec:

@@ -9,7 +9,11 @@ fullnameOverride: ""
 stackTag: ""
 
 # Number of instances
-replicas: 2
+replicas: 3
+
+#GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
+appPort: 2282
+nodePort: 31228
 
 ressources:
   # CPU allocation in milicores for each instance

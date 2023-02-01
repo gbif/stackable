@@ -1,7 +1,7 @@
 apiVersion: hive.stackable.tech/v1alpha1
 kind: HiveCluster
 metadata:
-  name: {{ include "hive-metastore.name" . }}
+  name: {{ include "gbif-chart-lib.name" . }}
 spec:
   version: {{ default .Chart.AppVersion .Values.stackTag }}
   hdfs:

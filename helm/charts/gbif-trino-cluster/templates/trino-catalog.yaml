@@ -3,7 +3,7 @@ kind: TrinoCatalog
 metadata:
   name: {{ .Values.catalog }}
   labels:
-{{ include "trino-cluster.selectorLabels" . | indent 4}}
+{{ include "gbif-chart-lib.selectorLabels" . | indent 4}}
 spec:
   connector:
     hive:

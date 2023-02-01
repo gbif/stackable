@@ -14,6 +14,10 @@ hdfsClusterName: "gbif-hdfs"
 # BUG Trino can't connect to hive cluster with more than 1 replicas
 replicas: 1
 
+#GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
+appPort: 9083
+nodePort: 31083
+
 metastore:
   cpu:
     min: '100m'

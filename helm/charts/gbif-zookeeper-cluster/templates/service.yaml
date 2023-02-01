@@ -1,0 +1,3 @@
+{{- include "gbif-chart-list.service" (list . "gbif-zookeeper-cluster.service") -}}
+{{- define "gbif-zookeeper-cluster.service" -}}
+{{- end -}}

@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "dag-loader.name" -}}
+{{- define "gbif-chart-lib.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "dag-loader.fullname" -}}
+{{- define "gbif-chart-lib.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "dag-loader.chart" -}}
+{{- define "gbif-chart-lib.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "dag-loader.labels" -}}
-helm.sh/chart: {{ include "dag-loader.chart" . }}
-{{ include "dag-loader.selectorLabels" . }}
+{{- define "gbif-chart-lib.labels" -}}
+helm.sh/chart: {{ include "gbif-chart-lib.chart" . }}
+{{ include "gbif-chart-lib.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,7 +45,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "dag-loader.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "dag-loader.name" . }}
+{{- define "gbif-chart-lib.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "gbif-chart-lib.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}

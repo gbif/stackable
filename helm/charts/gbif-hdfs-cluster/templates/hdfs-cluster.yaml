@@ -1,7 +1,7 @@
 apiVersion: hdfs.stackable.tech/v1alpha1
 kind: HdfsCluster
 metadata:
-  name: {{ include "hdfs-cluster.name" . }}
+  name: {{ include "gbif-chart-lib.name" . }}
 spec:
   image:
     productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}

@@ -1,0 +1,34 @@
+{{/*
+Manually configured nodeport services for the namenodes, 
+as there might be support for setting fixed port in the future.
+*/}}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-%s" .Release.Name "nodeport-0" }}
+spec:
+  type: NodePort
+  selector:
+    statefulset.kubernetes.io/pod-name: "gbif-hdfs-namenode-default-0"
+  ports:
+  - protocol: TCP
+    port: {{ (index .Values.nodePorts 0).appPort }}
+    targetPort: {{ (index .Values.nodePorts 0).appPort }}
+    nodePort: {{ (index .Values.nodePorts 0).nodePort }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-%s" .Release.Name "nodeport-1" }}
+spec:
+  type: NodePort
+  selector:
+    statefulset.kubernetes.io/pod-name: "gbif-hdfs-namenode-default-1"
+  ports:
+  - protocol: TCP
+    port: {{ (index .Values.nodePorts 1).appPort }}
+    targetPort: {{ (index .Values.nodePorts 1).appPort }}
+    nodePort: {{ (index .Values.nodePorts 1).nodePort }}

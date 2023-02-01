@@ -23,6 +23,10 @@ memPerNode: "5GB"
 # headroom + limit per-node shouldn't exceed the total memory set per worker.
 memHeadroom: "1GB"
 
+#GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
+appPort: 9083
+nodePort: 31908
+
 nodes:
   coordinator:
     replicas: 1
@@ -32,7 +36,6 @@ nodes:
     memory: '2Gi'
     storage:
       capacity: '4Gi'
-
   worker:
     replicas: 6
     cpu:

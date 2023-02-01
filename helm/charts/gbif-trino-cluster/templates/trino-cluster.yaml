@@ -1,12 +1,12 @@
 apiVersion: trino.stackable.tech/v1alpha1
 kind: TrinoCluster
 metadata:
-  name: {{ include "trino-cluster.name" . }}
+  name: {{ include "gbif-chart-lib.name" . }}
 spec:
   version: {{ default .Chart.AppVersion .Values.stackTag }}
   catalogLabelSelector:
     matchLabels:
-{{ include "trino-cluster.selectorLabels" . | indent 6}}
+{{ include "gbif-chart-lib.selectorLabels" . | indent 6}}
   coordinators:
     roleGroups:
       default:
