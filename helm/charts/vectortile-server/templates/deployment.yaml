@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "vectortile-server.fullname" . }}
+  name: {{ include "gbif-chart-lib.fullname" . }}
   labels:
-    {{- include "vectortile-server.labels" . | nindent 4 }}
+    {{- include "gbif-chart-lib.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "vectortile-server.selectorLabels" . | nindent 6 }}
+      {{- include "gbif-chart-lib.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -16,7 +16,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "vectortile-server.selectorLabels" . | nindent 8 }}
+        {{- include "gbif-chart-lib.selectorLabels" . | nindent 8 }}
     spec:
       containers:
         - name: {{ .Chart.Name }}
@@ -42,13 +42,13 @@ spec:
       volumes:
         - name: application-config
           configMap:
-            name: {{ include "vectortile-server.name" . }}-configuration
+            name: {{ include "gbif-chart-lib.name" . }}-configuration
             items:
               - key: application.yml
                 path: application.yml
         - name: bootstrap-config
           configMap:
-            name: {{ include "vectortile-server.name" . }}-bootstrap
+            name: {{ include "gbif-chart-lib.name" . }}-bootstrap
             items:
               - key: bootstrap.yml
                 path: bootstrap.yml

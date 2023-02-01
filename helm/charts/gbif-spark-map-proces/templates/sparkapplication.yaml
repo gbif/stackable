@@ -2,9 +2,9 @@
 apiVersion: spark.stackable.tech/v1alpha1
 kind: SparkApplication
 metadata:
-  name: {{ include "spark-map-process.fullname" . }}
+  name: {{ include "gbif-chart-lib.fullname" . }}
   labels:
-    {{- include "spark-map-process.labels" . | nindent 4 }}
+    {{- include "gbif-chart-lib.labels" . | nindent 4 }}
 spec:
   version: {{ default .Chart.AppVersion .Values.image.tag}}
   image: {{ default "docker.gbif.org/" .Values.image.repository }}{{ default .Chart.Name .Values.appName }}:{{ default .Chart.AppVersion .Values.image.tag}}
@@ -25,10 +25,10 @@ spec:
   volumes:
     - name: map-env
       configMap:
-        name: {{ include "spark-map-process.name" . }}-configuration
+        name: {{ include "gbif-chart-lib.name" . }}-configuration
     - name: spark-env
       configMap:
-        name: {{ include "spark-map-process.name" . }}-spark-env
+        name: {{ include "gbif-chart-lib.name" . }}-spark-env
     - name: hadoop-env
       configMap:
         name: {{ .Values.hdfs.clusterName }}

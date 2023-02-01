@@ -5,7 +5,7 @@ fullnameOverride: ""
 
 memoryPagingAllow: true
 
-#GBIF specified nodeports for exposing the infrastructure to VMs outsite the kubenetes cluster
+#GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
 appPort: 9200
 nodePort: 31920
 

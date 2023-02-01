@@ -7,7 +7,7 @@ All node ports is fixed to fit within the default range for nodePorts.
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name | printf "%s-%s" "gbif-node" }}
+  name: {{ printf "%s-%s" .Release.Name "nodeport" }}
 spec:
   type: NodePort
   selector:
@@ -16,7 +16,7 @@ spec:
   - protocol: TCP
     port: {{ .Values.appPort }}
     targetPort: {{ .Values.appPort }}
-    nodeport: {{ .Values.nodePort }}
+    nodePort: {{ .Values.nodePort }}
 {{- end -}}
 {{- define "gbif-chart-list.service" -}}
 {{- include "gbif-chart-list.util.merge" (append . "gbif-chart-list.service.tpl") -}}

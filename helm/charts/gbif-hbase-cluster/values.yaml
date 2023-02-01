@@ -14,7 +14,7 @@ zookeeperClusterName: "gbif-zookeeper"
 # Name of the HDFS cluster
 hdfsClusterName: "gbif-hdfs"
 
-#GBIF specified nodeports for exposing the infrastructure to VMs outsite the kubenetes cluster
+#GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
 appPort: 16020
 nodePort: 31160
 
