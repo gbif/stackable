@@ -18,3 +18,6 @@ spec:
     targetPort: {{ .Values.appPort }}
     nodeport: {{ .Values.nodePort }}
 {{- end -}}
+{{- define "gbif-chart-list.service" -}}
+{{- include "gbif-chart-list.util.merge" (append . "gbif-chart-list.service.tpl") -}}
+{{- end -}}
