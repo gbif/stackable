@@ -1,3 +1,6 @@
+# A Basic ingres example chart used in exploring the possibilities for use of ingress for exposing frontends.
+# Not currently in use.
+
 apiVersion: v2
 name: gbif-kube-ingress
 description: Chart for deploying an ingress for Kubernetes setup in GBIF context
