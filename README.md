@@ -4,30 +4,6 @@
 ## Description
 The Helm repository contains the charts and templates to provision the components into a given Kubernetes cluster. The charts are utilizing charts from [Stackable](https://stackable.tech/) organization which provides a wide selection of operators to work with technologies: **Hadoop HDFS**, **Trino**, **Hbase**, **Zookeeper**, etc. **Stackable's** operators provide a convenient and packaged solution for configuring  and organization the technology stack within the range of technologies they support.
 
-## Migration in phases
-As the transition from bare-metal hosting of infrastructure to on-site Kubernetes cluster is a complicated and large operation, it is done through an iterative process.
-
-**NOTE:** The helmfile files have moved to its own repository to protect environment specific values. The example will stay for now.
-
-An example of how to use the helmfile to deploy to a given namespace:
-
-``` bash
-helmfile apply -n <namespace> -f ./helmfile.yaml
-```
-
-Before deploying to a namespace, you should fetch and process any dependencies your charts might have:
-
-``` bash
-helmfile deps -f ./helmfile.yaml
-```
-### Prototyping phase
-Before committing to a large and unknown migration from old version of the software to newer version and different way of hosting it, it was decided to do some prototyping to prove and estimate the feasibility of such migration.
-
-The first part, that we have prototyped is the setup and configuration of the HDFS cluster together with a Hbase and a Spark application. The goal is to successfully load data into the HDFS cluster and run a Spark application to process the data.
-
-The second part is to test the query engine Trino to see if it can fill in on the area we use the Hive engine for. The test is documented under docs/comparison_of_query_engines.md.
-
-The third part is to test Airflow as a substitution for Oozie as a workflow executor.
 ## Tech stack
 Current components deployed via Helm charts:
 - Spark application
@@ -44,23 +20,51 @@ Current components deployed via Helm charts:
 
 ~~It is possible to use the helmfile.yaml to install the whole cluster.~~ **BEWARE** if you chooses to uninstall or reinstall the common-operator, the CRDs will be removed and thereby all the deployed components. The option currently kept for testing purposes.
 ## Requirements
-
 In order to work with Helm charts you need the following tools: 
 - [Helm](https://helm.sh/)
 - ~~[Helmfile](https://github.com/helmfile/helmfile)~~
 
 The following plug-in is required:
 - [Helm-diff](https://github.com/databus23/helm-diff)
+- [Helm-push](https://github.com/chartmuseum/helm-push)
 
 In order for Helm to be able to communicate with the Kubernetes cluster, the local kube-context need to be configured.
-## TODOs
-This helm repository is still **under construction** so here is a list of tasks that still needs to be implemented for it to completed:
+## Releasing Charts
+In this project we are using [semver 2.0](https://semver.org/) for the versioning of the helm charts. The charts can be released to GBIF helm repository by running the command:
+``` bash
+helm cm-push charts/<chart_to_release> https://repository.gbif.org/repository/gbif-helm-release/ --context-path=/repository/gbif-helm-release --username=<your_nexus_username> --password=<your_nexus_password>
+```
+After a successful push the new version of the chart should be ready for use.
 
-- [X] Implement a better way to configure and deploy a number of predefined volumes
-- [X] Write charts for the raw Kubernetes manifest files
-- [X] Create chart for Trino
-- [X] Create chart for Airflow
-- [X] Create added custom DAGs and way of loading them in
-- [X] Create move helmfile.d to own repository to keep env specific variables hidden
+**NOTE:** Currently all charts are released to the snapshot repository as the first version is not ready.
 
-The dev cluster is currently being tested together with the remaining infrastructure for the develop environment. Findings from the tests could lead to more development.
+Releasing to the snapshot repository is similar to previous command but pointing to the another repository:
+
+``` bash
+helm cm-push charts/<chart_to_release> https://repository.gbif.org/repository/gbif-helm-snapshot/ --context-path=/repository/gbif-helm-snapshot --username=<your_nexus_username> --password=<your_nexus_password>
+```
+## Deploying the Charts
+In GBIF we have adopted Helmfile to manage the state of our cluster contained in state files. The state files are stored in a separate repository to protect sensitive information.
+
+The helm charts can still be deployed through the traditional way following these steps:
+
+1. Add the GBIF helm repository:
+``` bash
+helm repo add gbif-charts-release https://repository.gbif.org/repository/gbif-helm-release/
+```
+1. Get helm to fetch depdencies for the chart:
+``` bash
+helm dependency update charts/<chart_to_deploy>
+```
+1. Run the install / upgrade command to:
+``` bash
+helm upgrade --install <my_release> charts/<chart_to_deploy> -n <namespace_to_deploy_to> --set <key_1>=<value_1> --set <key_2>=<value_2>
+```
+
+## Feedback & Bugs
+Feel free to create an issue within this repository.
+### Bug
+Describe the scenario the bug was spotted in and attach the **bug** label to the issue.
+
+### Feature Request
+Describe the feature you are request together with an use-case scenario, use the **enchantment** label for the issue.
