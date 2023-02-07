@@ -11,7 +11,7 @@ metadata:
 spec:
   type: NodePort
   selector:
-    app.kubernetes.io/name: {{ include "gbif-chart-lib.name" . }}
+    app.kubernetes.io/instance: {{ include "gbif-chart-lib.name" . }}
   ports:
   - name: gbif
     protocol: TCP
