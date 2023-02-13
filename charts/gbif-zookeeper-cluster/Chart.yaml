@@ -25,5 +25,5 @@ appVersion: "3.8.0-stackable0.9.0"
 
 dependencies:
 - name: gbif-chart-lib
-  version: 1.0.0
+  version: 1.0.1
   repository: https://repository.gbif.org/repository/gbif-helm-release/

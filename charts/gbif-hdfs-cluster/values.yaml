@@ -15,18 +15,6 @@ zookeeperClusterName: "gbif-zookeeper"
 # Number of times data should be replicated in the HDFS cluster
 dataReplication: 2
 
-#GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
-#Differs from the other charts as, we want to keep the active/passive nodes separated when accessing them.
-nodePorts: 
-  - tcpPort: 9870
-    ntcpPort: 31870
-    rcpPort: 8020
-    nrcpPort: 31871
-  - tcpPort: 9870
-    ntcpPort: 31872
-    rcpPort: 8020
-    nrcpPort: 31873
-
 nodes:
   name:
     replicas: 2
@@ -36,6 +24,17 @@ nodes:
     memory: '3Gi'
     storage:
       capacity: '15Gi'
+    #GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
+    #Differs from the other charts as, we want to keep the active/passive nodes separated when accessing them.
+    nodePorts: 
+    - tcpPort: 9870
+      ntcpPort: 31870
+      rcpPort: 8020
+      nrcpPort: 31871
+    - tcpPort: 9870
+      ntcpPort: 31872
+      rcpPort: 8020
+      nrcpPort: 31873
   data:
     replicas: 4
     cpu:
@@ -60,6 +59,33 @@ nodes:
       class: hdfs-datanode-storage
       capacity: '925Gi'
       type: "Disk"
+    #GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
+    #Differs from the other charts as, we want to keep the active/passive nodes separated when accessing them.
+    nodePorts: 
+    - tcpPort: 9864
+      ntcpPort: 31874
+      icpPort: 9867
+      nicpPort: 31875
+      dataPort: 9866
+      ndataPort: 31876
+    - tcpPort: 9864
+      ntcpPort: 31877
+      icpPort: 9867
+      nicpPort: 31878
+      dataPort: 9866
+      ndataPort: 31879
+    - tcpPort: 9864
+      ntcpPort: 31880
+      icpPort: 9867
+      nicpPort: 31881
+      dataPort: 9866
+      ndataPort: 31882
+    - tcpPort: 9864
+      ntcpPort: 31883
+      icpPort: 9867
+      nicpPort: 31884
+      dataPort: 9866
+      ndataPort: 31885
   journal:
     replicas: 3
     cpu:

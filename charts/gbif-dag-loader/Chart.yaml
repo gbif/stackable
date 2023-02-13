@@ -24,5 +24,5 @@ appVersion: "airflow-dags:0.4.7"
 
 dependencies:
 - name: gbif-chart-lib
-  version: 1.0.0
+  version: 1.0.1
   repository: https://repository.gbif.org/repository/gbif-helm-release/

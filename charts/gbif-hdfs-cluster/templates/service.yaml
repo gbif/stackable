@@ -2,25 +2,59 @@
 Manually configured nodeport services for the namenodes, 
 as there might be support for setting fixed port in the future.
 */}}
-{{ range $n := until (len .Values.nodePorts) }}
+{{ range $n := until (len .Values.nodes.name.nodePorts) }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ printf "%s-%s-%d" $.Release.Name "nodeport" $n }}
+  name: {{ printf "%s-%s-%d" $.Release.Name "name-nodeport" $n }}
 spec:
   type: NodePort
+  externalTrafficPolicy: Local
   selector:
     statefulset.kubernetes.io/pod-name: {{ printf "%s-%d" "gbif-hdfs-namenode-default" $n }}
   ports:
   - name: gbif-tcp
     protocol: TCP
-    port: {{ (index $.Values.nodePorts $n).tcpPort }}
-    targetPort: {{ (index $.Values.nodePorts $n).tcpPort }}
-    nodePort: {{ (index $.Values.nodePorts $n).ntcpPort }}
+    port: {{ (index $.Values.nodes.name.nodePorts $n).tcpPort }}
+    targetPort: {{ (index $.Values.nodes.name.nodePorts $n).tcpPort }}
+    nodePort: {{ (index $.Values.nodes.name.nodePorts $n).ntcpPort }}
   - name: gbif-rcp
     protocol: TCP
-    port: {{ (index $.Values.nodePorts $n).rcpPort }}
-    targetPort: {{ (index $.Values.nodePorts $n).rcpPort }}
-    nodePort: {{ (index $.Values.nodePorts $n).nrcpPort }}
+    port: {{ (index $.Values.nodes.name.nodePorts $n).rcpPort }}
+    targetPort: {{ (index $.Values.nodes.name.nodePorts $n).rcpPort }}
+    nodePort: {{ (index $.Values.nodes.name.nodePorts $n).nrcpPort }}
+{{ end }}
+
+{{/*
+Manually configured nodeport services for the datanodes, 
+as there might be support for setting fixed port in the future.
+*/}}
+{{ range $n := until (len .Values.nodes.data.nodePorts) }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-%s-%d" $.Release.Name "data-nodeport" $n }}
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  selector:
+    statefulset.kubernetes.io/pod-name: {{ printf "%s-%d" "gbif-hdfs-datanode-default" $n }}
+  ports:
+  - name: gbif-tcp
+    protocol: TCP
+    port: {{ (index $.Values.nodes.data.nodePorts $n).tcpPort }}
+    targetPort: {{ (index $.Values.nodes.data.nodePorts $n).tcpPort }}
+    nodePort: {{ (index $.Values.nodes.data.nodePorts $n).ntcpPort }}
+  - name: gbif-icp
+    protocol: TCP
+    port: {{ (index $.Values.nodes.data.nodePorts $n).icpPort }}
+    targetPort: {{ (index $.Values.nodes.data.nodePorts $n).icpPort }}
+    nodePort: {{ (index $.Values.nodes.data.nodePorts $n).nicpPort }}
+  - name: gbif-data
+    protocol: TCP
+    port: {{ (index $.Values.nodes.data.nodePorts $n).dataPort }}
+    targetPort: {{ (index $.Values.nodes.data.nodePorts $n).dataPort }}
+    nodePort: {{ (index $.Values.nodes.data.nodePorts $n).ndataPort }}
 {{ end }}
