@@ -1,3 +1,4 @@
+{{- if gt (len .Values.nodes.worker.storage.drives) 0 }}
 {{- range $label := .Values.nodes.worker.storage.labels }}
 {{- range $drive := $.Values.nodes.worker.storage.drives }}
 apiVersion: v1
@@ -25,5 +26,6 @@ spec:
           values:
           - {{ $label }}
 ---
+{{- end }}
 {{- end }}
 {{- end }}

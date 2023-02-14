@@ -31,6 +31,7 @@ spec:
             cpu:
               max: {{ .Values.nodes.data.cpu.max }}
               min: {{ .Values.nodes.data.cpu.min }}
+            {{- if gt (len .Values.nodes.data.storage.drives) 0 }}
             storage:
               data:
                 count: 0 # Setting count to 0 disables the default PVCs
@@ -41,6 +42,7 @@ spec:
                 hdfsStorageType: {{ .Values.nodes.data.storage.type }}
             memory:
               limit: {{ .Values.nodes.data.memory }}
+            {{- end }}
   journalNodes:
     roleGroups:
       default:

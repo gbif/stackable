@@ -26,17 +26,10 @@ nodes:
       max: '4000m'
     memory: 4096
     storage:
-      drives:
-        - elastic_volume_1
-        - elastic_volume_2
-      labels:
-        # Datanode one is disabled as we don't want Elastic to run on control plane
-        #- datanode-1
-        - datanode-2
-        - datanode-3
-        - datanode-4
+      drives: []
+      labels: []
       class: elastic-storage
-      capacity: '925Gi'
+      capacity: '100Gi'
   kibana:
     replicas: 1
     cpu:
