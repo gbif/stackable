@@ -1,0 +1,8 @@
+{{- if gt (len .Values.nodes.worker.storage.drives) 0 }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ $.Values.nodes.worker.storage.class }}
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+{{- end }}

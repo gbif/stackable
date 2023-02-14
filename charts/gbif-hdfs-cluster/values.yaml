@@ -1,0 +1,57 @@
+# Default values for GBIF HDFS cluster using Stackable HDFS operator.
+
+# Override name of the cluster
+nameOverride: ""
+# Override fullname of the cluster
+fullnameOverride: ""
+
+# Stackable versioning to override the version of the Stack component.
+stackProduct: "3.3.4"
+stackVersion: "0.3.0"
+
+# Name of the zookeeper cluster
+zookeeperClusterName: "gbif-zookeeper"
+
+# Number of times data should be replicated in the HDFS cluster
+dataReplication: 2
+
+nodes:
+  name:
+    replicas: 1
+    cpu:
+      min: '100m'
+      max: '2000m'
+    memory: '3Gi'
+    storage:
+      capacity: '15Gi'
+    #GBIF leviates the externalIP address together with selectors to expose native ports on the physical VMs.
+    #This is done in order to being able to connect to the HADOOP cluster outside the cluster as we aren't currently able to specify the datanode ports ourself in the hdfs-site.xml
+    tcpPort: 9870
+    rcpPort: 8020
+    ips: []
+  data:
+    replicas: 1
+    cpu:
+      min: '100m'
+      max: '1000m'
+    memory: '2Gi'
+    storage:
+      drives: []
+      labels: []
+      class: hdfs-datanode-storage
+      capacity: '100Gi'
+      type: "Disk"
+    #GBIF leviates the externalIP address together with selectors to expose native ports on the physical VMs.
+    #This is done in order to being able to connect to the HADOOP cluster outside the cluster as we aren't currently able to specify the datanode ports ourself in the hdfs-site.xml
+    tcpPort: 9864
+    icpPort: 9867
+    dataPort: 9866
+    ips: []
+  journal:
+    replicas: 3
+    cpu:
+      min: '100m'
+      max: '2000m'
+    memory: '2Gi'
+    storage:
+      capacity: '15Gi'

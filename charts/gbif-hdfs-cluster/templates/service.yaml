@@ -1,0 +1,55 @@
+{{/*
+Manually configured nodeport services for the namenodes, 
+as there might be support for setting fixed port in the future.
+*/}}
+{{ range $n := until (len .Values.nodes.name.ips) }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-%s-%d" $.Release.Name "name-local" $n }}
+spec:
+  selector:
+    statefulset.kubernetes.io/pod-name: {{ printf "%s-%d" "gbif-hdfs-namenode-default" $n }}
+  ports:
+  - name: gbif-tcp
+    protocol: TCP
+    port: {{ $.Values.nodes.name.tcpPort }}
+    targetPort: {{ $.Values.nodes.name.tcpPort }}
+  - name: gbif-rcp
+    protocol: TCP
+    port: {{ $.Values.nodes.name.rcpPort }}
+    targetPort: {{ $.Values.nodes.name.rcpPort }}
+  externalIPs: 
+  - {{ (index $.Values.nodes.name.ips $n) }}
+{{ end }}
+
+{{/*
+Manually configured nodeport services for the datanodes, 
+as there might be support for setting fixed port in the future.
+*/}}
+{{ range $n := until (len .Values.nodes.data.ips) }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-%s-%d" $.Release.Name "data-local" $n }}
+spec:
+  selector:
+    statefulset.kubernetes.io/pod-name: {{ printf "%s-%d" "gbif-hdfs-datanode-default" $n }}
+  ports:
+  - name: gbif-tcp
+    protocol: TCP
+    port: {{ $.Values.nodes.data.tcpPort }}
+    targetPort: {{ $.Values.nodes.data.tcpPort }}
+  - name: gbif-icp
+    protocol: TCP
+    port: {{ $.Values.nodes.data.icpPort }}
+    targetPort: {{ $.Values.nodes.data.icpPort }}
+  - name: gbif-data
+    protocol: TCP
+    port: {{ $.Values.nodes.data.dataPort }}
+    targetPort: {{ $.Values.nodes.data.dataPort }}
+  externalIPs: 
+  - {{ (index $.Values.nodes.data.ips $n) }}
+{{ end }}

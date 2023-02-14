@@ -1,0 +1,31 @@
+{{- if gt (len .Values.nodes.worker.storage.drives) 0 }}
+{{- range $label := .Values.nodes.worker.storage.labels }}
+{{- range $drive := $.Values.nodes.worker.storage.drives }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ $label }}-drive-{{ regexReplaceAll "_" $drive "-" }}-pv
+  annotations:
+    "helm.sh/resource-policy": keep
+spec:
+  capacity:
+    storage: {{ $.Values.nodes.worker.storage.capacity }}
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: {{ $.Values.nodes.worker.storage.class }}
+  local:
+    path: /data/{{ $drive }}
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: gbif.org/node
+          operator: In
+          values:
+          - {{ $label }}
+---
+{{- end }}
+{{- end }}
+{{- end }}
