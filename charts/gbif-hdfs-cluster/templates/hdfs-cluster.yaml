@@ -5,7 +5,7 @@ metadata:
 spec:
   image:
     productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
-    stackableVersion: {{ default "0.3.0" .Values.stackVersion }}
+    stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
   zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}
   dfsReplication: {{ .Values.dataReplication }}
   nameNodes:

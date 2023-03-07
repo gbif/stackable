@@ -5,8 +5,9 @@ nameOverride: ""
 # Override fullname of the cluster
 fullnameOverride: ""
 
-# Stackable tag to override the version of the Stack component.
-stackTag: ""
+# Stackable versioning to override the version of the Stack component.
+stackProduct: "3.1.3"
+stackVersion: "23.1.0"
 
 # Name of the HDFS cluster
 hdfsClusterName: "gbif-hdfs"

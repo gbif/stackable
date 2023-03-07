@@ -3,9 +3,17 @@ kind: HiveCluster
 metadata:
   name: {{ include "gbif-chart-lib.name" . }}
 spec:
-  version: {{ default .Chart.AppVersion .Values.stackTag }}
+  image:
+    productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
+    stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
   hdfs:
     configMap: {{ .Values.hdfsClusterName }}
+  clusterConfig:
+    database:
+      connString: jdbc:postgresql://{{ .Values.hiveDB.name }}/{{ .Values.hiveDB.db}}
+      user: {{ .Values.hiveDB.user }}
+      password: {{ .Values.hiveDB.password }}
+      dbType: postgres
   metastore:
     configOverrides:
       hive-site.xml:
@@ -25,8 +33,3 @@ spec:
                 capacity: {{ .Values.metastore.storage.capacity }}
             memory:
               limit: {{ .Values.metastore.memory }}
-          database:
-            connString: jdbc:postgresql://{{ .Values.hiveDB.name }}/{{ .Values.hiveDB.db}}
-            user: {{ .Values.hiveDB.user }}
-            password: {{ .Values.hiveDB.password }}
-            dbType: postgres
