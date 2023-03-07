@@ -7,7 +7,7 @@ fullnameOverride: ""
 
 # Stackable versioning to override the version of the Stack component.
 stackProduct: "3.3.4"
-stackVersion: "0.3.0"
+stackVersion: "23.1.0"
 
 # Name of the zookeeper cluster
 zookeeperClusterName: "gbif-zookeeper"

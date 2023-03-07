@@ -3,7 +3,9 @@ kind: ZookeeperCluster
 metadata:
   name: {{ include "gbif-chart-lib.name" . }}
 spec:
-  version: {{ default .Chart.AppVersion .Values.stackTag}}
+  image:
+    productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
+    stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
   servers:
     roleGroups:
       default:

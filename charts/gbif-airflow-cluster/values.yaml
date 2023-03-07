@@ -5,8 +5,9 @@ nameOverride: ""
 # Override fullname of the cluster
 fullnameOverride: ""
 
-# Stackable tag to override the version of the Stack component.
-stackTag: ""
+# Stackable versioning to override the version of the Stack component.
+stackProduct: "2.4.1"
+stackVersion: "23.1.0"
 
 # Executor airflow should use
 executor: CeleryExecutor
