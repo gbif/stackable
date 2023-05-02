@@ -1,11 +1,13 @@
 apiVersion: spark.stackable.tech/v1alpha1
 kind: SparkApplication
+metadata:
+  name: {{ run_id }}
 spec:
-  version: {{ dag_run.conf.version }}
-  image: {{ dag_run.conf.mainImage }}
+  version: 0.1.5
+  image: docker.gbif.org/gbif-ingest:0.1.5
   sparkImage: docker.stackable.tech/stackable/spark-k8s:3.3.0-stackable0.1.0
   mode: cluster
-  mainApplicationFile: local:///stackable/spark/jobs/{{ dag_run.conf.mainFile }}
+  mainApplicationFile: local:///stackable/spark/jobs/gbif-ingest.jar
   mainClass: {{ dag_run.conf.main }}
   args:
 {%- for arg in dag_run.conf.args %}
@@ -23,10 +25,10 @@ spec:
   volumes:
     - name: pipeline
       configMap:
-        name: configuration
+        name: {{ dag_run.conf.clusterName }}-pipeline-configuration
     - name: spark-env
       configMap:
-        name: spark-env
+        name: {{ dag_run.conf.clusterName }}-spark-env
     - name: hadoop-env
       configMap:
         name: {{ dag_run.conf.clusterName }}

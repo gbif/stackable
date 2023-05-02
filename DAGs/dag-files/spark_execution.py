@@ -16,11 +16,6 @@
 # specific language governing permissions and limitations
 # under the License.
 
-import logging
-import os
-
-import tempfile
-
 from datetime import datetime,timedelta
 
 from airflow.utils.trigger_rule import TriggerRule
@@ -30,40 +25,14 @@ from airflow.decorators import task
 from operators.stackable_spark_operator import SparkKubernetesOperator
 from sensors.stackable_spark_sensor import SparkKubernetesSensor
 
-BASE_DIR = tempfile.gettempdir()
+@task(task_id="process_application_file", templates_dict={"file": "templates/spark_job_template.yaml"}, templates_exts=[".yaml"])
+def proces_template(**kwargs):
+    return str(kwargs["templates_dict"]["file"])
 
-@task(task_id="create_application_file", templates_dict={"file": "templates/spark_job_template.yaml"}, templates_exts=[".yaml"])
-def create_file(fileName=None, **kwargs):
-    import uuid
-    baseDir = tempfile.gettempdir()
-    if fileName != None:
-        fullPath = baseDir + "/" + fileName + "-" + str(uuid.uuid4()) + ".yaml"
-    else:
-        logging.warning("No file name provided, created file with random uuid")
-        fullPath = baseDir + uuid.uuid4() + ".yaml"
-    f = open(fullPath, "w")
-    f.write(str(kwargs["templates_dict"]["file"]))
-    f.close()
-    return fullPath
-
-@task(task_id="read_application_file")
-def read_file(ti=None):
+@task(task_id="print_application_file")
+def print_processed_template(ti=None):
     processedTemplate = ti.xcom_pull(key="return_value", task_ids="create_application_file")
-    with open(processedTemplate, "r") as f:
-        while True:
-            l = f.readline()
-            if not l:
-                break
-            print(l.strip())
-
-@task(task_id="cleanup_application_file", trigger_rule=TriggerRule.ALL_DONE)
-def remove_file(ti=None):
-    processedTemplate = ti.xcom_pull(key="return_value", task_ids="create_application_file")
-    if os.path.isfile(processedTemplate) == True:
-        print("Removing the processed application file.\n")
-        os.remove(processedTemplate)
-    else:
-        print("Unable to find processed application file, skipping stepn.\n")
+    print(processedTemplate)
 
 with DAG(
     dag_id='gbif_spark_execution_dag',
@@ -74,26 +43,24 @@ with DAG(
     tags=['spark_executor', 'GBIF']
 ) as dag:
 
-    create_application_file = create_file("{{ dag_run.conf.main }}")
+    process_application_file = proces_template()
 
-    read_application_file = read_file()
-
-    cleanup_application_file = remove_file()
+    print_application_file = print_processed_template()
 
     start_spark = SparkKubernetesOperator(
         task_id='spark_submit',
-        namespace = "namespace",
-        application_file="{{ task_instance.xcom_pull(key='return_value', task_ids='create_application_file' }}",
+        namespace = "gbif-develop",
+        application_file="{{ task_instance.xcom_pull(key='return_value', task_ids='process_application_file') }}",
         do_xcom_push=True,
         dag=dag,
     )
 
     monitor_spark = SparkKubernetesSensor(
         task_id='spark_monitor',
-        namespace = "namesapce",
-        application_name="{{ task_instance.xcom_pull(key='return_value', task_ids='create_application_file' }}",
+        namespace = "gbif-develop",
+        application_name="{{ task_instance.xcom_pull(task_ids='spark_submit')['metadata']['name'] }}",
         poke_interval=5,
         dag=dag,
     )
 
-    create_application_file >> read_application_file >> start_spark >> monitor_spark >> cleanup_application_file
+    process_application_file >> print_application_file >> start_spark >> monitor_spark

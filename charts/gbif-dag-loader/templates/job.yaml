@@ -19,7 +19,7 @@ spec:
           securityContext:
             runAsUser: 50000
             runAsGroup: 1000
-          image: docker.gbif.org/airflow-dags:0.4.8
+          image: docker.gbif.org/airflow-dags:{{ .Chart.AppVersion }}
           env:
             - name: DAG_DIR
               value: "/gbif_external/airflow/dags"
