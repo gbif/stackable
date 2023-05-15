@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ default .Chart.Name .Values.overrideName }}
+  labels:
+    app: {{ .Values.label }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.label }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.label }}
+    spec:
+      serviceAccountName: {{ default .Chart.Name .Values.overrideName }}
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsUser: 1000
+      volumes:
+        - name: {{ default .Chart.Name .Values.overrideName }}-pod-template
+          configMap:
+            name: {{ default .Chart.Name .Values.overrideName }}-pod-template
+        - name: {{ default .Chart.Name .Values.overrideName }}-core
+          configMap:
+            name: {{ .Values.hdfs.clusterId }}
+            items:
+            - key: core-site.xml
+              path: core-site.xml
+            - key: hdfs-site.xml
+              path: hdfs-site.xml
+        - name: {{ default .Chart.Name .Values.overrideName }}-hive
+          configMap:
+            name: {{ default .Chart.Name .Values.overrideName }}-hive
+            items:
+            - key: hive-site.xml
+              path: hive-site.xml 
+        - name: {{ default .Chart.Name .Values.overrideName }}-spark-env
+          configMap:
+            name: {{ default .Chart.Name .Values.overrideName }}-env-script
+      containers:
+      - name: {{ default .Chart.Name .Values.overrideName }}-container
+        image: {{ .Values.image }}
+        command: ['sh', '-c', 'exec tail -f /dev/null']
+        env:
+          - name: SPARK_CONF_DIR
+            value: /stackable/spark/conf
+          - name: HADOOP_CONF_DIR
+            value: /etc/hadoop/conf
+        volumeMounts:
+        - name: {{ default .Chart.Name .Values.overrideName }}-pod-template
+          mountPath: /etc/template
+        - name: {{ default .Chart.Name .Values.overrideName }}-core
+          mountPath: /etc/hadoop/conf/core-site.xml
+          subPath: core-site.xml
+        - name: {{ default .Chart.Name .Values.overrideName }}-core
+          mountPath: /etc/hadoop/conf/hdfs-site.xml
+          subPath: hdfs-site.xml
+        - name: {{ default .Chart.Name .Values.overrideName }}-hive
+          mountPath: /etc/hadoop/conf/hive-site.xml
+          subPath: hive-site.xml

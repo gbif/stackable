@@ -1,0 +1,63 @@
+apiVersion: spark.stackable.tech/v1alpha1
+kind: SparkApplication
+metadata:
+  name: {{ run_id }}
+spec:
+  version: 0.1.5
+  image: docker.gbif.org/gbif-ingest:0.1.5
+  sparkImage: docker.stackable.tech/stackable/spark-k8s:3.3.0-stackable0.1.0
+  mode: cluster
+  mainApplicationFile: local:///stackable/spark/jobs/gbif-ingest.jar
+  mainClass: {{ dag_run.conf.main }}
+  args:
+{%- for arg in dag_run.conf.args %}
+    - "{{arg}}"
+{%- endfor %}
+  sparkConf:
+{%- raw %}
+    "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+    "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+    "spark.broadcast.compress": "true"
+    "spark.checkpoint.compress": "true"
+    "spark.io.compression.codec": "lz4"
+    "spark.rdd.compress": "true"
+{%- endraw %}
+  volumes:
+    - name: pipeline
+      configMap:
+        name: {{ dag_run.conf.clusterName }}-pipeline-configuration
+    - name: spark-env
+      configMap:
+        name: {{ dag_run.conf.clusterName }}-spark-env
+    - name: hadoop-env
+      configMap:
+        name: {{ dag_run.conf.clusterName }}
+  driver:
+    resources:
+      cpu:
+        min: "100m"
+        max: "{{ dag_run.conf.driverCores }}"
+      memory:
+        limit: "{{ dag_run.conf.driverMemory }}"
+    volumeMounts:
+      - name: pipeline
+        mountPath: /etc/gbif
+      - name: spark-env
+        mountPath: /stackable/spark/conf
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf
+  executor:
+    instances: {{ dag_run.conf.executorInstances }}
+    resources:
+      cpu:
+        min: "100m"
+        max: "{{ dag_run.conf.executorCores }}"
+      memory:
+        limit: "{{ dag_run.conf.executorMemory }}"
+    volumeMounts:
+      - name: pipeline
+        mountPath: /etc/gbif
+      - name: spark-env
+        mountPath: /stackable/spark/conf
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf

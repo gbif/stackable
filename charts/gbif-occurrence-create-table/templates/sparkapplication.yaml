@@ -10,20 +10,24 @@ spec:
   image: {{ default "docker.gbif.org/" .Values.image.repository }}{{ default .Chart.Name .Values.appName }}:{{ default .Chart.AppVersion .Values.image.tag}}
   sparkImage: "docker.stackable.tech/stackable/spark-k8s:{{ required "Specific which spark / operator version to use" .Values.stackTag }}"
   mode: {{ .Values.mode }}
-  mainApplicationFile: local:///stackable/spark/jobs/{{ default .Chart.Name .Values.appName }}.jar
+  mainApplicationFile: local:///stackable/spark/jobs/gbif-occurrence-table.jar
   mainClass: {{ .Values.appClass }}
   args:
-    - "all"
-    - "/gbif/configurations/config.yaml"
+    - "/etc/gbif/occurrence-table-backfill.yml"
+    - "CREATE"
+    - "ALL"
   sparkConf:
      "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
      "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
      "spark.broadcast.compress": "true"
      "spark.checkpoint.compress": "true"
+     "spark.executor.memoryOverhead": "4096"
+     "spark.executor.heartbeatInterval": "10s"
+     "spark.network.timeout": "60s"
      "spark.io.compression.codec": "lz4"
      "spark.rdd.compress": "true"
   volumes:
-    - name: map-env
+    - name: occurrence-config
       configMap:
         name: {{ include "gbif-chart-lib.name" . }}-configuration
     - name: spark-env
@@ -32,6 +36,17 @@ spec:
     - name: hadoop-env
       configMap:
         name: {{ .Values.hdfs.clusterName }}
+        items:
+        - key: core-site.xml
+          path: core-site.xml
+        - key: hdfs-site.xml
+          path: hdfs-site.xml
+    - name: hive-env
+      configMap:
+        name: gbif-hive-metastore-metastore-default
+        items:
+        - key: hive-site.xml
+          path: hive-site.xml
   driver:
     resources:
       cpu:
@@ -40,12 +55,19 @@ spec:
       memory:
         limit: {{ .Values.driver.mem }}
     volumeMounts:
-      - name: map-env
-        mountPath: /gbif/configurations
+      - name: occurrence-config
+        mountPath: /etc/gbif
       - name: spark-env
         mountPath: /stackable/spark/conf
       - name: hadoop-env
-        mountPath: /etc/hadoop/conf
+        mountPath: /etc/hadoop/conf/core-site.xml
+        subPath: core-site.xml
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf/hdfs-site.xml
+        subPath: hdfs-site.xml
+      - name: hive-env
+        mountPath: /etc/hadoop/conf/hive-site.xml
+        subPath: hive-site.xml
   executor:
     instances: {{ .Values.executor.instances }}
     resources:
@@ -55,10 +77,17 @@ spec:
       memory:
         limit: {{ .Values.executor.mem }}
     volumeMounts:
-      - name: map-env
-        mountPath: /gbif/configurations
+      - name: occurrence-config
+        mountPath: /etc/gbif
       - name: spark-env
         mountPath: /stackable/spark/conf
       - name: hadoop-env
-        mountPath: /etc/hadoop/conf
+        mountPath: /etc/hadoop/conf/core-site.xml
+        subPath: core-site.xml
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf/hdfs-site.xml
+        subPath: hdfs-site.xml
+      - name: hive-env
+        mountPath: /etc/hadoop/conf/hive-site.xml
+        subPath: hive-site.xml
 {{- end }}

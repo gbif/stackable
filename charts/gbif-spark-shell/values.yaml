@@ -1,0 +1,14 @@
+overrideName: ""
+label: "spark-shell"
+image: "docker.stackable.tech/stackable/spark-k8s:3.3.0-stackable23.4.0"
+ports:
+  standard: 7078
+  blockmanager: 7089
+  ui: 4040
+
+hdfs:
+  clusterId: "gbif-hdfs"
+
+hive:
+  clusterId: "gbif-hive"
+  thrift: ""

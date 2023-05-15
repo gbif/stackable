@@ -6,9 +6,9 @@ spec:
   image:
     productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
     stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
-  hdfs:
-    configMap: {{ .Values.hdfsClusterName }}
   clusterConfig:
+    hdfs:
+      configMap: {{ .Values.hdfsClusterName }}
     database:
       connString: jdbc:postgresql://{{ .Values.hiveDB.name }}/{{ .Values.hiveDB.db}}
       user: {{ .Values.hiveDB.user }}
