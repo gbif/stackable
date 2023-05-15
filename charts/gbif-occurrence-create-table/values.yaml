@@ -23,11 +23,11 @@ driver:
 # Ressource configuration for spark executors.
 executor:
   # Number of cores for each executor.
-  core: "8000m"
+  core: "6000m"
   # Memory for each executor.
-  mem: "16Gi"
+  mem: "12Gi"
   # Number of executors.
-  instances: 5
+  instances: 6
 
 nameOverride: ""
 fullnameOverride: ""
@@ -45,6 +45,6 @@ hdfs:
 
 zookeeper:
   quotum: ""
-
+  
 hive:
   thrift: ""

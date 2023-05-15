@@ -33,8 +33,12 @@ spec:
       configMap:
         name: {{ .Values.hdfs.clusterName }}
   driver:
-    cores: {{ .Values.driver.core }}
-    memory: {{ .Values.driver.mem }}
+    resources:
+      cpu:
+        min: "100m"
+        max: {{ .Values.driver.core }}
+      memory:
+        limit: {{ .Values.driver.mem }}
     volumeMounts:
       - name: map-env
         mountPath: /gbif/configurations
@@ -43,9 +47,13 @@ spec:
       - name: hadoop-env
         mountPath: /etc/hadoop/conf
   executor:
-    cores: {{ .Values.executor.core }}
     instances: {{ .Values.executor.instances }}
-    memory: {{ .Values.executor.mem }}
+    resources:
+      cpu:
+        min: "100m"
+        max: {{ .Values.executor.core }}
+      memory:
+        limit: {{ .Values.executor.mem }}
     volumeMounts:
       - name: map-env
         mountPath: /gbif/configurations

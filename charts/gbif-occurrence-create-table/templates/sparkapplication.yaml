@@ -15,15 +15,15 @@ spec:
   args:
     - "/etc/gbif/occurrence-table-backfill.yml"
     - "CREATE"
-    - "TABLE"
+    - "ALL"
   sparkConf:
      "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
      "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
      "spark.broadcast.compress": "true"
      "spark.checkpoint.compress": "true"
      "spark.executor.memoryOverhead": "4096"
-     "spark.executor.heartbeatInterval": "20s"
-     "spark.network.timeout": "240s"
+     "spark.executor.heartbeatInterval": "10s"
+     "spark.network.timeout": "60s"
      "spark.io.compression.codec": "lz4"
      "spark.rdd.compress": "true"
   volumes:
