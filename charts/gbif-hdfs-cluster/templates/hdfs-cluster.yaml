@@ -22,6 +22,10 @@ spec:
                 capacity: {{ .Values.nodes.name.storage.capacity }}
             memory:
               limit: {{ .Values.nodes.name.memory }}
+        configOverrides:
+          hdfs-site.xml:
+            dfs.client.use.datanode.hostname: {{ .Values.useDataNodeHostName }}
+            dfs.datanode.use.datanode.hostname: {{ .Values.useDataNodeHostName }}
   dataNodes:
     roleGroups:
       default:
@@ -43,6 +47,10 @@ spec:
             memory:
               limit: {{ .Values.nodes.data.memory }}
             {{- end }}
+        configOverrides:
+          hdfs-site.xml:
+            dfs.client.use.datanode.hostname: {{ .Values.useDataNodeHostName }}
+            dfs.datanode.use.datanode.hostname: {{ .Values.useDataNodeHostName }}
   journalNodes:
     roleGroups:
       default:
@@ -57,3 +65,7 @@ spec:
                 capacity: {{ .Values.nodes.journal.storage.capacity }}
             memory:
               limit: {{ .Values.nodes.journal.memory }}
+        configOverrides:
+          hdfs-site.xml:
+            dfs.client.use.datanode.hostname: {{ .Values.useDataNodeHostName }}
+            dfs.datanode.use.datanode.hostname: {{ .Values.useDataNodeHostName }}

@@ -15,6 +15,10 @@ zookeeperClusterName: "gbif-zookeeper"
 # Number of times data should be replicated in the HDFS cluster
 dataReplication: 2
 
+# Controls if the datanode should use hostname to resolve each others addresses. 
+# Used so clients outside the cluster can resolve the IPs locally instead of the internal IPs of the Kubernetes cluster.
+useDataNodeHostName: true
+
 nodes:
   name:
     replicas: 1
