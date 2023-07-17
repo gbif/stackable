@@ -1,0 +1,83 @@
+{{- if or (eq (lower .Values.installMode) "all") (eq (lower .Values.installMode) "config")  }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "gbif-chart-lib.name" . }}-configuration
+data:
+  pipelines.yaml: |
+    zkConnectionString: gbif-zookeeper-server-default-0.gbif-zookeeper-server-default.gbif-develop.svc.cluster.local:2282,gbif-zookeeper-server-default-1.gbif-zookeeper-server-default.gbif-develop.svc.cluster.local:2282,gbif-zookeeper-server-default-2.gbif-zookeeper-server-default.gbif-develop.svc.cluster.local:2282
+    gbifApi:
+      wsUrl: https://api.gbif-dev2.org/v1/
+    nameUsageMatch:
+      numOfKeyBuckets: 5
+      tableName: name_usage_kv
+      api:
+        wsUrl: https://api.gbif-dev.org/v1/
+    grscicollLookup:
+      numOfKeyBuckets: 5
+      tableName: grscicoll_lookup_kv
+      api:
+        wsUrl: https://api.gbif-dev.org/v1/
+    geocode:
+      numOfKeyBuckets: 5
+      tableName: geocode_kv
+      wsCacheSizeMb: 128
+      api:
+        wsUrl: https://api.gbif-dev.org/v1/
+    imageCachePath: hdfs://gbif-hdfs/pipelines/jars/bitmap.png
+    content:
+      esHosts:
+        - http://cms-search.gbif-dev2.org:9200/
+    amplification:
+      wsUrl: http://blast.gbif-dev.org
+    keygen:
+      occurrenceTable: dev_occurrence
+      counterTable: dev_occurrence_counter
+      lookupTable: dev_occurrence_lookup
+    indexLock:
+      namespace: dev2_index_lock
+      lockingPath: /indices/
+      lockName: occurrence
+    hdfsLock:
+      namespace: dev2_index_lock
+      lockingPath: /hive/
+      lockName: hdfsview
+    vocabularyConfig:
+      vocabulariesPath: hdfs://gbif-hdfs/pipelines/vocabularies
+      vocabulariesNames:
+        http://rs.tdwg.org/dwc/terms/degreeOfEstablishment: DegreeOfEstablishment
+        http://rs.tdwg.org/dwc/terms/lifeStage: LifeStage
+        http://rs.tdwg.org/dwc/terms/establishmentMeans: EstablishmentMeans
+        http://rs.tdwg.org/dwc/terms/pathway: Pathway
+        http://rs.gbif.org/terms/1.0/eventType: EventType
+    extensionsAllowedForVerbatimSet:
+      - http://rs.tdwg.org/dwc/terms/Occurrence
+      - http://rs.tdwg.org/ac/terms/Multimedia
+      - http://data.ggbn.org/schemas/ggbn/terms/Amplification
+      - http://data.ggbn.org/schemas/ggbn/terms/Cloning
+      - http://data.ggbn.org/schemas/ggbn/terms/GelImage
+      - http://data.ggbn.org/schemas/ggbn/terms/Loan
+      - http://data.ggbn.org/schemas/ggbn/terms/MaterialSample
+      - http://data.ggbn.org/schemas/ggbn/terms/Permit
+      - http://data.ggbn.org/schemas/ggbn/terms/Preparation
+      - http://data.ggbn.org/schemas/ggbn/terms/Preservation
+      - http://rs.iobis.org/obis/terms/ExtendedMeasurementOrFact
+      - http://rs.tdwg.org/chrono/terms/ChronometricAge
+      - http://purl.org/germplasm/germplasmTerm#GermplasmAccession
+      - http://purl.org/germplasm/germplasmTerm#MeasurementScore
+      - http://purl.org/germplasm/germplasmTerm#MeasurementTrait
+      - http://purl.org/germplasm/germplasmTerm#MeasurementTrial
+      - http://rs.tdwg.org/dwc/terms/Identification
+      - http://rs.gbif.org/terms/1.0/Identifier
+      - http://rs.gbif.org/terms/1.0/Image
+      - http://rs.tdwg.org/dwc/terms/MeasurementOrFact
+      - http://rs.gbif.org/terms/1.0/Multimedia
+      - http://rs.gbif.org/terms/1.0/Reference
+      - http://rs.tdwg.org/dwc/terms/ResourceRelationship
+      - http://rs.gbif.org/terms/1.0/DNADerivedData
+      - https://tdwg.github.io/attribution/people/dwc/AgentActions
+    clusteringRelationshipConfig:
+      relationshipTableSalt: 10
+      relationshipTableName: dev2_occurrence_relationships_experimental
+
+{{- end }}

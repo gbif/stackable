@@ -3,22 +3,27 @@ Basic service template to create fixed NodePorts for the infrastructure we need 
 All node ports is fixed to fit within the default range for nodePorts.
 */}}
 
-{{- define "gbif-chart-list.service.tpl" -}}
+{{- define "gbif-chart-list.nodeport-service.tpl" -}}
+{{- range $nodeKey, $nodeValue := .Values.nodes }}
+{{- if gt ( len $nodeValue.ports ) 0 }}
 apiVersion: v1
 kind: Service
+length: {{ len (list $nodeValue.ports) }}
 metadata:
-  name: {{ printf "%s-%s" .Release.Name "nodeport" }}
+  name: {{ printf "%s-%s" $nodeKey "nodeport" }}
 spec:
-  type: NodePort
+  type: {{ $nodeValue.nodeType }}
   selector:
-    app.kubernetes.io/instance: {{ include "gbif-chart-lib.name" . }}
+    app.kubernetes.io/component: {{ $nodeKey }}
+    app.kubernetes.io/instance: {{ include "gbif-chart-lib.name" $ }}
   ports:
-  - name: gbif
+{{- range $portKey, $portValue := $nodeValue.ports }}
+  - name: NodePort
     protocol: TCP
-    port: {{ .Values.appPort }}
-    targetPort: {{ .Values.appPort }}
-    nodePort: {{ .Values.nodePort }}
+    port: {{ $portValue.appPort }}
+    targetPort: {{ $portValue.appPort }}
+    nodePort: {{ $portValue.nodePort }}
 {{- end -}}
-{{- define "gbif-chart-list.service" -}}
-{{- include "gbif-chart-list.util.merge" (append . "gbif-chart-list.service.tpl") -}}
+{{- end -}}
+{{- end -}}
 {{- end -}}

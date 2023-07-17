@@ -1,0 +1,35 @@
+overrideName: ""
+label: "gbif-cli"
+
+product:
+  repository: "docker.gbif.org"
+  artifact: "pipeline-coordinator-cli"
+  version: "2.15.0-SNAPSHOT"
+
+hdfs:
+  clusterId: "gbif-hdfs"
+
+hive:
+  clusterId: "gbif-hive"
+  thrift: ""
+
+command: 
+- "sh"
+- "-c"
+- "exec tail -f /dev/null"
+
+configurations: {}
+
+generic: {}
+
+kube: {}
+
+podTemplate: {}
+
+resources:
+  cpu:
+  mem: 
+
+logging:
+  host: ""
+  port: 

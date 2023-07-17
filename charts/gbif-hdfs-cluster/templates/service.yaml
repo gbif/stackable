@@ -1,9 +1,4 @@
-{{/*
-Manually configured nodeport services for the namenodes, 
-as there might be support for setting fixed port in the future.
-*/}}
-{{ range $n := until (len .Values.nodes.name.ips) }}
----
+{{ range $n := until (len .Values.nodes.namenode.ips) }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -14,22 +9,18 @@ spec:
   ports:
   - name: gbif-tcp
     protocol: TCP
-    port: {{ $.Values.nodes.name.tcpPort }}
-    targetPort: {{ $.Values.nodes.name.tcpPort }}
+    port: {{ $.Values.nodes.namenode.tcpPort }}
+    targetPort: {{ $.Values.nodes.namenode.tcpPort }}
   - name: gbif-rcp
     protocol: TCP
-    port: {{ $.Values.nodes.name.rcpPort }}
-    targetPort: {{ $.Values.nodes.name.rcpPort }}
+    port: {{ $.Values.nodes.namenode.rcpPort }}
+    targetPort: {{ $.Values.nodes.namenode.rcpPort }}
   externalIPs: 
-  - {{ (index $.Values.nodes.name.ips $n) }}
+  - {{ (index $.Values.nodes.namenode.ips $n) }}
+---
 {{ end }}
 
-{{/*
-Manually configured nodeport services for the datanodes, 
-as there might be support for setting fixed port in the future.
-*/}}
-{{ range $n := until (len .Values.nodes.data.ips) }}
----
+{{ range $n := until (len .Values.nodes.datanode.ips) }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -40,16 +31,17 @@ spec:
   ports:
   - name: gbif-tcp
     protocol: TCP
-    port: {{ $.Values.nodes.data.tcpPort }}
-    targetPort: {{ $.Values.nodes.data.tcpPort }}
+    port: {{ $.Values.nodes.datanode.tcpPort }}
+    targetPort: {{ $.Values.nodes.datanode.tcpPort }}
   - name: gbif-icp
     protocol: TCP
-    port: {{ $.Values.nodes.data.icpPort }}
-    targetPort: {{ $.Values.nodes.data.icpPort }}
+    port: {{ $.Values.nodes.datanode.icpPort }}
+    targetPort: {{ $.Values.nodes.datanode.icpPort }}
   - name: gbif-data
     protocol: TCP
-    port: {{ $.Values.nodes.data.dataPort }}
-    targetPort: {{ $.Values.nodes.data.dataPort }}
+    port: {{ $.Values.nodes.datanode.dataPort }}
+    targetPort: {{ $.Values.nodes.datanode.dataPort }}
   externalIPs: 
-  - {{ (index $.Values.nodes.data.ips $n) }}
+  - {{ (index $.Values.nodes.datanode.ips $n) }}
+---
 {{ end }}

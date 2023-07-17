@@ -6,9 +6,10 @@ spec:
   image:
     productVersion: {{ default .Chart.AppVersion .Values.stackProduct | quote }}
     stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
-  catalogLabelSelector:
-    matchLabels:
-{{ include "gbif-chart-lib.selectorLabels" . | indent 6}}
+  clusterConfig:
+    catalogLabelSelector:
+      matchLabels:
+{{ include "gbif-chart-lib.selectorLabels" . | indent 8}}
   coordinators:
     roleGroups:
       default:

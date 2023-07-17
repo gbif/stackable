@@ -17,10 +17,51 @@ dataReplication: 2
 
 # Controls if the datanode should use hostname to resolve each others addresses. 
 # Used so clients outside the cluster can resolve the IPs locally instead of the internal IPs of the Kubernetes cluster.
-useDataNodeHostName: true
+useDataNodeHostName: "true"
+
+# Value for enabling node affinity.
+# A specific label is used on the nodes to indicate if namenode and/or datanode should be running on the node
+# It is done in case you need a specific range of servers to expose the nodes outside the cluster
+# For making node available for nodename, add label namenodes=enabled to the node
+# For making node available for datanode, add label datanodes=enabled to the node
+useNodeAffinity: true
 
 nodes:
-  name:
+  datanode:
+    replicas: 1
+    cpu:
+      min: '100m'
+      max: '1000m'
+    memory: '2Gi'
+    # The storage structure allows for defining node specific drives created by the cluster administrator
+    # If you want to let the cluster deploy the storage, you can do the following:
+    # storage:
+    #   capacity: '50Gi'
+    storage:
+      drives: []
+      labels: []
+      class: hdfs-datanode-storage
+      capacity: '100Gi'
+      type: "Disk"
+    #Allow for specifying nodeports for exposing the pods to VMs outside the kubenetes cluster on the internal network
+    ports:
+      tcp:
+        appPort: 9864
+        nodePort: 
+      icp:
+        appPort: 9867
+        nodePort: 
+      data:
+        appPort: 9866
+        nodePort: 
+    # List of IPs hosting the specific nodes.
+    # Example node1 host datanode2 and node2 host datanode1
+    # Then it should look like:
+    # - ips:
+    #   - node2_ip
+    #   - node1_ip
+    ips: []
+  namenode:
     replicas: 1
     cpu:
       min: '100m'
@@ -28,30 +69,22 @@ nodes:
     memory: '3Gi'
     storage:
       capacity: '15Gi'
-    #GBIF leviates the externalIP address together with selectors to expose native ports on the physical VMs.
-    #This is done in order to being able to connect to the HADOOP cluster outside the cluster as we aren't currently able to specify the datanode ports ourself in the hdfs-site.xml
-    tcpPort: 9870
-    rcpPort: 8020
+    #Allow for specifying nodeports for exposing the pods to VMs outside the kubenetes cluster on the internal network
+    ports:
+      tcp:
+        appPort: 9870
+        nodePort: 
+      rpc:
+        appPort: 8020
+        nodePort: 
+    # List of IPs hosting the specific nodes.
+    # Example node1 host namenode2 and node2 host namenode1
+    # Then it should look like:
+    # - ips:
+    #   - node2_ip
+    #   - node1_ip
     ips: []
-  data:
-    replicas: 1
-    cpu:
-      min: '100m'
-      max: '1000m'
-    memory: '2Gi'
-    storage:
-      drives: []
-      labels: []
-      class: hdfs-datanode-storage
-      capacity: '100Gi'
-      type: "Disk"
-    #GBIF leviates the externalIP address together with selectors to expose native ports on the physical VMs.
-    #This is done in order to being able to connect to the HADOOP cluster outside the cluster as we aren't currently able to specify the datanode ports ourself in the hdfs-site.xml
-    tcpPort: 9864
-    icpPort: 9867
-    dataPort: 9866
-    ips: []
-  journal:
+  journalnode:
     replicas: 3
     cpu:
       min: '100m'
@@ -59,3 +92,5 @@ nodes:
     memory: '2Gi'
     storage:
       capacity: '15Gi'
+    ports: []
+    ips: []

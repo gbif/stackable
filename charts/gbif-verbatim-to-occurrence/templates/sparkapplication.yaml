@@ -1,0 +1,77 @@
+{{- if or (eq (lower .Values.installMode) "all") (eq (lower .Values.installMode) "app")  }}
+apiVersion: spark.stackable.tech/v1alpha1
+kind: SparkApplication
+metadata:
+  name: {{ include "gbif-chart-lib.fullname" . }}
+  labels:
+    {{- include "gbif-chart-lib.labels" . | nindent 4 }}
+spec:
+  version: {{ default .Chart.AppVersion .Values.image.tag}}
+  image: {{ default "docker.gbif.org/" .Values.image.repository }}{{ default .Chart.Name .Values.appName }}:{{ default .Chart.AppVersion .Values.image.tag}}
+  sparkImage: "docker.stackable.tech/stackable/spark-k8s:{{ required "Specific which spark / operator version to use" .Values.stackTag }}"
+  mode: {{ .Values.mode }}
+  mainApplicationFile: local:///stackable/spark/jobs/{{ default .Chart.Name .Values.appName }}.jar
+  mainClass: {{ .Values.appClass }}
+  args:
+    - "--datasetId=647490ab-72e9-4dd6-ac83-8f771494df36"
+    - "--attempt=273"
+    - "--interpretationTypes=IDENTIFIER_TABLE,TEMPORAL,LOCATION,GRSCICOLL,MULTIMEDIA,BASIC,TAXONOMY,IMAGE,IDENTIFIER_ABSENT,AMPLIFICATION,CLUSTERING,OCCURRENCE,VERBATIM,MEASUREMENT_OR_FACT,AUDUBON,LOCATION_FEATURE,METADATA"
+    - "--runner=SparkRunner"
+    - "--targetPath=hdfs://gbif-hdfs/data/ingest"
+    - "--metaFileName=verbatim-to-identifier.yml"
+    - "--inputPath=hdfs://gbif-hdfs/data/ingest/647490ab-72e9-4dd6-ac83-8f771494df36/273/verbatim.avro"
+    - "--avroCompressionType=GZ"
+    - "--avroSyncInterval=2097152"
+    - "--hdfsSiteConfig=/etc/hadoop/conf/hdfs-site.xml"
+    - "--coreSiteConfig=/etc/hadoop/conf/core-site.xml"
+    - "--properties=/etc/gbif/pipelines.yaml"
+    - "--experiments=use_deprecated_read"
+    - "--tripletValid=false"
+    - "--occurrenceIdValid=true"
+  sparkConf:
+     "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+     "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+     "spark.broadcast.compress": "true"
+     "spark.checkpoint.compress": "true"
+     "spark.io.compression.codec": "lz4"
+     "spark.rdd.compress": "true"
+  volumes:
+    - name: pipeline
+      configMap:
+        name: {{ include "gbif-chart-lib.name" . }}-configuration
+    - name: spark-env
+      configMap:
+        name: {{ include "gbif-chart-lib.name" . }}-spark-env
+    - name: hadoop-env
+      configMap:
+        name: {{ .Values.hdfs.clusterName }}
+  driver:
+    resources:
+      cpu:
+        min: "100m"
+        max: {{ .Values.driver.core | quote }}
+      memory:
+        limit: {{ .Values.driver.mem | quote }}
+    volumeMounts:
+      - name: pipeline
+        mountPath: /etc/gbif
+      - name: spark-env
+        mountPath: /stackable/spark/conf
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf
+  executor:
+    instances: {{ .Values.executor.instances }}
+    resources:
+      cpu:
+        min: "100m"
+        max: {{ .Values.executor.core | quote }}
+      memory:
+        limit: {{ .Values.executor.mem | quote }}
+    volumeMounts:
+      - name: pipeline
+        mountPath: /etc/gbif
+      - name: spark-env
+        mountPath: /stackable/spark/conf
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf
+{{- end }}

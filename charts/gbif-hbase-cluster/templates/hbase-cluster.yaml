@@ -6,8 +6,9 @@ spec:
   image:
     productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
     stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
-  hdfsConfigMapName: {{ .Values.hdfsClusterName }}
-  zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}
+  clusterConfig:
+    hdfsConfigMapName: {{ .Values.hdfsClusterName }}
+    zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}
   config:
     hbaseRootdir: {{ .Values.hbaseRoot }}
   masters:

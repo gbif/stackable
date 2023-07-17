@@ -9,14 +9,23 @@ spec:
   servers:
     roleGroups:
       default:
-        replicas: {{ .Values.replicas }}
+        replicas: {{ .Values.nodes.server.replicas }}
         config:
           resources:
             cpu:
-              max: {{ .Values.ressources.cpu.max }}
-              min: {{ .Values.ressources.cpu.min }}
+              max: {{ .Values.nodes.server.ressources.cpu.max }}
+              min: {{ .Values.nodes.server.ressources.cpu.min }}
             storage:
               data:
-                capacity: {{ .Values.ressources.storage }}
+                capacity: {{ .Values.nodes.server.ressources.storage }}
             memory:
-              limit: {{ .Values.ressources.memory }}
+              limit: {{ .Values.nodes.server.ressources.memory }}
+          affinity:
+            nodeAffinity: 
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                - matchExpressions:
+                  - key: zookeeper
+                    operator: In
+                    values:
+                    - enabled

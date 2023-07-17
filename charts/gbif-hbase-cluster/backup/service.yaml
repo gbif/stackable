@@ -1,0 +1,3 @@
+{{- include "gbif-chart-list.service" (list . "gbif-hbase-cluster.service") -}}
+{{- define "gbif-hbase-cluster.service" -}}
+{{- end -}}

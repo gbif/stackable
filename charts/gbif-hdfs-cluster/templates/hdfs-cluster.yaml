@@ -6,66 +6,93 @@ spec:
   image:
     productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
     stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
-  zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}
-  dfsReplication: {{ .Values.dataReplication }}
+  clusterConfig:
+    zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}
+    dfsReplication: {{ .Values.dataReplication }}
   nameNodes:
     roleGroups:
       default:
-        replicas: {{ .Values.nodes.name.replicas }}
+        replicas: {{ .Values.nodes.namenode.replicas }}
         config:
           resources:
             cpu:
-              max: {{ .Values.nodes.name.cpu.max }}
-              min: {{ .Values.nodes.name.cpu.min }}
+              max: {{ .Values.nodes.namenode.cpu.max }}
+              min: {{ .Values.nodes.namenode.cpu.min }}
             storage:
               data:
-                capacity: {{ .Values.nodes.name.storage.capacity }}
+                capacity: {{ .Values.nodes.namenode.storage.capacity }}
             memory:
-              limit: {{ .Values.nodes.name.memory }}
+              limit: {{ .Values.nodes.namenode.memory }}
+          {{- if eq .Values.useNodeAffinity true}}
+          affinity:
+            nodeAffinity: 
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                - matchExpressions:
+                  - key: namenodes
+                    operator: In
+                    values:
+                    - enabled
+          {{- end }}
         configOverrides:
           hdfs-site.xml:
-            dfs.client.use.datanode.hostname: {{ .Values.useDataNodeHostName }}
-            dfs.datanode.use.datanode.hostname: {{ .Values.useDataNodeHostName }}
+            dfs.client.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
+            dfs.datanode.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
   dataNodes:
     roleGroups:
       default:
-        replicas: {{ .Values.nodes.data.replicas }}
+        replicas: {{ .Values.nodes.datanode.replicas }}
         config:
           resources:
             cpu:
-              max: {{ .Values.nodes.data.cpu.max }}
-              min: {{ .Values.nodes.data.cpu.min }}
-            {{- if gt (len .Values.nodes.data.storage.drives) 0 }}
+              max: {{ .Values.nodes.datanode.cpu.max }}
+              min: {{ .Values.nodes.datanode.cpu.min }}
+            memory:
+              limit: {{ .Values.nodes.datanode.memory }}
+            {{- if gt (len .Values.nodes.datanode.storage.drives) 0 }}
             storage:
               data:
                 count: 0 # Setting count to 0 disables the default PVCs
               hard-disks:
-                count: {{ len .Values.nodes.data.storage.drives }}
-                capacity: {{ .Values.nodes.data.storage.capacity }} # Currently the same for all disks but in the future it could easily be different for different types of disks
-                storageClass: {{ .Values.nodes.data.storage.class }}
-                hdfsStorageType: {{ .Values.nodes.data.storage.type }}
-            memory:
-              limit: {{ .Values.nodes.data.memory }}
+                count: {{ len .Values.nodes.datanode.storage.drives }}
+                capacity: {{ .Values.nodes.datanode.storage.capacity }} # Currently the same for all disks but in the future it could easily be different for different types of disks
+                storageClass: {{ .Values.nodes.datanode.storage.class }}
+                hdfsStorageType: {{ .Values.nodes.datanode.storage.type }}
+            {{- else }}
+            storage:
+              data:
+                capacity: {{ .Values.nodes.datanode.storage.capacity }}
             {{- end }}
+          {{- if eq .Values.useNodeAffinity true }}
+          affinity:
+            nodeAffinity: 
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                - matchExpressions:
+                  - key: datanodes
+                    operator: In
+                    values:
+                    - enabled
+          {{- end }}
         configOverrides:
           hdfs-site.xml:
-            dfs.client.use.datanode.hostname: {{ .Values.useDataNodeHostName }}
-            dfs.datanode.use.datanode.hostname: {{ .Values.useDataNodeHostName }}
+            dfs.client.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
+            dfs.datanode.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
   journalNodes:
     roleGroups:
       default:
-        replicas: {{ .Values.nodes.journal.replicas }}
+        replicas: {{ .Values.nodes.journalnode.replicas }}
         config:
           resources:
             cpu:
-              max: {{ .Values.nodes.journal.cpu.max }}
-              min: {{ .Values.nodes.journal.cpu.min }}
+              max: {{ .Values.nodes.journalnode.cpu.max }}
+              min: {{ .Values.nodes.journalnode.cpu.min }}
+            memory:
+              limit: {{ .Values.nodes.journalnode.memory }}
             storage:
               data:
-                capacity: {{ .Values.nodes.journal.storage.capacity }}
-            memory:
-              limit: {{ .Values.nodes.journal.memory }}
+                capacity: {{ .Values.nodes.journalnode.storage.capacity }}
         configOverrides:
           hdfs-site.xml:
-            dfs.client.use.datanode.hostname: {{ .Values.useDataNodeHostName }}
-            dfs.datanode.use.datanode.hostname: {{ .Values.useDataNodeHostName }}
+            dfs.client.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
+            dfs.datanode.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"

@@ -2,11 +2,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "gbif-chart-lib.name" . }}-configuration
+  name: {{ include "gbif-chart-lib.fullname" . }}-configuration
 data:
   occurrence-table-backfill.yml: |
     hdfsLock:
-      zkConnectionString: {{ .Values.zookeeper.quotum }}
+      zkConnectionString: {{ .Values.zookeeper.quorum }}
       namespace: dev_index_lock
       path: /hive/
       name: hdfsview
@@ -15,10 +15,10 @@ data:
     hiveDatabase: downloads
     tablePartitions: 200
     sourceDirectory: /data/hdfsview/
-    targetDirectory: /data/hive/
+    targetDirectory: /hive/
     usePartitionedTable: true
     coreName: occurrence
-    tableName: dev2_occurrence
+    tableName: occurrence_new
     warehouseLocation: /stackable/warehouse
     hiveThriftAddress: {{ .Values.hive.thrift }}
 {{- end }}
