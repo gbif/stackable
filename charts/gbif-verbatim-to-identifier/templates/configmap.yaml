@@ -5,31 +5,31 @@ metadata:
   name: {{ include "gbif-chart-lib.name" . }}-configuration
 data:
   pipelines.yaml: |
-    zkConnectionString: gbif-zookeeper-server-default-0.gbif-zookeeper-server-default.gbif-develop.svc.cluster.local:2282,gbif-zookeeper-server-default-1.gbif-zookeeper-server-default.gbif-develop.svc.cluster.local:2282,gbif-zookeeper-server-default-2.gbif-zookeeper-server-default.gbif-develop.svc.cluster.local:2282
+    zkConnectionString: 
     gbifApi:
-      wsUrl: https://api.gbif-dev2.org/v1/
+      wsUrl: 
     nameUsageMatch:
       numOfKeyBuckets: 5
       tableName: name_usage_kv
       api:
-        wsUrl: https://api.gbif-dev.org/v1/
+        wsUrl:
     grscicollLookup:
       numOfKeyBuckets: 5
       tableName: grscicoll_lookup_kv
       api:
-        wsUrl: https://api.gbif-dev.org/v1/
+        wsUrl:
     geocode:
       numOfKeyBuckets: 5
       tableName: geocode_kv
       wsCacheSizeMb: 128
       api:
-        wsUrl: https://api.gbif-dev.org/v1/
+        wsUrl: 
     imageCachePath: hdfs://gbif-hdfs/pipelines/jars/bitmap.png
     content:
       esHosts:
-        - http://cms-search.gbif-dev2.org:9200/
+        - 
     amplification:
-      wsUrl: http://blast.gbif-dev.org
+      wsUrl: 
     keygen:
       occurrenceTable: dev_occurrence
       counterTable: dev_occurrence_counter
