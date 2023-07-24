@@ -42,7 +42,7 @@ spec:
               path: hdfs-site.xml
         - name: {{ default .Chart.Name .Values.overrideName }}-hive
           configMap:
-            name: {{ default .Chart.Name .Values.overrideName }}-hive
+            name: {{ default .Chart.Name .Values.hive.clusterId }}-custom
             items:
             - key: hive-site.xml
               path: hive-site.xml 

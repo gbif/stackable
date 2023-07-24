@@ -10,8 +10,7 @@ spec:
   image: {{ default "docker.gbif.org/" .Values.image.repository }}{{ default .Chart.Name .Values.appName }}:{{ default .Chart.AppVersion .Values.image.tag}}
   sparkImage: "docker.stackable.tech/stackable/spark-k8s:{{ required "Specific which spark / operator version to use" .Values.stackTag }}"
   mode: {{ .Values.mode }}
-  mainApplicationFile: hdfs://gbif-hdfs/tmp/occurrence-table-build-spark-0.193.0-H3-SNAPSHOT.jar
-  #mainApplicationFile: local:///stackable/spark/jobs/gbif-occurrence-table.jar
+  mainApplicationFile: local:///stackable/spark/jobs/gbif-occurrence-table.jar
   mainClass: {{ .Values.appClass }}
   deps:
     repositories:
@@ -39,7 +38,7 @@ spec:
   volumes:
     - name: occurrence-config
       configMap:
-        name: {{ include "gbif-chart-lib.fullname" . }}-configuration
+        name: {{ include "gbif-chart-lib.name" . }}-conf
     - name: hadoop-env
       configMap:
         name: {{ .Values.hdfs.clusterName }}

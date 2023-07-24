@@ -39,7 +39,7 @@ data:
                 path: hdfs-site.xml
         - name: hive-env
           configMap:
-            name: {{ default .Chart.Name .Values.overrideName }}-hive
+            name: {{ .Values.hive.clusterId }}-custom
             items:
               - key: hive-site.xml
                 path: hive-site.xml

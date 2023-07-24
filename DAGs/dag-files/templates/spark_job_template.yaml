@@ -37,15 +37,21 @@ spec:
   volumes:
     - name: config
       configMap:
-        name: {{ dag_run.params.clusterName }}-configuration
-    - name: hadoop-env
+        name: {{ dag_run.params.componentConfig }}-conf
+    - name: hdfs-env
       configMap:
-        name: {{ dag_run.params.clusterName }}
+        name: {{ dag_run.params.hdfsClusterName }}
         items:
         - key: core-site.xml
           path: core-site.xml
         - key: hdfs-site.xml
           path: hdfs-site.xml
+    - name: hive-env
+      configMap:
+        name: {{ dag_run.params.hiveClusterName }}-custom
+        items:
+        - key: hive-site.xml
+          path: hive-site.xml
   driver:
     resources:
       cpu:
@@ -56,12 +62,15 @@ spec:
     volumeMounts:
       - name: config
         mountPath: /etc/gbif
-      - name: hadoop-env
+      - name: hdfs-env
         mountPath: /etc/hadoop/conf/core-site.xml
         subPath: core-site.xml
-      - name: hadoop-env
+      - name: hdfs-env
         mountPath: /etc/hadoop/conf/hdfs-site.xml
         subPath: hdfs-site.xml
+      - name: hive-env
+        mountPath: /etc/hadoop/conf/hive-site.xml
+        subPath: hive-site.xml
   executor:
     instances: {{ dag_run.params.executorInstances }}
     resources:
@@ -73,9 +82,12 @@ spec:
     volumeMounts:
       - name: config
         mountPath: /etc/gbif
-      - name: hadoop-env
+      - name: hdfs-env
         mountPath: /etc/hadoop/conf/core-site.xml
         subPath: core-site.xml
-      - name: hadoop-env
+      - name: hdfs-env
         mountPath: /etc/hadoop/conf/hdfs-site.xml
         subPath: hdfs-site.xml
+      - name: hive-env
+        mountPath: /etc/hadoop/conf/hive-site.xml
+        subPath: hive-site.xml

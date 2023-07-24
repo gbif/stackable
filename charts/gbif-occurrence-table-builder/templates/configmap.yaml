@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "gbif-chart-lib.fullname" . }}-configuration
+  name: {{ include "gbif-chart-lib.name" . }}-conf
 data:
   config.yml: |
     hdfsLock:
