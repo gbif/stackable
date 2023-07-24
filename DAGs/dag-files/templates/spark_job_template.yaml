@@ -3,61 +3,79 @@ kind: SparkApplication
 metadata:
   name: {{ run_id }}
 spec:
-  version: 0.1.5
-  image: docker.gbif.org/gbif-ingest:0.1.5
-  sparkImage: docker.stackable.tech/stackable/spark-k8s:3.3.0-stackable0.1.0
+  version: {{ dag_run.params.version }}
+  image: docker.gbif.org/{{ dag_run.params.component }}:{{ dag_run.params.version }}
+  sparkImage: docker.stackable.tech/stackable/spark-k8s:3.3.0-stackable23.4.1
   mode: cluster
-  mainApplicationFile: local:///stackable/spark/jobs/gbif-ingest.jar
-  mainClass: {{ dag_run.conf.main }}
+  mainApplicationFile: local:///stackable/spark/jobs/{{ dag_run.params.component }}.jar
+  mainClass: {{ dag_run.params.main }}
   args:
-{%- for arg in dag_run.conf.args %}
+{%- for arg in dag_run.params.args %}
     - "{{arg}}"
 {%- endfor %}
+  deps:
+    repositories:
+      - https://repository.gbif.org/repository/central/
+    packages:
+      - org.apache.spark:spark-avro_2.12:3.3.1
+      - com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.3
   sparkConf:
 {%- raw %}
-    "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
-    "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
-    "spark.broadcast.compress": "true"
-    "spark.checkpoint.compress": "true"
-    "spark.io.compression.codec": "lz4"
-    "spark.rdd.compress": "true"
+     "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+     "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+     "spark.jars.ivy": "/tmp"
+     "spark.broadcast.compress": "true"
+     "spark.checkpoint.compress": "true"
+     "spark.executor.memoryOverhead": "4096"
+     "spark.executor.heartbeatInterval": "10s"
+     "spark.network.timeout": "60s"
+     "spark.io.compression.codec": "lz4"
+     "spark.rdd.compress": "true"
+     "spark.driver.extraClassPath": "/etc/hadoop/conf/"
+     "spark.executor.extraClassPath": "/etc/hadoop/conf/"
 {%- endraw %}
   volumes:
-    - name: pipeline
+    - name: config
       configMap:
-        name: {{ dag_run.conf.clusterName }}-pipeline-configuration
-    - name: spark-env
-      configMap:
-        name: {{ dag_run.conf.clusterName }}-spark-env
+        name: {{ dag_run.params.clusterName }}-configuration
     - name: hadoop-env
       configMap:
-        name: {{ dag_run.conf.clusterName }}
+        name: {{ dag_run.params.clusterName }}
+        items:
+        - key: core-site.xml
+          path: core-site.xml
+        - key: hdfs-site.xml
+          path: hdfs-site.xml
   driver:
     resources:
       cpu:
         min: "100m"
-        max: "{{ dag_run.conf.driverCores }}"
+        max: "{{ dag_run.params.driverCores }}"
       memory:
-        limit: "{{ dag_run.conf.driverMemory }}"
+        limit: "{{ dag_run.params.driverMemory }}"
     volumeMounts:
-      - name: pipeline
+      - name: config
         mountPath: /etc/gbif
-      - name: spark-env
-        mountPath: /stackable/spark/conf
       - name: hadoop-env
-        mountPath: /etc/hadoop/conf
+        mountPath: /etc/hadoop/conf/core-site.xml
+        subPath: core-site.xml
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf/hdfs-site.xml
+        subPath: hdfs-site.xml
   executor:
-    instances: {{ dag_run.conf.executorInstances }}
+    instances: {{ dag_run.params.executorInstances }}
     resources:
       cpu:
         min: "100m"
-        max: "{{ dag_run.conf.executorCores }}"
+        max: "{{ dag_run.params.executorCores }}"
       memory:
-        limit: "{{ dag_run.conf.executorMemory }}"
+        limit: "{{ dag_run.params.executorMemory }}"
     volumeMounts:
-      - name: pipeline
+      - name: config
         mountPath: /etc/gbif
-      - name: spark-env
-        mountPath: /stackable/spark/conf
       - name: hadoop-env
-        mountPath: /etc/hadoop/conf
+        mountPath: /etc/hadoop/conf/core-site.xml
+        subPath: core-site.xml
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf/hdfs-site.xml
+        subPath: hdfs-site.xml

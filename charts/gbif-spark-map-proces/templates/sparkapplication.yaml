@@ -14,24 +14,32 @@ spec:
   mainClass: {{ .Values.appClass }}
   args:
     - "all"
-    - "/gbif/configurations/config.yaml"
+    - "/etc/gbif/config.yaml"
   sparkConf:
      "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
      "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+     "spark.jars.ivy": "/tmp"
      "spark.broadcast.compress": "true"
      "spark.checkpoint.compress": "true"
+     "spark.executor.memoryOverhead": "4096"
+     "spark.executor.heartbeatInterval": "10s"
+     "spark.network.timeout": "60s"
      "spark.io.compression.codec": "lz4"
      "spark.rdd.compress": "true"
+     "spark.driver.extraClassPath": "/etc/hadoop/conf/"
+     "spark.executor.extraClassPath": "/etc/hadoop/conf/"
   volumes:
     - name: map-env
       configMap:
         name: {{ include "gbif-chart-lib.name" . }}-configuration
-    - name: spark-env
-      configMap:
-        name: {{ include "gbif-chart-lib.name" . }}-spark-env
     - name: hadoop-env
       configMap:
         name: {{ .Values.hdfs.clusterName }}
+        items:
+        - key: core-site.xml
+          path: core-site.xml
+        - key: hdfs-site.xml
+          path: hdfs-site.xml
   driver:
     resources:
       cpu:
@@ -41,11 +49,13 @@ spec:
         limit: {{ .Values.driver.mem }}
     volumeMounts:
       - name: map-env
-        mountPath: /gbif/configurations
-      - name: spark-env
-        mountPath: /stackable/spark/conf
+        mountPath: /etc/gbif
       - name: hadoop-env
-        mountPath: /etc/hadoop/conf
+        mountPath: /etc/hadoop/conf/core-site.xml
+        subPath: core-site.xml
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf/hdfs-site.xml
+        subPath: hdfs-site.xml
   executor:
     instances: {{ .Values.executor.instances }}
     resources:
@@ -56,9 +66,11 @@ spec:
         limit: {{ .Values.executor.mem }}
     volumeMounts:
       - name: map-env
-        mountPath: /gbif/configurations
-      - name: spark-env
-        mountPath: /stackable/spark/conf
+        mountPath: /etc/gbif
       - name: hadoop-env
-        mountPath: /etc/hadoop/conf
+        mountPath: /etc/hadoop/conf/core-site.xml
+        subPath: core-site.xml
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf/hdfs-site.xml
+        subPath: hdfs-site.xml
 {{- end }}

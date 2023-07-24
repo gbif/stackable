@@ -20,7 +20,7 @@ spec:
       - org.apache.spark:spark-avro_2.12:3.3.1
       - com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.3
   args:
-    - "/etc/gbif/occurrence-table-backfill.yml"
+    - "/etc/gbif/config.yml"
     - "CREATE"
     - "table"
   sparkConf:

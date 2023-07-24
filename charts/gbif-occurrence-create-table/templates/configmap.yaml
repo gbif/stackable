@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
   name: {{ include "gbif-chart-lib.fullname" . }}-configuration
 data:
-  occurrence-table-backfill.yml: |
+  config.yml: |
     hdfsLock:
       zkConnectionString: {{ .Values.zookeeper.quorum }}
       namespace: dev_index_lock
