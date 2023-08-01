@@ -1,16 +1,16 @@
 apiVersion: spark.stackable.tech/v1alpha1
 kind: SparkApplication
 metadata:
-  name: {{ run_id }}
+  name: {{ macros.uuid.uuid1() }}
 spec:
-  version: {{ dag_run.params.version }}
-  image: docker.gbif.org/{{ dag_run.params.component }}:{{ dag_run.params.version }}
+  version: {{ params.version }}
+  image: docker.gbif.org/{{ params.component }}:{{ params.version }}
   sparkImage: docker.stackable.tech/stackable/spark-k8s:3.3.0-stackable23.4.1
   mode: cluster
-  mainApplicationFile: local:///stackable/spark/jobs/{{ dag_run.params.component }}.jar
-  mainClass: {{ dag_run.params.main }}
+  mainApplicationFile: local:///stackable/spark/jobs/{{ params.component }}.jar
+  mainClass: {{ params.main }}
   args:
-{%- for arg in dag_run.params.args %}
+{%- for arg in params.args %}
     - "{{arg}}"
 {%- endfor %}
   deps:
@@ -35,12 +35,12 @@ spec:
      "spark.executor.extraClassPath": "/etc/hadoop/conf/"
 {%- endraw %}
   volumes:
-    - name: config
+    - name: gbif-config
       configMap:
-        name: {{ dag_run.params.componentConfig }}-conf
+        name: {{ params.componentConfig }}-conf
     - name: hdfs-env
       configMap:
-        name: {{ dag_run.params.hdfsClusterName }}
+        name: {{ params.hdfsClusterName }}
         items:
         - key: core-site.xml
           path: core-site.xml
@@ -48,7 +48,7 @@ spec:
           path: hdfs-site.xml
     - name: hive-env
       configMap:
-        name: {{ dag_run.params.hiveClusterName }}-custom
+        name: {{ params.hiveClusterName }}-custom
         items:
         - key: hive-site.xml
           path: hive-site.xml
@@ -56,12 +56,13 @@ spec:
     resources:
       cpu:
         min: "100m"
-        max: "{{ dag_run.params.driverCores }}"
+        max: "{{ params.driverCores }}"
       memory:
-        limit: "{{ dag_run.params.driverMemory }}"
+        limit: "{{ params.driverMemory }}"
     volumeMounts:
-      - name: config
-        mountPath: /etc/gbif
+      - name: gbif-config
+        mountPath: /etc/gbif/config.yaml
+        subPath: config.yaml
       - name: hdfs-env
         mountPath: /etc/hadoop/conf/core-site.xml
         subPath: core-site.xml
@@ -72,16 +73,17 @@ spec:
         mountPath: /etc/hadoop/conf/hive-site.xml
         subPath: hive-site.xml
   executor:
-    instances: {{ dag_run.params.executorInstances }}
+    instances: {{ params.executorInstances }}
     resources:
       cpu:
         min: "100m"
-        max: "{{ dag_run.params.executorCores }}"
+        max: "{{ params.executorCores }}"
       memory:
-        limit: "{{ dag_run.params.executorMemory }}"
+        limit: "{{ params.executorMemory }}"
     volumeMounts:
-      - name: config
-        mountPath: /etc/gbif
+      - name: gbif-config
+        mountPath: /etc/gbif/config.yaml
+        subPath: config.yaml
       - name: hdfs-env
         mountPath: /etc/hadoop/conf/core-site.xml
         subPath: core-site.xml

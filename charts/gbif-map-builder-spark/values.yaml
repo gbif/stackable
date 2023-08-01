@@ -37,7 +37,7 @@ fullnameOverride: ""
 ## config: Installs the configmaps maps into a namespace
 ## app: Installs the spark application
 # The use case is for enabling templating only the application for use in Airflows or start an instance of spark within necessary updating the configsmaps
-installMode: conf
+installMode: config
 
 hdfs:
   # Name of the Stackabl HdfsCluster in the namespace.
@@ -48,6 +48,8 @@ hdfs:
   sourceSubDir: occurrence/
   # Target directory for the produced HFiles from the Spark application. Currently needs to be cleaned afeter each run.
   targetDir: temp/dev_maps
+  # Setting the property for overwriting the target directory
+  targetDirOverwrite: false
   # Space in zookeeper to place the lock
   namespace: KUBE_index
   # Path to place the lock

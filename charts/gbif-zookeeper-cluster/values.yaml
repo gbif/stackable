@@ -9,7 +9,6 @@ fullnameOverride: ""
 stackProduct: "3.8.0"
 stackVersion: "23.1.0"
 
-
 appPort: 2282
 nodePort: 31228
 

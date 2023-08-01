@@ -46,7 +46,7 @@ with DAG(
     params= {
         "variable_name": Param("variable_value", type="string"),
         "args": Param(["points", "/etc/gbif/config.yaml"], type="array"),
-        "version": Param("1.0.0", type="string"),
+        "version": Param("1.0.15", type="string"),
         "component": Param("map-builder-spark", type="string"),
         "main": Param("org.gbif.maps.spark.Backfill", type="string"),
         "hdfsClusterName": Param("gbif-hdfs", type="string"),

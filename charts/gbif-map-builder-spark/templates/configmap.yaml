@@ -9,6 +9,7 @@ data:
     snapshotDirectory: hdfs://{{ .Values.hdfs.clusterName }}/{{ .Values.hdfs.snapshotDir }}
     sourceSubdirectory: {{ .Values.hdfs.sourceSubDir }}
     targetDirectory: hdfs://{{ .Values.hdfs.clusterName }}/{{ .Values.hdfs.targetDir }}
+    targetDirectoryOverwrite: {{ default false .Values.hdfs.targetDirOverwrite }}
     tilesThreshold: {{ .Values.tileThreshold }}
     hbase:
       zkQuorum: {{ .Values.zookeeper.quorum }}
@@ -25,12 +26,12 @@ data:
       tileBufferSize: {{ .Values.tiles.tileBuffer }}
       {{- if .Values.tiles.typeOfMaps }}
       projections:
-        {{- range $type := .Values.tiles.typeOfMaps }}
-          - minZoom: {{ $type.min }}
-            maxZoom: {{ $type.max }}
-            tileSize: {{ $type.tileSize }}
-            srs: {{ $type.srs }}
-        {{- end}}
+      {{- range $type := .Values.tiles.typeOfMaps }}
+        - minZoom: {{ $type.min }}
+          maxZoom: {{ $type.max }}
+          tileSize: {{ $type.tileSize }}
+          srs: {{ $type.srs }}
+      {{- end}}
       {{- end}}
     hdfsLockConfig:
       zkConnectionString: {{ .Values.zookeeper.quorum }}

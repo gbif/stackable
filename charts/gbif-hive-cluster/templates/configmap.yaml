@@ -14,4 +14,8 @@ data:
         <value>thrift://{{ .Chart.Name }}-metastore-default-0.{{ .Chart.Name }}-metastore-default.{{ .Release.Namespace }}.svc.cluster.local:9083</value>
         {{- end }}
       </property>
+      <property>
+        <name>hive.metastore.warehouse.dir</name>
+        <value>{{ .Values.warehouse }}</value>
+      </property>
     </configuration>

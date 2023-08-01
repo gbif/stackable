@@ -18,6 +18,9 @@ replicas: 1
 # Using more than 1 replica or using a different default service naming scheme, set the thrift url manually
 thriftUrl: ""
 
+# Use for setting the warehouse location
+warehouse: "/gbif/warehouse"
+
 #Values for setting ports to something different than default
 appPort: 9083
 nodePort: 31083

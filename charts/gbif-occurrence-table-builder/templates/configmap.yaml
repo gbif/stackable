@@ -4,21 +4,25 @@ kind: ConfigMap
 metadata:
   name: {{ include "gbif-chart-lib.name" . }}-conf
 data:
-  config.yml: |
+  config.yaml: |
     hdfsLock:
       zkConnectionString: {{ .Values.zookeeper.quorum }}
-      namespace: dev_index_lock
-      path: /hive/
-      name: hdfsview
-      connectionSleepTimeMs: 100
-      connectionMaxRetries: 3
-    hiveDatabase: downloads
-    tablePartitions: 200
-    sourceDirectory: /data/hdfsview/
-    targetDirectory: /hive/
+      namespace: {{ .Values.hdfs.namespace }}
+      path: {{ .Values.hdfs.lockPath }}
+      name: {{ .Values.hdfs.lockName }}
+      connectionSleepTimeMs: {{ .Values.hdfs.sleepMs }}
+      connectionMaxRetries: {{ .Values.hdfs.retries }}
+    hiveDatabase: {{ .Values.hive.databaseName }}
+    tablePartitions: {{ .Values.hive.partition }}
+    sourceDirectory: {{ .Values.hdfs.sourceDir }}
+    targetDirectory: {{ .Values.hdfs.targetDir }}
+    {{- if .Values.hive.partition }}
     usePartitionedTable: true
-    coreName: occurrence
-    tableName: occurrence_new
-    warehouseLocation: /stackable/warehouse
+    {{- else }}
+    usePartitionedTable: false
+    {{- end }}
+    coreName: {{ .Values.hdfs.sourceSubDir }}
+    tableName: {{ .Values.hive.tableName }}
+    warehouseLocation: {{ .Values.hive.warehouse }}
     hiveThriftAddress: {{ .Values.hive.thrift }}
 {{- end }}

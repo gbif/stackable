@@ -42,9 +42,35 @@ installMode: config
 hdfs:
   # Name of the Stackabl HdfsCluster in the namespace.
   clusterName: gbif-hdfs
+  # Directory of the source data, needs to be created beforehand in the HDFS cluster.
+  sourceDir: /data/hdfsview/
+  # Source directory of the data loaded into the HDFS cluster.
+  sourceSubDir: occurrence
+  # Target directory for the produced HFiles from the Spark application. Currently needs to be cleaned afeter each run.
+  targetDir: /hive/
+  # Space in zookeeper to place the lock
+  namespace: KUBE_index
+  # Path to place the lock
+  lockPath: /hive/
+  # Lock name
+  lockName: hdfsview
+  # Timeout time for each try, set in ms.
+  sleepMs: 100
+  # Number of retries
+  retries: 5
 
 zookeeper:
   quorum: ""
   
 hive:
+  # Thrift URL for the cluster - Can be removed when the app knows it can load the gbif hive-site.xml from the cluster
   thrift: ""
+  # Name of the hive database
+  databaseName: gbif
+  # Name of the table to create and store the information in
+  tableName: KUBE
+  # Number of partitioning to use for the table - Set to nothing if you want to disable partitioning of the table
+  partition: 10
+  # The warehouse location in the cluster - Can be removed when the app knows it can load the gbif hive-site.xml from the cluster
+  warehouse: /gbif/warehouse
+  

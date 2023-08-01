@@ -8,7 +8,6 @@ All node ports is fixed to fit within the default range for nodePorts.
 {{- if gt ( len $nodeValue.ports ) 0 }}
 apiVersion: v1
 kind: Service
-length: {{ len (list $nodeValue.ports) }}
 metadata:
   name: {{ printf "%s-%s" $nodeKey "nodeport" }}
 spec:
