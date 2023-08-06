@@ -1,6 +1,6 @@
 # Default values for GBIF Spark application for process data and prepare map tiles.
 # Name of the application, chart uses the name to find the .jar file.
-appName: ""
+appName: "map-builder-spark"
 # Repository and tag for finding the image if selfhosted.
 image:
   repository: ""
@@ -33,11 +33,11 @@ nameOverride: ""
 fullnameOverride: ""
 
 #Mode for installing. This is a implemtantion for selecting which objects to install.
-## all: Installs both spark application and configmaps
+## all: Installs both spark application and configmaps - will fail if configmap already exists
 ## config: Installs the configmaps maps into a namespace
 ## app: Installs the spark application
 # The use case is for enabling templating only the application for use in Airflows or start an instance of spark within necessary updating the configsmaps
-installMode: all
+installMode: config
 
 hdfs:
   # Name of the Stackabl HdfsCluster in the namespace.
@@ -48,6 +48,8 @@ hdfs:
   sourceSubDir: occurrence/
   # Target directory for the produced HFiles from the Spark application. Currently needs to be cleaned afeter each run.
   targetDir: temp/dev_maps
+  # Setting the property for overwriting the target directory
+  targetDirOverwrite: false
   # Space in zookeeper to place the lock
   namespace: KUBE_index
   # Path to place the lock

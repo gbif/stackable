@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ default .Chart.Name .Values.overrideName }}-custom
+data:
+  hive-site.xml: |
+    <?xml version="1.0"?>
+    <configuration>
+      <property>
+        <name>hive.metastore.uris</name>
+        {{- if .Values.thriftUrl }}
+        <value>{{ .Values.thriftUrl }}</value>
+        {{- else }}
+        <value>thrift://{{ .Chart.Name }}-metastore-default-0.{{ .Chart.Name }}-metastore-default.{{ .Release.Namespace }}.svc.cluster.local:9083</value>
+        {{- end }}
+      </property>
+      <property>
+        <name>hive.metastore.warehouse.dir</name>
+        <value>{{ .Values.warehouse }}</value>
+      </property>
+    </configuration>

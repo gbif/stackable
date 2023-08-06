@@ -1,63 +1,95 @@
 apiVersion: spark.stackable.tech/v1alpha1
 kind: SparkApplication
 metadata:
-  name: {{ run_id }}
+  name: {{ macros.uuid.uuid1() }}
 spec:
-  version: 0.1.5
-  image: docker.gbif.org/gbif-ingest:0.1.5
-  sparkImage: docker.stackable.tech/stackable/spark-k8s:3.3.0-stackable0.1.0
+  version: {{ params.version }}
+  image: docker.gbif.org/{{ params.component }}:{{ params.version }}
+  sparkImage: docker.stackable.tech/stackable/spark-k8s:3.3.0-stackable23.4.1
   mode: cluster
-  mainApplicationFile: local:///stackable/spark/jobs/gbif-ingest.jar
-  mainClass: {{ dag_run.conf.main }}
+  mainApplicationFile: local:///stackable/spark/jobs/{{ params.component }}.jar
+  mainClass: {{ params.main }}
   args:
-{%- for arg in dag_run.conf.args %}
+{%- for arg in params.args %}
     - "{{arg}}"
 {%- endfor %}
+  deps:
+    repositories:
+      - https://repository.gbif.org/repository/central/
+    packages:
+      - org.apache.spark:spark-avro_2.12:3.3.1
+      - com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.3
   sparkConf:
 {%- raw %}
-    "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
-    "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
-    "spark.broadcast.compress": "true"
-    "spark.checkpoint.compress": "true"
-    "spark.io.compression.codec": "lz4"
-    "spark.rdd.compress": "true"
+     "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+     "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+     "spark.jars.ivy": "/tmp"
+     "spark.broadcast.compress": "true"
+     "spark.checkpoint.compress": "true"
+     "spark.executor.memoryOverhead": "4096"
+     "spark.executor.heartbeatInterval": "10s"
+     "spark.network.timeout": "60s"
+     "spark.io.compression.codec": "lz4"
+     "spark.rdd.compress": "true"
+     "spark.driver.extraClassPath": "/etc/hadoop/conf/"
+     "spark.executor.extraClassPath": "/etc/hadoop/conf/"
 {%- endraw %}
   volumes:
-    - name: pipeline
+    - name: gbif-config
       configMap:
-        name: {{ dag_run.conf.clusterName }}-pipeline-configuration
-    - name: spark-env
+        name: {{ params.componentConfig }}-conf
+    - name: hdfs-env
       configMap:
-        name: {{ dag_run.conf.clusterName }}-spark-env
-    - name: hadoop-env
+        name: {{ params.hdfsClusterName }}
+        items:
+        - key: core-site.xml
+          path: core-site.xml
+        - key: hdfs-site.xml
+          path: hdfs-site.xml
+    - name: hive-env
       configMap:
-        name: {{ dag_run.conf.clusterName }}
+        name: {{ params.hiveClusterName }}-custom
+        items:
+        - key: hive-site.xml
+          path: hive-site.xml
   driver:
     resources:
       cpu:
         min: "100m"
-        max: "{{ dag_run.conf.driverCores }}"
+        max: "{{ params.driverCores }}"
       memory:
-        limit: "{{ dag_run.conf.driverMemory }}"
+        limit: "{{ params.driverMemory }}"
     volumeMounts:
-      - name: pipeline
-        mountPath: /etc/gbif
-      - name: spark-env
-        mountPath: /stackable/spark/conf
-      - name: hadoop-env
-        mountPath: /etc/hadoop/conf
+      - name: gbif-config
+        mountPath: /etc/gbif/config.yaml
+        subPath: config.yaml
+      - name: hdfs-env
+        mountPath: /etc/hadoop/conf/core-site.xml
+        subPath: core-site.xml
+      - name: hdfs-env
+        mountPath: /etc/hadoop/conf/hdfs-site.xml
+        subPath: hdfs-site.xml
+      - name: hive-env
+        mountPath: /etc/hadoop/conf/hive-site.xml
+        subPath: hive-site.xml
   executor:
-    instances: {{ dag_run.conf.executorInstances }}
+    instances: {{ params.executorInstances }}
     resources:
       cpu:
         min: "100m"
-        max: "{{ dag_run.conf.executorCores }}"
+        max: "{{ params.executorCores }}"
       memory:
-        limit: "{{ dag_run.conf.executorMemory }}"
+        limit: "{{ params.executorMemory }}"
     volumeMounts:
-      - name: pipeline
-        mountPath: /etc/gbif
-      - name: spark-env
-        mountPath: /stackable/spark/conf
-      - name: hadoop-env
-        mountPath: /etc/hadoop/conf
+      - name: gbif-config
+        mountPath: /etc/gbif/config.yaml
+        subPath: config.yaml
+      - name: hdfs-env
+        mountPath: /etc/hadoop/conf/core-site.xml
+        subPath: core-site.xml
+      - name: hdfs-env
+        mountPath: /etc/hadoop/conf/hdfs-site.xml
+        subPath: hdfs-site.xml
+      - name: hive-env
+        mountPath: /etc/hadoop/conf/hive-site.xml
+        subPath: hive-site.xml

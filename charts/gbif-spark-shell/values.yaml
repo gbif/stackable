@@ -10,5 +10,4 @@ hdfs:
   clusterId: "gbif-hdfs"
 
 hive:
-  clusterId: "gbif-hive"
-  thrift: ""
+  clusterId: "gbif-hive-metastore"

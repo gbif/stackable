@@ -1,0 +1,18 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "gbif-chart-lib.name" . }}-role
+  namespace: {{ .Release.Namespace }}
+rules:
+- apiGroups:
+  - spark.stackable.tech
+  - ""
+  resources:
+  - sparkapplications
+  - pods
+  - pods/log
+  - pods/exec
+  verbs:
+  - create
+  - get
+  - list

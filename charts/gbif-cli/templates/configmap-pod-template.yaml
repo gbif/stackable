@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ default .Chart.Name .Values.overrideName }}-template
+data:
+  pod-template.yaml: |
+{{ .Values.podTemplate | toYaml | indent 4 }}

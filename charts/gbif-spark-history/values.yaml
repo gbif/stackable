@@ -1,0 +1,18 @@
+# Default values for GBIF spark history server using Stackable Spark operator.
+
+# Override name of the cluster
+nameOverride: ""
+# Override fullname of the cluster
+fullnameOverride: ""
+
+# Stackable versioning to override the version of the Stack component.
+stackProduct: "3.3.0"
+stackVersion: "23.1.0"
+
+hdfs:
+  clusterId: "gbif-hdfs"
+
+cpu:
+  min: '100m'
+  max: '1500m'
+memory: 2Gi

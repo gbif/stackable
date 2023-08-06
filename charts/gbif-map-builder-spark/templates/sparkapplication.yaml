@@ -10,15 +10,15 @@ spec:
   image: {{ default "docker.gbif.org/" .Values.image.repository }}{{ default .Chart.Name .Values.appName }}:{{ default .Chart.AppVersion .Values.image.tag}}
   sparkImage: "docker.stackable.tech/stackable/spark-k8s:{{ required "Specific which spark / operator version to use" .Values.stackTag }}"
   mode: {{ .Values.mode }}
-  mainApplicationFile: local:///stackable/spark/jobs/gbif-occurrence-table.jar
+  mainApplicationFile: local:///stackable/spark/jobs/{{ default .Chart.Name .Values.appName }}.jar
   mainClass: {{ .Values.appClass }}
   args:
-    - "/etc/gbif/occurrence-table-backfill.yml"
-    - "CREATE"
-    - "ALL"
+    - "all"
+    - "/etc/gbif/config.yaml"
   sparkConf:
      "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
      "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+     "spark.jars.ivy": "/tmp"
      "spark.broadcast.compress": "true"
      "spark.checkpoint.compress": "true"
      "spark.executor.memoryOverhead": "4096"
@@ -26,13 +26,12 @@ spec:
      "spark.network.timeout": "60s"
      "spark.io.compression.codec": "lz4"
      "spark.rdd.compress": "true"
+     "spark.driver.extraClassPath": "/etc/hadoop/conf/"
+     "spark.executor.extraClassPath": "/etc/hadoop/conf/"
   volumes:
-    - name: occurrence-config
+    - name: map-env
       configMap:
-        name: {{ include "gbif-chart-lib.name" . }}-configuration
-    - name: spark-env
-      configMap:
-        name: {{ include "gbif-chart-lib.name" . }}-spark-env
+        name: {{ include "gbif-chart-lib.name" . }}-conf
     - name: hadoop-env
       configMap:
         name: {{ .Values.hdfs.clusterName }}
@@ -41,12 +40,6 @@ spec:
           path: core-site.xml
         - key: hdfs-site.xml
           path: hdfs-site.xml
-    - name: hive-env
-      configMap:
-        name: gbif-hive-metastore-metastore-default
-        items:
-        - key: hive-site.xml
-          path: hive-site.xml
   driver:
     resources:
       cpu:
@@ -55,19 +48,14 @@ spec:
       memory:
         limit: {{ .Values.driver.mem }}
     volumeMounts:
-      - name: occurrence-config
+      - name: map-env
         mountPath: /etc/gbif
-      - name: spark-env
-        mountPath: /stackable/spark/conf
       - name: hadoop-env
         mountPath: /etc/hadoop/conf/core-site.xml
         subPath: core-site.xml
       - name: hadoop-env
         mountPath: /etc/hadoop/conf/hdfs-site.xml
         subPath: hdfs-site.xml
-      - name: hive-env
-        mountPath: /etc/hadoop/conf/hive-site.xml
-        subPath: hive-site.xml
   executor:
     instances: {{ .Values.executor.instances }}
     resources:
@@ -77,17 +65,12 @@ spec:
       memory:
         limit: {{ .Values.executor.mem }}
     volumeMounts:
-      - name: occurrence-config
+      - name: map-env
         mountPath: /etc/gbif
-      - name: spark-env
-        mountPath: /stackable/spark/conf
       - name: hadoop-env
         mountPath: /etc/hadoop/conf/core-site.xml
         subPath: core-site.xml
       - name: hadoop-env
         mountPath: /etc/hadoop/conf/hdfs-site.xml
         subPath: hdfs-site.xml
-      - name: hive-env
-        mountPath: /etc/hadoop/conf/hive-site.xml
-        subPath: hive-site.xml
 {{- end }}

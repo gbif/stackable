@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ default .Chart.Name .Values.overrideName }}-kube
+data:
+  kubeconfig.yaml: |
+{{ .Values.kube | toYaml | indent 4 }}

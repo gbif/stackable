@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ default .Chart.Name .Values.overrideName }}-generic
+data:
+  pipeline-generic.yaml: |
+{{ .Values.generic | toYaml | indent 4 }}

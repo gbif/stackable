@@ -4,6 +4,9 @@
 ## Description
 The Helm repository contains the charts and templates to provision the components into a given Kubernetes cluster. The charts are utilizing charts from [Stackable](https://stackable.tech/) organization which provides a wide selection of operators to work with technologies: **Hadoop HDFS**, **Trino**, **Hbase**, **Zookeeper**, etc. **Stackable's** operators provide a convenient and packaged solution for configuring  and organization the technology stack within the range of technologies they support.
 
+ As GBIF current services lives outside of the Kubernetes ecosystem, the setup currently relies on a hard coded approach for exposing ports locally within GBIF infrastructure to focus on migrating the infrastructure for storage and processing first. By using Kubernetes, it allows us to utilize Stackable's operators and pre made images and later, a more smooth migration of other components and services if desired.
+
+ The way HDFS is setup in this project is very node dependent to rely on local assigned disks and ports to ensure fix locations for the pods and data.
 ## Tech stack
 Current components deployed via Helm charts:
 - Spark application
@@ -18,7 +21,7 @@ Current components deployed via Helm charts:
 - Redis (Used by Airflow)
 - Stackable Operators (Mainly uses Stackable provided charts)
 
-~~It is possible to use the helmfile.yaml to install the whole cluster.~~ **BEWARE** if you chooses to uninstall or reinstall the common-operator, the CRDs will be removed and thereby all the deployed components. The option currently kept for testing purposes.
+~~It is possible to use the helmfile.yaml to install the whole cluster.~~ **BEWARE** if you chooses to uninstall or reinstall the common-operator, the CRDs will be removed and thereby all the deployed components resulting in potential dataloss. The option currently kept for testing purposes.
 ## Requirements
 In order to work with Helm charts you need the following tools: 
 - [Helm](https://helm.sh/)

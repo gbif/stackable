@@ -1,0 +1,38 @@
+apiVersion: spark.stackable.tech/v1alpha1
+kind: SparkHistoryServer
+metadata:
+  name: {{ include "gbif-chart-lib.name" . }}
+spec:
+  image:
+    productVersion: {{ .Values.stackProduct }}
+    stackableVersion: {{ .Values.stackVersion }}
+  logFileDirectory:
+    s3:
+      prefix: /
+      bucket:
+        inline:
+          bucketName: dev-minio-history
+          connection:
+            inline:
+              host: minio
+              port: 443
+              accessStyle: Path
+              credentials:
+                secretClass: s3-credentials-class
+  sparkConf:
+    "spark.hadoop.fs.s3a.path.style.access": "true"
+    "spark.com.amazonaws.services.s3.enableV4": "true"
+    "spark.hadoop.com.amazonaws.services.s3.enableV4": "true"
+    "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
+  nodes:
+    roleGroups:
+      default:
+        replicas: 1
+        config:
+          cleaner: true
+          resources:
+            cpu:
+              min: {{ .Values.cpu.min }}
+              max: {{ .Values.cpu.max }}
+            memory:
+              limit: {{ .Values.memory }}

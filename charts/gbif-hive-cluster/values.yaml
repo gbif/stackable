@@ -15,7 +15,13 @@ hdfsClusterName: "gbif-hdfs"
 # BUG Trino can't connect to hive cluster with more than 1 replicas
 replicas: 1
 
-#GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
+# Using more than 1 replica or using a different default service naming scheme, set the thrift url manually
+thriftUrl: ""
+
+# Use for setting the warehouse location
+warehouse: "/gbif/warehouse"
+
+#Values for setting ports to something different than default
 appPort: 9083
 nodePort: 31083
 

@@ -1,0 +1,28 @@
+{{- if or (eq (lower .Values.installMode) "all") (eq (lower .Values.installMode) "config")  }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "gbif-chart-lib.name" . }}-conf
+data:
+  config.yaml: |
+    hdfsLock:
+      zkConnectionString: {{ .Values.zookeeper.quorum }}
+      namespace: {{ .Values.hdfs.namespace }}
+      path: {{ .Values.hdfs.lockPath }}
+      name: {{ .Values.hdfs.lockName }}
+      connectionSleepTimeMs: {{ .Values.hdfs.sleepMs }}
+      connectionMaxRetries: {{ .Values.hdfs.retries }}
+    hiveDatabase: {{ .Values.hive.databaseName }}
+    tablePartitions: {{ .Values.hive.partition }}
+    sourceDirectory: {{ .Values.hdfs.sourceDir }}
+    targetDirectory: {{ .Values.hdfs.targetDir }}
+    {{- if .Values.hive.partition }}
+    usePartitionedTable: true
+    {{- else }}
+    usePartitionedTable: false
+    {{- end }}
+    coreName: {{ .Values.hdfs.sourceSubDir }}
+    tableName: {{ .Values.hive.tableName }}
+    warehouseLocation: {{ .Values.hive.warehouse }}
+    hiveThriftAddress: {{ .Values.hive.thrift }}
+{{- end }}

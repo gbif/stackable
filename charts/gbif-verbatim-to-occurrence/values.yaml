@@ -1,33 +1,33 @@
 # Default values for GBIF Spark application for process data and prepare map tiles.
 # Name of the application, chart uses the name to find the .jar file.
-appName: "gbif-occurrence-spark"
+appName: "gbif-ingest"
 # Repository and tag for finding the image if selfhosted.
 image:
   repository: ""
-  tag: "0.11.0"
+  tag: ""
 
 # Stackable tag to use for the Spark application.
 stackTag: 3.3.0-stackable23.1.0
 # Spark running mode, currently only cluster is supported.
 mode: cluster
 # Main class for starting the Spark process.
-appClass: org.gbif.occurrence.table.backfill.TableBackfill
+appClass: org.gbif.pipelines.ingest.pipelines.VerbatimToOccurrencePipeline
 
 # Ressource configuration for spark driver.
 driver:
   # Number of cores for the Spark driver.
-  core: "4000m"
+  core: "2000m"
   # Memory for the Spark driver.
-  mem: "3Gi"
+  mem: "2Gi"
 
 # Ressource configuration for spark executors.
 executor:
   # Number of cores for each executor.
-  core: "6000m"
+  core: "4000m"
   # Memory for each executor.
-  mem: "12Gi"
+  mem: "40Gi"
   # Number of executors.
-  instances: 6
+  instances: 3
 
 nameOverride: ""
 fullnameOverride: ""
@@ -42,9 +42,3 @@ installMode: all
 hdfs:
   # Name of the Stackabl HdfsCluster in the namespace.
   clusterName: gbif-hdfs
-
-zookeeper:
-  quotum: ""
-  
-hive:
-  thrift: ""

@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ default .Chart.Name .Values.overrideName }}-logback
+data:
+  pipelines-logback.xml: |
+    <configuration>
+      <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+      </contextListener>
+
+      <property name="defaultPattern" value="%-5level [%date{'MM-dd HH:mm:ss,SSSZ'}] [%thread] %X{datasetKey} %X{attempt} %X{step} %logger: %msg%n%xEx"/>
+
+      <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>./logs/{{.Values.overrideName}}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+          <fileNamePattern>./logs/{{.Values.overrideName}}.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+          <maxHistory>14</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+          <pattern>${defaultPattern}</pattern>
+        </encoder>
+      </appender>
+
+      <appender name="STASH" class="net.logstash.logback.appender.LogstashSocketAppender">
+        <host>{{.Values.logging.host}}</host>
+        <port>{{.Values.logging.port}}</port>
+        <customFields>{"environment":"{{.Release.Namespace}}","class":"coordinator","service":"{{.Values.overrideName}}"}</customFields>
+      </appender>
+
+      <logger name="org.apache.zookeeper" level="WARN"/>
+      <logger name="org.apache.http" level="WARN"/>
+      <logger name="com.netflix.curator.framework" level="WARN"/>
+      <logger name="com.google.inject.internal.ProxyFactory" level="ERROR"/>
+      <logger name="org.gbif.crawler.pipelines" level="INFO"/>
+      <logger name="org.apache.tomcat.util.digester.Digester" level="WARN"/>
+      <logger name="org.gbif.vocabulary.lookup.VocabularyLookup" level="WARN"/>
+      <logger name="org.gbif.pipelines.core.parsers.location.cache.GeocodeBitmapCache" level="WARN"/>
+      <logger name="org.gbif.dwc.terms" level="WARN"/>
+
+      <root level="INFO">
+        <appender-ref ref="STASH"/>
+        <appender-ref ref="FILE"/>
+      </root>
+
+    </configuration>

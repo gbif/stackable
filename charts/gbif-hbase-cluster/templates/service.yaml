@@ -1,3 +1,25 @@
-{{- include "gbif-chart-list.service" (list . "gbif-hbase-cluster.service") -}}
-{{- define "gbif-hbase-cluster.service" -}}
-{{- end -}}
+{{ range $n := until (len .Values.nodes.datanode.ips) }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-%s-%d" $.Release.Name "data-local" $n }}
+spec:
+  selector:
+    statefulset.kubernetes.io/pod-name: {{ printf "%s-%d" "gbif-hdfs-datanode-default" $n }}
+  ports:
+  - name: gbif-tcp
+    protocol: TCP
+    port: {{ $.Values.nodes.datanode.tcpPort }}
+    targetPort: {{ $.Values.nodes.datanode.tcpPort }}
+  - name: gbif-icp
+    protocol: TCP
+    port: {{ $.Values.nodes.datanode.icpPort }}
+    targetPort: {{ $.Values.nodes.datanode.icpPort }}
+  - name: gbif-data
+    protocol: TCP
+    port: {{ $.Values.nodes.datanode.dataPort }}
+    targetPort: {{ $.Values.nodes.datanode.dataPort }}
+  externalIPs: 
+  - {{ (index $.Values.nodes.datanode.ips $n) }}
+---
+{{ end }}
