@@ -1,6 +1,6 @@
 overrideName: ""
 label: "spark-shell"
-image: "docker.stackable.tech/stackable/spark-k8s:3.3.0-stackable23.4.0"
+image: "docker.stackable.tech/stackable/spark-k8s:3.3.0-stackable23.4.1"
 ports:
   standard: 7078
   blockmanager: 7089

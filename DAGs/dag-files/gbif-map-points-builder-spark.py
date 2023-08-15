@@ -44,7 +44,6 @@ with DAG(
     dagrun_timeout=timedelta(minutes=180),
     tags=['spark_executor', 'GBIF', 'map_points'],
     params= {
-        "variable_name": Param("variable_value", type="string"),
         "args": Param(["points", "/etc/gbif/config.yaml"], type="array"),
         "version": Param("1.0.15", type="string"),
         "component": Param("map-builder-spark", type="string"),

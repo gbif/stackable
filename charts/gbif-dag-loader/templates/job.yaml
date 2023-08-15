@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "gbif-chart-lib.name" .}}
+  name: {{ include "gbif-chart-lib.fullname" .}}
 spec:
   template:
     spec:
@@ -19,7 +19,7 @@ spec:
           securityContext:
             runAsUser: 50000
             runAsGroup: 1000
-          image: docker.gbif.org/airflow-dags:{{ .Chart.AppVersion }}
+          image: docker.gbif.org/airflow-dags:{{ default .Chart.AppVersion .Values.versionOverride }}
           env:
             - name: DAG_DIR
               value: "/gbif_external/airflow/dags"

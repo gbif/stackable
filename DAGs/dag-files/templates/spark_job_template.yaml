@@ -17,8 +17,7 @@ spec:
     repositories:
       - https://repository.gbif.org/repository/central/
     packages:
-      - org.apache.spark:spark-avro_2.12:3.3.1
-      - com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.3
+      - org.apache.spark:spark-avro_2.12:3.3.0
   sparkConf:
 {%- raw %}
      "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"

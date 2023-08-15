@@ -2,7 +2,9 @@
 
 # Override name of the cluster
 nameOverride: ""
+# Override version to configure at deploy time
+versionOverride: ""
 # Override fullname of the cluster
 fullnameOverride: ""
-
-storageCapacity: '2Gi'
+# Storage use during runtime of the job
+storageCapacity: '1Gi'

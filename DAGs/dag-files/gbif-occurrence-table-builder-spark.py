@@ -44,9 +44,8 @@ with DAG(
     dagrun_timeout=timedelta(minutes=180),
     tags=['spark_executor', 'GBIF', 'occurrence_table_builder'],
     params= {
-        "variable_name": Param("variable_value", type="string"),
-        "args": Param(["/etc/gbif/config.yaml", "CREATE", "table"], type="array"),
-        "version": Param("1.0.1", type="string"),
+        "args": Param(["/etc/gbif/config.yaml", "CREATE", "ALL"], type="array"),
+        "version": Param("1.0.2", type="string"),
         "component": Param("occurrence-table-builder-spark", type="string"),
         "main": Param("org.gbif.occurrence.table.backfill.TableBackfill", type="string"),
         "hdfsClusterName": Param("gbif-hdfs", type="string"),
