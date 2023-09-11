@@ -7,7 +7,7 @@ fullnameOverride: ""
 
 # Stackable tag to override the version of the Stack component.
 stackProduct: "2.4.12"
-stackVersion: "23.1.0"
+stackVersion: "23.7.0"
 
 # Name of the zookeeper cluster
 zookeeperClusterName: "gbif-zookeeper"
@@ -15,9 +15,8 @@ zookeeperClusterName: "gbif-zookeeper"
 # Name of the HDFS cluster
 hdfsClusterName: "gbif-hdfs"
 
-#GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
-appPort: 16020
-nodePort: 31160
+# hbase root
+hbaseRootDirectory: hdfs://hdfs-cluster/hbase
 
 nodes:
   master:
@@ -28,6 +27,8 @@ nodes:
     memory: '4Gi'
     storage:
       capacity: '4Gi'
+    # Currently no support in the service template for external ip ports for master node
+    ips: []
   region:
     replicas: 3
     cpu:
@@ -36,6 +37,14 @@ nodes:
     memory: '8Gi'
     storage:
       capacity: '16Gi'
+    tcpPort: 16020
+    # List of IPs hosting the specific nodes.
+    # Example server1 host region2 and server2 host region1
+    # Then it should look like:
+    # ips:
+    #  - server2_ip
+    #  - server1_ip
+    ips: []
   rest:
     replicas: 1
     cpu:
@@ -44,3 +53,5 @@ nodes:
     memory: '2Gi'
     storage:
       capacity: '2Gi'
+    # Currently no support in the service template for external ip ports for rest node
+    ips: []

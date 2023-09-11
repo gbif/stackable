@@ -8,10 +8,11 @@ spec:
     stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
   clusterConfig:
     hdfsConfigMapName: {{ .Values.hdfsClusterName }}
-    zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}
-  config:
-    hbaseRootdir: {{ .Values.hbaseRoot }}
+    zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}-znode
   masters:
+    configOverrides:
+      hbase-site.xml:
+        hbase.rootdir: {{ .Values.hbaseRootDirectory }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.master.replicas }}
@@ -26,6 +27,9 @@ spec:
             memory:
               limit: {{ .Values.nodes.master.memory }}
   regionServers:
+    configOverrides:
+      hbase-site.xml:
+        hbase.rootdir: {{ .Values.hbaseRootDirectory }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.region.replicas }}

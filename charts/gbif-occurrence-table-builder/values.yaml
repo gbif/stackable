@@ -7,7 +7,7 @@ image:
   tag: "1.0.0"
 
 # Stackable tag to use for the Spark application.
-stackTag: 3.3.0-stackable23.4.1
+stackTag: 3.3.4-stackable23.7.0
 # Spark running mode, currently only cluster is supported.
 mode: cluster
 # Main class for starting the Spark process.

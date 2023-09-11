@@ -7,7 +7,7 @@ fullnameOverride: ""
 
 # Stackable versioning to override the version of the Stack component.
 stackProduct: "3.3.4"
-stackVersion: "23.1.0"
+stackVersion: "23.7.0"
 
 # Name of the zookeeper cluster
 zookeeperClusterName: "gbif-zookeeper"
@@ -43,23 +43,16 @@ nodes:
       class: hdfs-datanode-storage
       capacity: '100Gi'
       type: "Disk"
-    #Allow for specifying nodeports for exposing the pods to VMs outside the kubenetes cluster on the internal network
-    ports:
-      tcp:
-        appPort: 9864
-        nodePort: 
-      icp:
-        appPort: 9867
-        nodePort: 
-      data:
-        appPort: 9866
-        nodePort: 
+    # Allow for specifying nodeports for exposing the pods to VMs outside the kubenetes cluster on the internal network
+    tcpPort: 9864
+    icpPort: 9867
+    dataPort: 9866
     # List of IPs hosting the specific nodes.
-    # Example node1 host datanode2 and node2 host datanode1
+    # Example server1 host datanode2 and server2 host datanode1
     # Then it should look like:
-    # - ips:
-    #   - node2_ip
-    #   - node1_ip
+    # ips:
+    #  - server2_ip
+    #  - server1_ip
     ips: []
   namenode:
     replicas: 1
@@ -69,20 +62,15 @@ nodes:
     memory: '3Gi'
     storage:
       capacity: '15Gi'
-    #Allow for specifying nodeports for exposing the pods to VMs outside the kubenetes cluster on the internal network
-    ports:
-      tcp:
-        appPort: 9870
-        nodePort: 
-      rpc:
-        appPort: 8020
-        nodePort: 
+    # Allow for specifying nodeports for exposing the pods to VMs outside the kubenetes cluster on the internal network
+    tcpPort: 9870
+    rcpPort: 8020
     # List of IPs hosting the specific nodes.
-    # Example node1 host namenode2 and node2 host namenode1
+    # Example server1 host namenode2 and server2 host namenodenode1
     # Then it should look like:
-    # - ips:
-    #   - node2_ip
-    #   - node1_ip
+    # ips:
+    #  - server2_ip
+    #  - server1_ip
     ips: []
   journalnode:
     replicas: 3
@@ -92,5 +80,5 @@ nodes:
     memory: '2Gi'
     storage:
       capacity: '15Gi'
-    ports: []
+    # Currently no support for external port in our service template for journalnode exposure
     ips: []

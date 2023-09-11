@@ -5,7 +5,7 @@ metadata:
 spec:
   version: {{ params.version }}
   image: docker.gbif.org/{{ params.component }}:{{ params.version }}
-  sparkImage: docker.stackable.tech/stackable/spark-k8s:3.3.0-stackable23.4.1
+  sparkImage: docker.stackable.tech/stackable/spark-k8s:3.3.4-stackable23.7.0
   mode: cluster
   mainApplicationFile: local:///stackable/spark/jobs/{{ params.component }}.jar
   mainClass: {{ params.main }}
@@ -17,7 +17,7 @@ spec:
     repositories:
       - https://repository.gbif.org/repository/central/
     packages:
-      - org.apache.spark:spark-avro_2.12:3.3.0
+      - org.apache.spark:spark-avro_2.12:3.3.4
   sparkConf:
 {%- raw %}
      "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
@@ -30,8 +30,8 @@ spec:
      "spark.network.timeout": "60s"
      "spark.io.compression.codec": "lz4"
      "spark.rdd.compress": "true"
-     "spark.driver.extraClassPath": "/etc/hadoop/conf/"
-     "spark.executor.extraClassPath": "/etc/hadoop/conf/"
+     "spark.driver.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*"
+     "spark.executor.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*"
 {%- endraw %}
   volumes:
     - name: gbif-config

@@ -5,7 +5,7 @@ metadata:
   name: {{ printf "%s-%s-%d" $.Release.Name "name-local" $n }}
 spec:
   selector:
-    statefulset.kubernetes.io/pod-name: {{ printf "%s-%d" "gbif-hdfs-namenode-default" $n }}
+    statefulset.kubernetes.io/pod-name: {{ printf "%s-namenode-default-%d" ( include "gbif-chart-lib.name" $ ) $n }}
   ports:
   - name: gbif-tcp
     protocol: TCP
@@ -27,7 +27,7 @@ metadata:
   name: {{ printf "%s-%s-%d" $.Release.Name "data-local" $n }}
 spec:
   selector:
-    statefulset.kubernetes.io/pod-name: {{ printf "%s-%d" "gbif-hdfs-datanode-default" $n }}
+    statefulset.kubernetes.io/pod-name: {{ printf "%s-datanode-default-%d" ( include "gbif-chart-lib.name" $ ) $n }}
   ports:
   - name: gbif-tcp
     protocol: TCP

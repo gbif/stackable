@@ -7,7 +7,7 @@ spec:
     productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
     stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
   clusterConfig:
-    zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}
+    zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}-znode
     dfsReplication: {{ .Values.dataReplication }}
   nameNodes:
     roleGroups:
