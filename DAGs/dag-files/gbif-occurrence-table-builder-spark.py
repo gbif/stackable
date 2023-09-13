@@ -27,7 +27,8 @@ from airflow.models.param import Param
 from operators.stackable_spark_operator import SparkKubernetesOperator
 from sensors.stackable_spark_sensor import SparkKubernetesSensor
 
-@task(task_id="process_application_file", templates_dict={"file": "templates/spark_job_template.yaml"}, templates_exts=[".yaml"])
+@task(task_id="process_application_file", templates_dict={
+    "file": "templates/spark_job_template.yaml"}, templates_exts=[".yaml"])
 def proces_template(**kwargs):
     return str(kwargs["templates_dict"]["file"])
 
@@ -45,11 +46,12 @@ with DAG(
     tags=['spark_executor', 'GBIF', 'occurrence_table_builder'],
     params= {
         "args": Param(["/etc/gbif/config.yaml", "CREATE", "ALL"], type="array"),
-        "version": Param("1.0.2", type="string"),
+        "version": Param("1.1.8", type="string"),
         "component": Param("occurrence-table-builder-spark", type="string"),
         "main": Param("org.gbif.occurrence.table.backfill.TableBackfill", type="string"),
         "hdfsClusterName": Param("gbif-hdfs", type="string"),
         "hiveClusterName": Param("gbif-hive-metastore", type="string"),
+        "hbaseClusterName": Param("gbif-hbase", type="string"),
         "componentConfig": Param("gbif-occurrence-table-builder", type="string"),
         "driverCores": Param("2000m", type="string"),
         "driverMemory": Param("2Gi", type="string"),

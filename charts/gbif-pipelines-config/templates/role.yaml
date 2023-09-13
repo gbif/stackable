@@ -5,14 +5,18 @@ metadata:
   namespace: {{ .Release.Namespace }}
 rules:
 - apiGroups:
-  - spark.stackable.tech
   - ""
   resources:
-  - sparkapplications
   - pods
   - pods/log
   - pods/exec
+  - configmaps
+  - persistentvolumeclaims
+  - services
   verbs:
   - create
   - get
   - list
+  - watch
+  - delete
+  - deletecollection

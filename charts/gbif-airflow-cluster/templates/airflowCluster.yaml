@@ -12,14 +12,14 @@ spec:
     loadExamples: {{ .Values.examples }}
     exposeConfig: {{ .Values.exposeConfigs }}
     credentialsSecret: {{ include "gbif-chart-lib.name" . }}-credentials
-  volumes:
-    - name: external-dags
-      persistentVolumeClaim:
-        claimName: {{ include "gbif-chart-lib.name" .}}-dag
-        readOnly: true
-  volumeMounts:
-    - name: external-dags
-      mountPath: {{ .Values.externalData }}
+    volumes:
+      - name: external-dags
+        persistentVolumeClaim:
+          claimName: {{ include "gbif-chart-lib.name" .}}-dag
+          readOnly: true
+    volumeMounts:
+      - name: external-dags
+        mountPath: {{ .Values.externalData }}
   webservers:
     roleGroups:
       default:

@@ -5,7 +5,7 @@ metadata:
 spec:
   version: {{ params.version }}
   image: docker.gbif.org/{{ params.component }}:{{ params.version }}
-  sparkImage: docker.stackable.tech/stackable/spark-k8s:3.3.4-stackable23.7.0
+  sparkImage: docker.stackable.tech/stackable/spark-k8s:3.4.0-stackable23.7.0
   mode: cluster
   mainApplicationFile: local:///stackable/spark/jobs/{{ params.component }}.jar
   mainClass: {{ params.main }}
@@ -17,7 +17,7 @@ spec:
     repositories:
       - https://repository.gbif.org/repository/central/
     packages:
-      - org.apache.spark:spark-avro_2.12:3.3.4
+      - org.apache.spark:spark-avro_2.12:3.4.0
   sparkConf:
 {%- raw %}
      "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
@@ -32,6 +32,7 @@ spec:
      "spark.rdd.compress": "true"
      "spark.driver.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*"
      "spark.executor.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*"
+     "spark.kubernetes.authenticate.driver.serviceAccountName": "gbif-spark-sa"
 {%- endraw %}
   volumes:
     - name: gbif-config
@@ -51,6 +52,12 @@ spec:
         items:
         - key: hive-site.xml
           path: hive-site.xml
+    - name: hbase-env
+      configMap:
+        name: {{ params.hbaseClusterName }}
+        items:
+        - key: hbase-site.xml
+          path: hbase-site.xml
   driver:
     resources:
       cpu:
@@ -71,6 +78,9 @@ spec:
       - name: hive-env
         mountPath: /etc/hadoop/conf/hive-site.xml
         subPath: hive-site.xml
+      - name: hbase-env
+        mountPath: /etc/hadoop/conf/hbase-site.xml
+        subPath: hbase-site.xml
   executor:
     instances: {{ params.executorInstances }}
     resources:
@@ -92,3 +102,6 @@ spec:
       - name: hive-env
         mountPath: /etc/hadoop/conf/hive-site.xml
         subPath: hive-site.xml
+      - name: hbase-env
+        mountPath: /etc/hadoop/conf/hbase-site.xml
+        subPath: hbase-site.xml

@@ -23,6 +23,4 @@ data:
     {{- end }}
     coreName: {{ .Values.hdfs.sourceSubDir }}
     tableName: {{ .Values.hive.tableName }}
-    warehouseLocation: {{ .Values.hive.warehouse }}
-    hiveThriftAddress: {{ .Values.hive.thrift }}
 {{- end }}

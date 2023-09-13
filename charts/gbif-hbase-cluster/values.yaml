@@ -15,8 +15,8 @@ zookeeperClusterName: "gbif-zookeeper"
 # Name of the HDFS cluster
 hdfsClusterName: "gbif-hdfs"
 
-# hbase root
-hbaseRootDirectory: hdfs://hdfs-cluster/hbase
+# hbase root folder for storing data
+hbaseRootDirectory: /hbase
 
 nodes:
   master:

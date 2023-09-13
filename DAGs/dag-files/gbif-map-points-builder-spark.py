@@ -45,11 +45,12 @@ with DAG(
     tags=['spark_executor', 'GBIF', 'map_points'],
     params= {
         "args": Param(["points", "/etc/gbif/config.yaml"], type="array"),
-        "version": Param("1.0.15", type="string"),
+        "version": Param("1.1.2", type="string"),
         "component": Param("map-builder-spark", type="string"),
         "main": Param("org.gbif.maps.spark.Backfill", type="string"),
         "hdfsClusterName": Param("gbif-hdfs", type="string"),
         "hiveClusterName": Param("gbif-hive-metastore", type="string"),
+        "hbaseClusterName": Param("gbif-hbase", type="string"),
         "componentConfig": Param("gbif-map-builder-spark", type="string"),
         "driverCores": Param("2000m", type="string"),
         "driverMemory": Param("2Gi", type="string"),

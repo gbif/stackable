@@ -63,14 +63,16 @@ zookeeper:
   quorum: ""
   
 hive:
-  # Thrift URL for the cluster - Can be removed when the app knows it can load the gbif hive-site.xml from the cluster
-  thrift: ""
   # Name of the hive database
   databaseName: gbif
   # Name of the table to create and store the information in
   tableName: KUBE
   # Number of partitioning to use for the table - Set to nothing if you want to disable partitioning of the table
   partition: 10
-  # The warehouse location in the cluster - Can be removed when the app knows it can load the gbif hive-site.xml from the cluster
-  warehouse: /gbif/warehouse
+  # Name of the hive cluster
+  clusterName: gbif-hive
+
+hbase:
+  # Name of the hbase cluster
+  clusterName: gbif-hbase
   

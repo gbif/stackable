@@ -1,7 +1,8 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
-  name: airflow-spark-clusterrole
+  name: {{ include "gbif-chart-lib.name" . }}-role
+  namespace: {{ .Release.Namespace }}
 rules:
 - apiGroups:
   - spark.stackable.tech
@@ -18,6 +19,7 @@ rules:
   - pods
   - pods/log
   - pods/exec
+  - configmaps
   verbs:
   - create
   - get

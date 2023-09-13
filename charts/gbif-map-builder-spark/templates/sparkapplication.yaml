@@ -12,6 +12,11 @@ spec:
   mode: {{ .Values.mode }}
   mainApplicationFile: local:///stackable/spark/jobs/{{ default .Chart.Name .Values.appName }}.jar
   mainClass: {{ .Values.appClass }}
+  deps:
+    repositories:
+      - https://repository.gbif.org/repository/central/
+    packages:
+      - org.apache.spark:spark-avro_2.12:3.4.0
   args:
     - "all"
     - "/etc/gbif/config.yaml"
@@ -26,8 +31,9 @@ spec:
      "spark.network.timeout": "60s"
      "spark.io.compression.codec": "lz4"
      "spark.rdd.compress": "true"
-     "spark.driver.extraClassPath": "/etc/hadoop/conf/"
-     "spark.executor.extraClassPath": "/etc/hadoop/conf/"
+     "spark.driver.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*"
+     "spark.executor.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*"
+     "spark.kubernetes.authenticate.driver.serviceAccountName": "gbif-spark-sa"
   volumes:
     - name: map-env
       configMap:
@@ -40,6 +46,18 @@ spec:
           path: core-site.xml
         - key: hdfs-site.xml
           path: hdfs-site.xml
+    - name: hive-env
+      configMap:
+        name: {{ .Values.hive.clusterName }}-custom
+        items:
+        - key: hive-site.xml
+          path: hive-site.xml
+    - name: hbase-env
+      configMap:
+        name: {{ .Values.hbase.clusterName }}
+        items:
+        - key: hbase-site.xml
+          path: hbase-site.xml
   driver:
     resources:
       cpu:
@@ -56,6 +74,12 @@ spec:
       - name: hadoop-env
         mountPath: /etc/hadoop/conf/hdfs-site.xml
         subPath: hdfs-site.xml
+      - name: hive-env
+        mountPath: /etc/hadoop/conf/hive-site.xml
+        subPath: hive-site.xml
+      - name: hbase-env
+        mountPath: /etc/hadoop/conf/hbase-site.xml
+        subPath: hbase-site.xml
   executor:
     instances: {{ .Values.executor.instances }}
     resources:
@@ -73,4 +97,10 @@ spec:
       - name: hadoop-env
         mountPath: /etc/hadoop/conf/hdfs-site.xml
         subPath: hdfs-site.xml
+      - name: hive-env
+        mountPath: /etc/hadoop/conf/hive-site.xml
+        subPath: hive-site.xml
+      - name: hbase-env
+        mountPath: /etc/hadoop/conf/hbase-site.xml
+        subPath: hbase-site.xml
 {{- end }}

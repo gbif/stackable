@@ -12,7 +12,7 @@ spec:
   masters:
     configOverrides:
       hbase-site.xml:
-        hbase.rootdir: {{ .Values.hbaseRootDirectory }}
+        hbase.rootdir: hdfs://{{ .Values.hdfsClusterName }}{{ .Values.hbaseRootDirectory }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.master.replicas }}
@@ -29,7 +29,7 @@ spec:
   regionServers:
     configOverrides:
       hbase-site.xml:
-        hbase.rootdir: {{ .Values.hbaseRootDirectory }}
+        hbase.rootdir: hdfs://{{ .Values.hdfsClusterName }}{{ .Values.hbaseRootDirectory }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.region.replicas }}
@@ -44,6 +44,9 @@ spec:
             memory:
               limit: {{ .Values.nodes.region.memory }}
   restServers:
+    configOverrides:
+      hbase-site.xml:
+        hbase.rootdir: hdfs://{{ .Values.hdfsClusterName }}{{ .Values.hbaseRootDirectory }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.rest.replicas }}

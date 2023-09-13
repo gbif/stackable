@@ -67,12 +67,19 @@ zookeeper:
   # Path to the root directory in zookeeper. Take from discovery map for your Stackable zookeeper cluster in the desired namespace.
   root: /
 
-# Number of minimum entries before it is created as a tile
-tileThreshold: 1000
+hive:
+  # Name of the hive cluster
+  clusterName: gbif-hive
 
 hbase:
+  # Name of the hbase cluster
+  clusterName: gbif-hbase
   # Number of regions in Hbase
   regions: 10
+
+
+# Number of minimum entries before it is created as a tile
+tileThreshold: 1000
 
 points:
   # Table name in HBase, needs to be created first with the correct number of regions
