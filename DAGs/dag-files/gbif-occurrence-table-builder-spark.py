@@ -27,8 +27,7 @@ from airflow.models.param import Param
 from operators.stackable_spark_operator import SparkKubernetesOperator
 from sensors.stackable_spark_sensor import SparkKubernetesSensor
 
-@task(task_id="process_application_file", templates_dict={
-    "file": "templates/spark_job_template.yaml"}, templates_exts=[".yaml"])
+@task(task_id="process_application_file", templates_dict={"file": "templates/spark_job_template.yaml"}, templates_exts=[".yaml"])
 def proces_template(**kwargs):
     return str(kwargs["templates_dict"]["file"])
 
