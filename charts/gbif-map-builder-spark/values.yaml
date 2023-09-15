@@ -7,7 +7,7 @@ image:
   tag: ""
 
 # Stackable tag to use for the Spark application.
-stackTag: 3.3.0-stackable23.1.0
+stackTag: 3.3.4-stackable23.7.0
 # Spark running mode, currently only cluster is supported.
 mode: cluster
 # Main class for starting the Spark process.
@@ -67,12 +67,19 @@ zookeeper:
   # Path to the root directory in zookeeper. Take from discovery map for your Stackable zookeeper cluster in the desired namespace.
   root: /
 
-# Number of minimum entries before it is created as a tile
-tileThreshold: 1000
+hive:
+  # Name of the hive cluster
+  clusterName: gbif-hive
 
 hbase:
+  # Name of the hbase cluster
+  clusterName: gbif-hbase
   # Number of regions in Hbase
   regions: 10
+
+
+# Number of minimum entries before it is created as a tile
+tileThreshold: 1000
 
 points:
   # Table name in HBase, needs to be created first with the correct number of regions

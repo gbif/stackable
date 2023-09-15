@@ -12,8 +12,6 @@ data:
     targetDirectoryOverwrite: {{ default false .Values.hdfs.targetDirOverwrite }}
     tilesThreshold: {{ .Values.tileThreshold }}
     hbase:
-      zkQuorum: {{ .Values.zookeeper.quorum }}
-      rootDir: {{ .Values.zookeeper.root }}
       keySaltModulus: {{ .Values.hbase.regions }}
     pointFeatures:
       numTasks: {{ .Values.points.sparkPartitions }}
@@ -34,7 +32,6 @@ data:
       {{- end}}
       {{- end}}
     hdfsLockConfig:
-      zkConnectionString: {{ .Values.zookeeper.quorum }}
       namespace: {{ .Values.hdfs.namespace }}
       lockingPath: {{ .Values.hdfs.lockPath }}
       lockName: {{ .Values.hdfs.lockName }}

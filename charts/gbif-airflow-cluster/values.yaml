@@ -6,8 +6,8 @@ nameOverride: ""
 fullnameOverride: ""
 
 # Stackable versioning to override the version of the Stack component.
-stackProduct: "2.4.1"
-stackVersion: "23.1.0"
+stackProduct: "2.6.1"
+stackVersion: "23.7.0"
 
 # Executor airflow should use
 executor: CeleryExecutor

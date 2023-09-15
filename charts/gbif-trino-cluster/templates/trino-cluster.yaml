@@ -8,6 +8,8 @@ spec:
     stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
   clusterConfig:
     catalogLabelSelector:
+      authentication:
+        - authenticationClass: {{ include "gbif-chart-lib.name" . }}-auth
       matchLabels:
 {{ include "gbif-chart-lib.selectorLabels" . | indent 8}}
   coordinators:

@@ -11,13 +11,13 @@ kind: Service
 metadata:
   name: {{ printf "%s-%s" $nodeKey "nodeport" }}
 spec:
-  type: {{ $nodeValue.nodeType }}
+  type: NodePort
   selector:
     app.kubernetes.io/component: {{ $nodeKey }}
     app.kubernetes.io/instance: {{ include "gbif-chart-lib.name" $ }}
   ports:
 {{- range $portKey, $portValue := $nodeValue.ports }}
-  - name: NodePort
+  - name: {{ $portKey }}
     protocol: TCP
     port: {{ $portValue.appPort }}
     targetPort: {{ $portValue.appPort }}

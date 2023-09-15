@@ -6,19 +6,20 @@ spec:
   image:
     productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
     stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
-  statsdExporterVersion: v{{ .Values.statsdVersion }}
-  executor: {{ .Values.executor }}
-  loadExamples: {{ .Values.examples }}
-  exposeConfig: {{ .Values.exposeConfigs }}
-  credentialsSecret: {{ include "gbif-chart-lib.name" . }}-credentials
-  volumes:
-    - name: external-dags
-      persistentVolumeClaim:
-        claimName: {{ include "gbif-chart-lib.name" .}}-dag
-        readOnly: true
-  volumeMounts:
-    - name: external-dags
-      mountPath: {{ .Values.externalData }}
+  clusterConfig:
+    statsdExporterVersion: v{{ .Values.statsdVersion }}
+    executor: {{ .Values.executor }}
+    loadExamples: {{ .Values.examples }}
+    exposeConfig: {{ .Values.exposeConfigs }}
+    credentialsSecret: {{ include "gbif-chart-lib.name" . }}-credentials
+    volumes:
+      - name: external-dags
+        persistentVolumeClaim:
+          claimName: {{ include "gbif-chart-lib.name" .}}-dag
+          readOnly: true
+    volumeMounts:
+      - name: external-dags
+        mountPath: {{ .Values.externalData }}
   webservers:
     roleGroups:
       default:
@@ -27,6 +28,13 @@ spec:
 {{- tpl (.Values.airflowEnvOverrides | toYaml) . | nindent 10 }}
 {{- end }}
         replicas: {{ .Values.nodes.webservers.replicas }}
+        config:
+          resources:
+            cpu: 
+              min: {{ .Values.nodes.webservers.cpu.min }}
+              max: {{ .Values.nodes.webservers.cpu.max }}
+            memory: 
+              limit: {{ .Values.nodes.webservers.memory }}
   workers:
     roleGroups:
       default:
@@ -35,6 +43,13 @@ spec:
 {{- tpl (.Values.airflowEnvOverrides | toYaml) . | nindent 10 }}
 {{- end }}
         replicas: {{ .Values.nodes.workers.replicas }}
+        config:
+          resources:
+            cpu: 
+              min: {{ .Values.nodes.workers.cpu.min }}
+              max: {{ .Values.nodes.workers.cpu.max }}
+            memory: 
+              limit: {{ .Values.nodes.workers.memory }}
   schedulers:
     roleGroups:
       default:
@@ -43,3 +58,10 @@ spec:
 {{- tpl (.Values.airflowEnvOverrides | toYaml) . | nindent 10 }}
 {{- end }}
         replicas: {{ .Values.nodes.schedulers.replicas }}
+        config:
+          resources:
+            cpu: 
+              min: {{ .Values.nodes.schedulers.cpu.min }}
+              max: {{ .Values.nodes.schedulers.cpu.max }}
+            memory: 
+              limit: {{ .Values.nodes.schedulers.memory }}

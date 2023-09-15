@@ -6,8 +6,8 @@ nameOverride: ""
 fullnameOverride: ""
 
 # Stackable versioning to override the version of the Stack component.
-stackProduct: "403"
-stackVersion: "23.1.0"
+stackProduct: "414"
+stackVersion: "23.7.0"
 
 # Name of the hive metastore
 hiveMetastoreName: "gbif-hive-metastore"
@@ -23,6 +23,13 @@ memPerNode: "5GB"
 # limit for headroom per node
 # headroom + limit per-node shouldn't exceed the total memory set per worker.
 memHeadroom: "1GB"
+
+# users that should be created for the cluster at cluster creation time
+# example of who it could look:
+# customUsers:
+#   test1: test1Password
+#   test2: test2Password
+customUsers:
 
 #GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
 appPort: 9083
