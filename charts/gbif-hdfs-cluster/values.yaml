@@ -26,6 +26,22 @@ useDataNodeHostName: "true"
 # For making node available for datanode, add label datanodes=enabled to the node
 useNodeAffinity: true
 
+# Note describing configurations for NFS and HTTPFS to propergate to the hadoop cluster
+gateway:
+  httpfs:
+    # Hosts allowed to proxy through the webhdfs
+    proxyHosts: "*"
+    # Groups allowed to proxy through the webhdfs
+    proxyGroup: "*"
+  nfs:
+    # ACL user to acces the system
+    user: "stackable"
+    # Local directory to use a intermidiate storage
+    localDirectory: "/home/stackable/data"
+    # Directory within the HDFS cluster to be exported
+    directoryToExport: "/occurrence-download/some-directory"
+    # Hosts and their access to the system
+    exportAccess: "* ro"
 nodes:
   datanode:
     replicas: 1

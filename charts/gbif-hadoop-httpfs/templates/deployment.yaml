@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ default .Chart.Name .Values.overrideName }}
+  labels:
+    app.kubernetes.io/component: {{ .Values.label }}
+spec:
+  replicas: {{ .Values.nodes.httpfs.replica }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: {{ .Values.label }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: {{ .Values.label }}
+        app.kubernetes.io/instance: {{ include "gbif-chart-lib.name" . }}
+    spec:
+      serviceAccountName: {{ default .Chart.Name .Values.overrideName }}
+      securityContext:
+        fsGroup: 101
+        runAsGroup: 1000
+        runAsUser: 1000
+      volumes:
+      - name: {{ default .Chart.Name .Values.overrideName }}-core
+        configMap:
+          name: {{ .Values.hdfs.clusterId }}
+          items:
+          - key: core-site.xml
+            path: core-site.xml
+          - key: hdfs-site.xml
+            path: hdfs-site.xml
+      - name: {{ default .Chart.Name .Values.overrideName }}
+        configMap:
+          name: {{ default .Chart.Name .Values.overrideName }}-conf
+          items:
+          - key: httpfs-site.xml
+            path: httpfs-site.xml
+      - name: {{ default .Chart.Name .Values.overrideName }}-log
+        emptyDir:
+          sizeLimit: 150Mi
+      - name: {{ default .Chart.Name .Values.overrideName }}-data
+        emptyDir:
+          sizeLimit: 150Mi
+      containers:
+      - name: {{ default .Chart.Name .Values.overrideName }}-container
+        image: {{.Values.product.repository}}/{{ .Values.product.artifact }}:{{ .Values.product.version }}
+        resources:
+          requests:
+            memory: {{ .Values.nodes.httpfs.resources.mem }}
+            cpu: "100m"
+          limits:
+            memory: {{ .Values.nodes.httpfs.resources.mem }}
+            cpu: {{ .Values.nodes.httpfs.resources.cpu }}
+        command: ["/bin/bash", "-x", "-euo", "pipefail", "-c"]
+        args: ["/stackable/hadoop/bin/hdfs httpfs"]
+        env:
+        - name: HADOOP_CONF_DIR
+          value: /etc/hadoop/conf
+        - name: HADOOP_HOME
+          value: /stackable/hadoop
+        volumeMounts:
+        - name: {{ default .Chart.Name .Values.overrideName }}-core
+          mountPath: /etc/hadoop/conf/core-site.xml
+          subPath: core-site.xml
+        - name: {{ default .Chart.Name .Values.overrideName }}-core
+          mountPath: /etc/hadoop/conf/hdfs-site.xml
+          subPath: hdfs-site.xml
+        - name: {{ default .Chart.Name .Values.overrideName }}
+          mountPath: /etc/hadoop/conf/httpfs-site.xml
+          subPath: httpfs-site.xml
+        - name: {{ default .Chart.Name .Values.overrideName }}-log
+          mountPath: /stackable/log
+        - name: {{ default .Chart.Name .Values.overrideName }}-data
+          mountPath: /stackable/data
+        

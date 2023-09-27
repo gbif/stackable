@@ -38,6 +38,13 @@ spec:
           hdfs-site.xml:
             dfs.client.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
             dfs.datanode.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
+            nfs.superuser: "{{ .Values.gateway.nfs.user }}"
+            nfs.dump.dir: "{{ .Values.gateway.nfs.localDirectory }}"
+            nfs.exports.allowed.hosts: "{{ .Values.gateway.nfs.exportAccess }}"
+            nfs.export.point: "{{ .Values.gateway.nfs.directoryToExport }}"
+          core-site.xml:
+            hadoop.proxyuser.stackable.hosts: "{{ .Values.gateway.httpfs.proxyHosts }}"
+            hadoop.proxyuser.stackable.groups: "{{ .Values.gateway.httpfs.proxyGroup }}"
   dataNodes:
     roleGroups:
       default:
@@ -78,6 +85,13 @@ spec:
           hdfs-site.xml:
             dfs.client.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
             dfs.datanode.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
+            nfs.superuser: "{{ .Values.gateway.nfs.user }}"
+            nfs.dump.dir: "{{ .Values.gateway.nfs.localDirectory }}"
+            nfs.exports.allowed.hosts: "{{ .Values.gateway.nfs.exportAccess }}"
+            nfs.export.point: "{{ .Values.gateway.nfs.directoryToExport }}"
+          core-site.xml:
+            hadoop.proxyuser.stackable.hosts: "{{ .Values.gateway.httpfs.proxyHosts }}"
+            hadoop.proxyuser.stackable.groups: "{{ .Values.gateway.httpfs.proxyGroup }}"
   journalNodes:
     roleGroups:
       default:
@@ -96,3 +110,10 @@ spec:
           hdfs-site.xml:
             dfs.client.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
             dfs.datanode.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
+            nfs.superuser: "{{ .Values.gateway.nfs.user }}"
+            nfs.dump.dir: "{{ .Values.gateway.nfs.localDirectory }}"
+            nfs.exports.allowed.hosts: "{{ .Values.gateway.nfs.exportAccess }}"
+            nfs.export.point: "{{ .Values.gateway.nfs.directoryToExport }}"
+          core-site.xml:
+            hadoop.proxyuser.stackable.hosts: "{{ .Values.gateway.httpfs.proxyHosts }}"
+            hadoop.proxyuser.stackable.groups: "{{ .Values.gateway.httpfs.proxyGroup }}"

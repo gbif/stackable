@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ default .Chart.Name .Values.overrideName }}-conf
+data:
+  httpfs-site.xml: |
+    <?xml version="1.0"?>
+    <configuration>
+      <property>
+        <name>httpfs.http.port</name>
+        <value>{{ .Values.nodes.httpfs.ports.http.appPort }}</value>
+      </property>
+      <property>
+        <name>httpfs.http.administrators</name>
+        <value>"stackable stackable"</value>
+      </property>
+      <property>
+        <name>hadoop.security.instrumentation.requires.admin</name>
+        <value>true</value>
+      </property>
+      <property>
+        <name>httpfs.access.mode</name>
+        <value>{{ .Values.accessMode }}</value>
+      </property>
+    </configuration>

@@ -1,0 +1,35 @@
+overrideName: ""
+label: "httpfs"
+
+# Officiael stackable image
+#product:
+#  repository: "docker.stackable.tech"
+#  artifact: "stackable/hadoop"
+#  version: "3.3.4-stackable23.7.0"
+
+# Gbif rebuild edition of the stackable image
+# Could be phased out if the additional package is included in the public Stackable repository
+product:
+  repository: "docker.gbif.org"
+  artifact: "rebuilds/hadoop"
+  version: "23.7.1"
+
+hdfs:
+  clusterId: "gbif-hdfs"
+
+# Access mode for the httpfs user
+# To enable write:
+# accessMode: write-read
+accessMode: read-only
+
+nodes:
+  httpfs:
+    replica: 1
+    resources:
+      mem: "2Gi"
+      cpu: "2000m"
+    #GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
+    ports:
+      http:
+        appPort: 14000
+        nodePort: 31400
