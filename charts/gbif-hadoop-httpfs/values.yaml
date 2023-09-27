@@ -7,10 +7,11 @@ label: "httpfs"
 #  artifact: "stackable/hadoop"
 #  version: "3.3.4-stackable23.7.0"
 
-# Gbif test edition of the image
+# Gbif rebuild edition of the stackable image
+# Could be phased out if the additional package is included in the public Stackable repository
 product:
   repository: "docker.gbif.org"
-  artifact: "test/hadoop"
+  artifact: "rebuilds/hadoop"
   version: "23.7.1"
 
 hdfs:

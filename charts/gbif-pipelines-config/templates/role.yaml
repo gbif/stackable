@@ -15,6 +15,9 @@ rules:
   - persistentvolumeclaims
   - services
   - sparkapplications
+  - events
+  - status
+  - statefulsets
   verbs:
   - create
   - get
