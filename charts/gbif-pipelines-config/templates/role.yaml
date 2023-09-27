@@ -6,6 +6,7 @@ metadata:
 rules:
 - apiGroups:
   - ""
+  - "spark.stackable.tech"
   resources:
   - pods
   - pods/log
@@ -13,6 +14,7 @@ rules:
   - configmaps
   - persistentvolumeclaims
   - services
+  - sparkapplications
   verbs:
   - create
   - get
