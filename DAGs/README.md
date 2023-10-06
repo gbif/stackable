@@ -31,7 +31,7 @@ After the image is successfully pushed, we need to run a batch job to hot swap t
 VER=0.6.2 bash -c 'helm template dag-loader-$VER ./charts/gbif-dag-loader --namespace=gbif-develop --set versionOverride=$VER'
 ```
 
-In the the example, we are assuming the user is deploying to the namespace called **gbif-develop**.
+In the example, we are assuming the user is deploying to the namespace called **gbif-develop**.
 
 After the helm command completes you would be able to find the newly deployed batch job running the cluster with the command:
 
