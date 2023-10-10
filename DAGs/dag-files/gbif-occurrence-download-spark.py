@@ -50,12 +50,12 @@ with DAG(
         "hdfsClusterName": Param("gbif-hdfs", type="string"),
         "hiveClusterName": Param("gbif-hive-metastore", type="string"),
         "hbaseClusterName": Param("gbif-hbase", type="string"),
-        "componentConfig": Param("occurrence-conf", type="string"),
+        "componentConfig": Param("occurrence", type="string"),
         "driverCores": Param("2000m", type="string"),
         "driverMemory": Param("2Gi", type="string"),
         "executorInstances": Param(6, type="integer", minimum=1, maximum=12),
         "executorCores": Param("6000m", type="string"),
-        "executorMemory": Param("10Gi", type="string"),
+        "executorMemory": Param("10Gi", type="string")
     },
 ) as dag:
 
@@ -68,7 +68,7 @@ with DAG(
         namespace=Variable.get('namespace_to_run'),
         application_file="{{ task_instance.xcom_pull(key='return_value', task_ids='process_application_file') }}",
         do_xcom_push=True,
-        dag=dag,
+        dag=dag
     )
 
     monitor_spark = SparkKubernetesSensor(
@@ -76,7 +76,7 @@ with DAG(
         namespace=Variable.get('namespace_to_run'),
         application_name="{{ task_instance.xcom_pull(task_ids='spark_submit')['metadata']['name'] }}",
         poke_interval=10,
-        dag=dag,
+        dag=dag
     )
 
     process_application_file >> print_application_file >> start_spark >> monitor_spark
