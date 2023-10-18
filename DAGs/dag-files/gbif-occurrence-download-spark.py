@@ -25,6 +25,21 @@ from airflow.models.param import Param
 
 from operators.stackable_spark_operator import SparkKubernetesOperator
 from sensors.stackable_spark_sensor import SparkKubernetesSensor
+import requests
+
+
+def update_download_status(dag_id, status, callback_url):
+    response = requests.get(callback_url + '?job_id=' + dag_id + '&status=' + status)
+    response.raise_for_status()
+
+def on_success_download(context):
+    update_download_status(context['run_id'],'SUCCEEDED', context["params"]["callbackUrl"])
+
+def on_failure_download(context):
+    update_download_status(context['run_id'],'FAILED', context["params"]["callbackUrl"])
+
+def on_execute_download(context):
+    update_download_status(context['run_id'],'RUNNING', context["params"]["callbackUrl"])
 
 @task(task_id="process_application_file", templates_dict={"file": "templates/spark_job_template.yaml"}, templates_exts=[".yaml"])
 def process_template(**kwargs):
@@ -55,7 +70,8 @@ with DAG(
         "driverMemory": Param("2Gi", type="string"),
         "executorInstances": Param(6, type="integer", minimum=1, maximum=12),
         "executorCores": Param("6000m", type="string"),
-        "executorMemory": Param("10Gi", type="string")
+        "executorMemory": Param("10Gi", type="string"),
+        "callbackUrl": Param("", type="string")
     },
 ) as dag:
 
@@ -68,7 +84,10 @@ with DAG(
         namespace=Variable.get('namespace_to_run'),
         application_file="{{ task_instance.xcom_pull(key='return_value', task_ids='process_application_file') }}",
         do_xcom_push=True,
-        dag=dag
+        dag=dag,
+        on_success_callback=on_success_download,
+        on_failure_callback=on_failure_download,
+        on_execute_callback=on_execute_download,
     )
 
     monitor_spark = SparkKubernetesSensor(
