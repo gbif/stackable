@@ -43,7 +43,7 @@ def on_failure_download(context):
 def on_execute_download(context):
     update_download_status(cget_download_key(context),'RUNNING', context["params"]["callbackUrl"])
 
-@task(task_id="process_application_file", templates_dict={"file": "templates/spark_job_template.yaml"}, templates_exts=[".yaml"])
+@task(task_id="process_application_file", templates_dict={"file": "templates/spark_job_download_template.yaml"}, templates_exts=[".yaml"])
 def process_template(**kwargs):
     return str(kwargs["templates_dict"]["file"])
 
