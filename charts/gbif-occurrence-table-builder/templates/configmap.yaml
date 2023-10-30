@@ -21,6 +21,7 @@ data:
     {{- else }}
     usePartitionedTable: false
     {{- end }}
+    warehouseLocation: {{ .Values.hdfs.warehouseLocation }}
     coreName: {{ .Values.hdfs.sourceSubDir }}
     tableName: {{ .Values.hive.tableName }}
 {{- end }}
