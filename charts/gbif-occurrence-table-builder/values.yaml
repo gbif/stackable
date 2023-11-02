@@ -68,7 +68,7 @@ hive:
   # Name of the table to create and store the information in
   tableName: KUBE
   # Number of partitioning to use for the table - Set to nothing if you want to disable partitioning of the table
-  partition: 10
+  partition:
   # Name of the hive cluster
   clusterName: gbif-hive
 
