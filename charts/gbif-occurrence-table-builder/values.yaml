@@ -71,6 +71,8 @@ hive:
   partition:
   # Name of the hive cluster
   clusterName: gbif-hive
+  # Hive metadata uri
+  hiveThriftAddress: thrift://gbif-hive-metastore-metastore-default-0.gbif-hive-metastore-metastore-default.gbif-develop.svc.cluster.local:9083
 
 hbase:
   # Name of the hbase cluster
