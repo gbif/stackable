@@ -73,6 +73,8 @@ hive:
   clusterName: gbif-hive
   # Hive metadata uri
   hiveThriftAddress: thrift://gbif-hive-metastore-metastore-default-0.gbif-hive-metastore-metastore-default.gbif-develop.svc.cluster.local:9083
+  # Hive warehouse location
+  warehouseLocation: /stackable/warehouse
 
 hbase:
   # Name of the hbase cluster
