@@ -1,0 +1,59 @@
+{{- if or (eq (lower .Values.installMode) "all") (eq (lower .Values.installMode) "config")  }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "gbif-chart-lib.name" . }}-conf
+data:
+  download.properties: |
+    api.url={{ .Values.apiUrl }}
+    core_term_name={{ .Values.coreTermName }}
+    create_tables_dynamically={{ .Values.createTablesDynamically }}
+    es.connect_timeout={{ .Values.es.connectTimeout }}
+    es.hosts={{ .Values.es.hosts }}
+    es.index.nested={{ .Values.es.index.nested }}
+    es.index.type={{ .Values.es.index.type }}
+    es.index={{ .Values.es.index.name }}
+    es.socket_timeout={{ .Values.es.socketTimeout }}
+    hadoop.jobtracker={{ .Values.hadoopJobtracker }}
+    hbase.table={{ .Values.hbaseTable }}
+    hdfs.lock.connection.maxRetries={{ .Values.hdfs.lock.connection.maxRetries }}
+    hdfs.lock.connection.sleepTimeMs={{ .Values.hdfs.lock.connection.sleepTimeMs }}
+    hdfs.lock.name={{ .Values.hdfs.lock.name }}
+    hdfs.lock.namespace={{ .Values.hdfs.lock.namespace }}
+    hdfs.lock.path={{ .Values.hdfs.lock.path }}
+    hdfs.lock.zkConnectionString={{ .Values.zkConnectionString }}
+    hdfs.namenode={{ .Values.hdfs.namenode }}
+    hive.db={{ .Values.hive.db }}
+    hive.metastore.uris={{ .Values.hive.metastoreUris }}
+    hive.server2={{ .Values.hive.server2 }}
+    hive.user={{ .Values.hive.user }}
+    hive.warehouse.dir={{ .Values.hive.warehouseDir }}
+    occurrence.download.bionomia.reducer.memory={{ .Values.occurrence.download.bionomiaReducer.memory }}
+    occurrence.download.bionomia.reducer.opts={{ .Values.occurrence.download.bionomiaReducer.opts }}
+    occurrence.download.file.max_records={{ .Values.occurrence.download.fileMaxRecords }}
+    occurrence.download.hdfs.tmp.dir={{ .Values.occurrence.download.hdfsTmpDir }}
+    occurrence.download.hdfsOutputPath={{ .Values.occurrence.download.hdfsOutputPath }}
+    occurrence.download.hive.hdfs.out={{ .Values.occurrence.download.hiveHdfsOut }}
+    occurrence.download.job.max_threads={{ .Values.occurrence.download.job.maxThreads }}
+    occurrence.download.job.min_records={{ .Values.occurrence.download.job.minRecords }}
+    occurrence.download.link={{ .Values.occurrence.download.link }}
+    occurrence.download.max_connection_pool={{ .Values.occurrence.download.maxConnectionPool }}
+    occurrence.download.max_global_threads={{ .Values.occurrence.download.maxGlobalThreads }}
+    occurrence.download.tmp.dir={{ .Values.occurrence.download.tmpDir }}
+    occurrence.download.ws.password={{ .Values.occurrence.download.ws.password }}
+    occurrence.download.ws.username={{ .Values.occurrence.download.ws.username }}
+    occurrence.download.zookeeper.downloads.namespace={{ .Values.occurrence.download.zookeeper.downloadsNamespace }}
+    occurrence.download.zookeeper.indices.namespace={{ .Values.occurrence.download.zookeeper.indicesNamespace }}
+    occurrence.download.zookeeper.lock_name={{ .Values.occurrence.download.zookeeper.lockName }}
+    occurrence.download.zookeeper.max_retries={{ .Values.occurrence.download.zookeeper.maxRetries }}
+    occurrence.download.zookeeper.quorum={{ .Values.zkConnectionString }}
+    occurrence.download.zookeeper.sleep_time={{ .Values.occurrence.download.zookeeper.sleepTime }}
+    occurrence.env_prefix={{ .Values.envPrefix }}
+    occurrence.environment={{ .Values.environment }}
+    occurrence.hdfs.build.frequency={{ .Values.hdfsBuildFrequency }}
+    registry.ws.url={{ .Values.registryWsUrl }}
+    synctables={{ .Values.synctables }}
+    table_name={{ .Values.tableName }}
+    wf_prefix={{ .Values.wfPrefix }}
+    zookeeper.quorum={{ .Values.zkConnectionString }}
+{{- end }}
