@@ -1,14 +1,20 @@
-# Default values for the GBIF Spark application for creating a table in the registry with a list of gridded datasets.
+# Default values for the GBIF Spark application for creating occurrence downloads
 # Name of the application, chart uses the name to find the .jar file.
 appName: "gbif-occurrence-download-spark"
 
 # Stackable tag to use for the Spark application.
 stackTag: 3.3.0-stackable23.1.0
 
+# Artifact name without extension
+jarName: "occurrence-download-spark"
+
 # Main class for starting the Spark process.
 appClass: org.gbif.occurrence.download.spark.SparkDownloads
 
-#Mode for installing. This is an implemtantion for selecting which objects to install.
+# Spark mode
+mode: cluster
+
+# Mode for installing. This is an implemtantion for selecting which objects to install.
 ## all: Installs both spark application and configmaps - will fail if configmap already exists
 ## config: Installs the configmaps maps into a namespace
 ## app: Installs the spark application
@@ -32,7 +38,7 @@ executor:
   instances: 6
 
 # Application configs
-apiUrl: http\://api.gbif-dev2.org/v1/
+apiUrl: ""
 coreTermName: Occurrence
 createTablesDynamically: false
 es:
@@ -41,7 +47,7 @@ es:
   index:
     nested: false
     type: OCCURRENCE
-    name: occurrence_dev2
+    name: ""
   socketTimeout: 120000
 hadoopJobtracker: ""
 hbaseTable: occurrence
@@ -51,7 +57,7 @@ hdfs:
       maxRetries: 5
       sleepTimeMs: 100
     name: hdfsview
-    namespace: dev_index_lock
+    namespace: ""
     path: /hive/
   namenode: ""
 hive:
@@ -63,9 +69,9 @@ hive:
 occurrence:
   download:
     bionomiaReducer:
-      memory: 10000
-      opts: -Xmx8G
-    fileMaxRecords: 1000
+      memory: ""
+      opts: ""
+    fileMaxRecords: ""
     hdfsTmpDir: /tmp/
     hdfsOutputPath: ""
     hiveHdfsOut: ""
@@ -80,15 +86,15 @@ occurrence:
       password: ""
       username: ""
     zookeeper:
-      downloadsNamespace: dev_occurrencedownload
-      indicesNamespace: dev_index_lock
+      downloadsNamespace: ""
+      indicesNamespace: ""
       lockName: occDownloadJobsCounter
       maxRetries: 10
       sleepTime: 1000
-  envPrefix: dev2
-  environment: dev2
+  envPrefix: ""
+  environment: ""
   hdfsBuildFrequency: ${coord\:days(1)}
-registryWsUrl: http\://api.gbif-dev2.org/v1/
+registryWsUrl: ""
 synctables: false
 tableName: occurrence
 wfPrefix: occurrence
