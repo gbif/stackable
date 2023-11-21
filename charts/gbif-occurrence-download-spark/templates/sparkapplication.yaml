@@ -18,7 +18,8 @@ spec:
     packages:
       - org.apache.spark:spark-avro_2.12:3.3.0
   args:
-    - "/etc/gbif/config.yml"
+    - "Occurrence"
+    - "/stackable/spark/jobs/download.properties"
   sparkConf:
      "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
      "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
