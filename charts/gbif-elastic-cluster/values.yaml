@@ -5,34 +5,40 @@ fullnameOverride: ""
 
 memoryPagingAllow: true
 
-#GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
-appPort: 9200
-nodePort: 31920
-
 nodes:
   manager:
-    replicas: 3
-    cpu:
-      min: '500m'
-      max: '2000m'
-    memory: 3072
-    storage:
-      class: local-path
-      capacity: '25Gi'
+    replicas: 1
+    resources:
+      cpu:
+        min: '500m'
+        max: '2000m'
+      memory: 3072
+      storage:
+        class: local-path
+        capacity: '25Gi'
+    #GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
+    ports:
+      tcp:
+        appPort: 9200
+        nodePort: 31920
   worker:
-    replicas: 3
-    cpu:
-      min: '1000m'
-      max: '4000m'
-    memory: 4096
-    storage:
-      drives: []
-      labels: []
-      class: elastic-storage
-      capacity: '100Gi'
+    replicas: 1
+    resources:
+      cpu:
+        min: '1000m'
+        max: '4000m'
+      memory: 4096
+      storage:
+        drives: []
+        labels: []
+        class: elastic-storage
+        capacity: '100Gi'
+    ports: {}
   kibana:
     replicas: 1
-    cpu:
-      min: '500m'
-      max: '2000m'
-    memory: 2048
+    resources:
+      cpu:
+        min: '500m'
+        max: '2000m'
+      memory: 2048
+    ports: {}

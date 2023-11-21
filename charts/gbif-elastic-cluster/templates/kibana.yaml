@@ -13,11 +13,11 @@ spec:
       - name: kibana
         env:
         - name: ES_JAVA_OPTS
-          value: -Xms{{ sub .Values.nodes.kibana.memory 512 }}m -Xmx{{ sub .Values.nodes.kibana.memory 512 }}m
+          value: -Xms{{ sub .Values.nodes.kibana.resources.memory 512 }}m -Xmx{{ sub .Values.nodes.kibana.resources.memory 512 }}m
         resources:
           requests:
-            memory: {{ .Values.nodes.kibana.memory }}Mi
-            cpu: {{ .Values.nodes.kibana.cpu.min }}
+            memory: {{ .Values.nodes.kibana.resources.memory }}Mi
+            cpu: {{ .Values.nodes.kibana.resources.cpu.min }}
           limits:
-            memory: {{ .Values.nodes.kibana.memory }}Mi
-            cpu: {{ .Values.nodes.kibana.cpu.max }}
+            memory: {{ .Values.nodes.kibana.resources.memory }}Mi
+            cpu: {{ .Values.nodes.kibana.resources.cpu.max }}

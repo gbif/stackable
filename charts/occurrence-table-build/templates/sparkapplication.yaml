@@ -18,7 +18,7 @@ spec:
     packages:
       - org.apache.spark:spark-avro_2.12:3.4.0
   args:
-    - "/etc/gbif/config.yml"
+    - "config.yml"
     - "CREATE"
     - "table"
   sparkConf:
@@ -32,8 +32,8 @@ spec:
      "spark.network.timeout": "60s"
      "spark.io.compression.codec": "lz4"
      "spark.rdd.compress": "true"
-     "spark.driver.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*"
-     "spark.executor.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*"
+     "spark.driver.extraClassPath": "/etc/gbif/:/etc/hadoop/conf/:/stackable/spark/extra-jars/*"
+     "spark.executor.extraClassPath": "/etc/gbif/:/etc/hadoop/conf/:/stackable/spark/extra-jars/*"
      "spark.kubernetes.authenticate.driver.serviceAccountName": "gbif-spark-sa"
   volumes:
     - name: occurrence-config

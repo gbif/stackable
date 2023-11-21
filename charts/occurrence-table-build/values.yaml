@@ -1,33 +1,33 @@
 # Default values for GBIF Spark application for process data and prepare map tiles.
 # Name of the application, chart uses the name to find the .jar file.
-appName: "map-builder-spark"
+appName: "occurrence-table-builder-spark"
 # Repository and tag for finding the image if selfhosted.
 image:
   repository: ""
-  tag: ""
+  tag: "1.0.0"
 
 # Stackable tag to use for the Spark application.
 stackTag: 3.3.4-stackable23.7.0
 # Spark running mode, currently only cluster is supported.
 mode: cluster
 # Main class for starting the Spark process.
-appClass: org.gbif.maps.spark.Backfill
+appClass: org.gbif.occurrence.table.backfill.TableBackfill
 
 # Ressource configuration for spark driver.
 driver:
   # Number of cores for the Spark driver.
-  core: 2
+  core: "4000m"
   # Memory for the Spark driver.
-  mem: 2048m
+  mem: "3Gi"
 
 # Ressource configuration for spark executors.
 executor:
   # Number of cores for each executor.
-  core: 8
+  core: "6000m"
   # Memory for each executor.
-  mem: 30000m
+  mem: "12Gi"
   # Number of executors.
-  instances: 3
+  instances: 6
 
 nameOverride: ""
 fullnameOverride: ""
@@ -42,14 +42,12 @@ installMode: config
 hdfs:
   # Name of the Stackabl HdfsCluster in the namespace.
   clusterName: gbif-hdfs
-  # Directory of the snapshot location, needs to be created beforehand in the HDFS cluster.
-  snapshotDir: data/hdfs/hdfsview/occurrence/
+  # Directory of the source data, needs to be created beforehand in the HDFS cluster.
+  sourceDir: /data/hdfsview/
   # Source directory of the data loaded into the HDFS cluster.
-  sourceSubDir: occurrence/
+  sourceSubDir: occurrence
   # Target directory for the produced HFiles from the Spark application. Currently needs to be cleaned afeter each run.
-  targetDir: temp/dev_maps
-  # Setting the property for overwriting the target directory
-  targetDirOverwrite: false
+  targetDir: /hive/
   # Space in zookeeper to place the lock
   namespace: KUBE_index
   # Path to place the lock
@@ -62,45 +60,19 @@ hdfs:
   retries: 5
 
 zookeeper:
-  # Quorum needs to point to the quorum string. Take from discovery configmap for your Stackable zookeeper cluster in the desired namespace.
-  quorum: default-zookeeper-default-0.default-namespace.svc.cluster.local:2282
-  # Path to the root directory in zookeeper. Take from discovery map for your Stackable zookeeper cluster in the desired namespace.
-  root: /
-
+  quorum: ""
+  
 hive:
+  # Name of the hive database
+  databaseName: gbif
+  # Name of the table to create and store the information in
+  tableName: KUBE
+  # Number of partitioning to use for the table - Set to nothing if you want to disable partitioning of the table
+  partition: 10
   # Name of the hive cluster
   clusterName: gbif-hive
 
 hbase:
   # Name of the hbase cluster
   clusterName: gbif-hbase
-  # Number of regions in Hbase
-  regions: 10
-
-
-# Number of minimum entries before it is created as a tile
-tileThreshold: 1000
-
-points:
-  # Table name in HBase, needs to be created first with the correct number of regions
-  tableName: KUBE
-  # Number of partitions to process data in
-  sparkPartitions: 200
-  # Number of HFiles to create
-  numberOfHFiles: 32
-
-tiles:
-  # Table name in HBase, needs to be created first with the correct number of regions
-  tableName: KUBE
-  # Number of partitions to process data in
-  sparkPartitions: 200
-  # Number of HFiles to create
-  numberOfHFiles: 100
-  tileBuffer: 64
-  #Add entries for which maps to process in the spark job.
-  typeOfMaps: 
-    EPSG_3857:
-      min: 0
-      max: 16
-      tileSize: 512
-      srs: "EPSG:3857"
+  

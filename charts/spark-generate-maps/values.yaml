@@ -1,33 +1,33 @@
 # Default values for GBIF Spark application for process data and prepare map tiles.
 # Name of the application, chart uses the name to find the .jar file.
-appName: "occurrence-table-builder-spark"
+appName: "spark-generate-maps"
 # Repository and tag for finding the image if selfhosted.
 image:
   repository: ""
-  tag: "1.0.0"
+  tag: ""
 
 # Stackable tag to use for the Spark application.
-stackTag: 3.3.4-stackable23.7.0
+stackTag: 3.4.0-stackable23.7.0
 # Spark running mode, currently only cluster is supported.
 mode: cluster
 # Main class for starting the Spark process.
-appClass: org.gbif.occurrence.table.backfill.TableBackfill
+appClass: org.gbif.maps.workflow.Backfill
 
 # Ressource configuration for spark driver.
 driver:
   # Number of cores for the Spark driver.
-  core: "4000m"
+  core: '2000m'
   # Memory for the Spark driver.
-  mem: "3Gi"
+  mem: '2Gi'
 
 # Ressource configuration for spark executors.
 executor:
   # Number of cores for each executor.
-  core: "6000m"
+  core: '6000m'
   # Memory for each executor.
-  mem: "12Gi"
+  mem: '8Gi'
   # Number of executors.
-  instances: 6
+  instances: 4
 
 nameOverride: ""
 fullnameOverride: ""
@@ -42,14 +42,14 @@ installMode: config
 hdfs:
   # Name of the Stackabl HdfsCluster in the namespace.
   clusterName: gbif-hdfs
-  # Directory of the source data, needs to be created beforehand in the HDFS cluster.
-  sourceDir: /data/hdfsview/
+  # Directory of the snapshot location, needs to be created beforehand in the HDFS cluster.
+  snapshotDir: data/hdfsview/occurrence/
   # Source directory of the data loaded into the HDFS cluster.
-  sourceSubDir: occurrence
+  sourceSubDir: occurrence/
   # Target directory for the produced HFiles from the Spark application. Currently needs to be cleaned afeter each run.
-  targetDir: /hive/
+  targetDir: tmp/hfiles/dev_maps
   # Space in zookeeper to place the lock
-  namespace: KUBE_index
+  namespace: dev_index_lock
   # Path to place the lock
   lockPath: /hive/
   # Lock name
@@ -59,24 +59,26 @@ hdfs:
   # Number of retries
   retries: 5
 
-zookeeper:
-  quorum: ""
-  
+map:
+  # Number of minimum entries before it is created as a tile
+  tileThreshold: 1000
+  # Tile buffer size
+  tileBuffer: 64
+  # Tile size
+  tileSize: 512
+  # zoom levels goes from 0 up to limit underneath
+  zoom: 16
+
 hive:
-  # Name of the hive database
-  databaseName: gbif
-  # Name of the table to create and store the information in
-  tableName: KUBE
-  # Number of partitioning to use for the table - Set to nothing if you want to disable partitioning of the table
-  partition:
   # Name of the hive cluster
-  clusterName: gbif-hive
-  # Hive metadata uri
-  hiveThriftAddress: thrift://gbif-hive-metastore-metastore-default-0.gbif-hive-metastore-metastore-default.gbif-develop.svc.cluster.local:9083
-  # Hive warehouse location
-  warehouseLocation: /stackable/warehouse
+  clusterName: hive-metastore
+  # Name of the hive database
+  schema: dev
 
 hbase:
   # Name of the hbase cluster
   clusterName: gbif-hbase
-  
+  # Table name in HBase, needs to be created first with the correct number of regions
+  tableName: dev_maps
+  # Modulus for doing the salts in hbase
+  saltModulus: 10

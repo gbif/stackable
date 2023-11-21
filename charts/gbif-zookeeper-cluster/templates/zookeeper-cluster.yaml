@@ -13,13 +13,13 @@ spec:
         config:
           resources:
             cpu:
-              max: {{ .Values.nodes.server.ressources.cpu.max }}
-              min: {{ .Values.nodes.server.ressources.cpu.min }}
+              max: {{ .Values.nodes.server.resources.cpu.max }}
+              min: {{ .Values.nodes.server.resources.cpu.min }}
             storage:
               data:
-                capacity: {{ .Values.nodes.server.ressources.storage }}
+                capacity: {{ .Values.nodes.server.resources.storage }}
             memory:
-              limit: {{ .Values.nodes.server.ressources.memory }}
+              limit: {{ .Values.nodes.server.resources.memory }}
           affinity:
             nodeAffinity: 
               requiredDuringSchedulingIgnoredDuringExecution:

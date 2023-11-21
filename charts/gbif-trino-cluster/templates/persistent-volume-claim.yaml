@@ -1,0 +1,19 @@
+{{- if .Values.persistedGeocodeLayerStorage.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "gbif-chart-lib.name" . }}-geocode-layers
+  namespace: {{ .Release.Namespace }}
+  labels:
+    gbif-app: trino-geocode-layers-containers
+  annotations:
+    "helm.sh/resource-policy": keep
+spec:
+  accessModes:
+  - ReadWriteOnce
+  - ReadOnlyMany
+  storageClassName: {{ .Values.persistedGeocodeLayerStorage.storageClass }}
+  resources:
+    requests: 
+      storage: {{ .Values.persistedGeocodeLayerStorage.capacity }}
+{{- end }}
