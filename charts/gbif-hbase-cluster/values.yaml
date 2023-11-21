@@ -18,6 +18,12 @@ hdfsClusterName: "gbif-hdfs"
 # hbase root folder for storing data
 hbaseRootDirectory: /hbase
 
+# Enable logging via the vector aggregator
+# Needs the name of configmap for discovery of the aggregator
+logging:
+  enabled: false
+  discoveryMap: "gbif-vector-aggregator-discovery"
+
 nodes:
   master:
     replicas: 1

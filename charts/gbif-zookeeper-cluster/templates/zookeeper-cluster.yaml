@@ -6,6 +6,13 @@ spec:
   image:
     productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
     stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
+  clusterConfig:
+{{- if .Values.logging.enabled  }}     
+    vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
+    databaseInitialization:
+      logging:
+        enableVectorAgent: true
+{{- end }}
   servers:
     roleGroups:
       default:

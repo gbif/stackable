@@ -60,6 +60,12 @@ persistedGeocodeLayerStorage:
 #   test2: test2Password
 customUsers:
 
+# Enable logging via the vector aggregator
+# Needs the name of configmap for discovery of the aggregator
+logging:
+  enabled: false
+  discoveryMap: "gbif-vector-aggregator-discovery"
+
 nodes:
   coordinator:
     replicas: 1

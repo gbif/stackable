@@ -26,6 +26,12 @@ useDataNodeHostName: "true"
 # For making node available for datanode, add label datanodes=enabled to the node
 useNodeAffinity: true
 
+# Enable logging via the vector aggregator
+# Needs the name of configmap for discovery of the aggregator
+logging:
+  enabled: false
+  discoveryMap: "gbif-vector-aggregator-discovery"
+
 # Note describing configurations for NFS and HTTPFS to propergate to the hadoop cluster
 gateway:
   httpfs:

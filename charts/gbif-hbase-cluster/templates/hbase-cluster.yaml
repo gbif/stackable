@@ -9,6 +9,12 @@ spec:
   clusterConfig:
     hdfsConfigMapName: {{ .Values.hdfsClusterName }}
     zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}-znode
+{{- if .Values.logging.enabled  }}     
+    vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
+    databaseInitialization:
+      logging:
+        enableVectorAgent: true
+{{- end }}
   masters:
     configOverrides:
       hbase-site.xml:

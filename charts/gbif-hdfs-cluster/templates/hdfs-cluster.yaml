@@ -9,6 +9,12 @@ spec:
   clusterConfig:
     zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}-znode
     dfsReplication: {{ .Values.dataReplication }}
+{{- if .Values.logging.enabled  }}     
+    vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
+    databaseInitialization:
+      logging:
+        enableVectorAgent: true
+{{- end }}
   nameNodes:
     roleGroups:
       default:
