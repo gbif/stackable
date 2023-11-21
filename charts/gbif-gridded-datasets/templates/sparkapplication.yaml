@@ -65,7 +65,7 @@ spec:
       memory:
         limit: {{ .Values.driver.mem }}
     volumeMounts:
-      - name: occurrence-config
+      - name: gbif-config
         mountPath: /etc/gbif
       - name: hadoop-env
         mountPath: /etc/hadoop/conf/core-site.xml
@@ -88,7 +88,7 @@ spec:
       memory:
         limit: {{ .Values.executor.mem }}
     volumeMounts:
-      - name: occurrence-config
+      - name: gbif-config
         mountPath: /etc/gbif
       - name: hadoop-env
         mountPath: /etc/hadoop/conf/core-site.xml

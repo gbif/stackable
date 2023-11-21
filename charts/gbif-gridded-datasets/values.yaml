@@ -1,12 +1,15 @@
 # Default values for the GBIF Spark application for creating a table in the registry with a list of gridded datasets.
 # Name of the application, chart uses the name to find the .jar file.
-appName: "gridded-datasets"
+appName: "gbif-gridded-datasets"
 
 # Stackable tag to use for the Spark application.
 stackTag: 3.3.0-stackable23.1.0
 
 # Main class for starting the Spark process.
 appClass: org.gbif.gridded.datasets.GriddedDatasets
+
+# Spark mode
+mode: cluster
 
 #Mode for installing. This is an implemtantion for selecting which objects to install.
 ## all: Installs both spark application and configmaps - will fail if configmap already exists
