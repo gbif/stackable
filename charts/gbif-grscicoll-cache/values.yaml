@@ -1,0 +1,37 @@
+# Default values for the GBIF Spark application for creating a table in the registry with a list of gridded datasets.
+# Name of the application, chart uses the name to find the .jar file.
+appName: "gbif-grscicoll-cache"
+
+# Stackable tag to use for the Spark application.
+stackTag: 3.3.0-stackable23.1.0
+
+# Main class for starting the Spark process.
+appClass: org.gbif.kvs.indexing.grscicoll.GrscicollPipelineWorkflow
+
+# Spark mode
+mode: cluster
+
+#Mode for installing. This is an implemtantion for selecting which objects to install.
+## all: Installs both spark application and configmaps - will fail if configmap already exists
+## config: Installs the configmaps maps into a namespace
+## app: Installs the spark application
+# The use case is for enabling templating only the application for use in Airflows or start an instance of spark within necessary updating the configsmaps
+installMode: config
+
+# Ressource configuration for spark driver.
+driver:
+  # Number of cores for the Spark driver.
+  core: 2
+  # Memory for the Spark driver.
+  mem: 2048m
+
+# Ressource configuration for spark executors.
+executor:
+  # Number of cores for each executor.
+  core: 6
+  # Memory for each executor.
+  mem: 6000m
+  # Number of executors.
+  instances: 6
+
+# Application configs

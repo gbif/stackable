@@ -1,0 +1,117 @@
+{{- if or (eq (lower .Values.installMode) "all") (eq (lower .Values.installMode) "app")  }}
+apiVersion: spark.stackable.tech/v1alpha1
+kind: SparkApplication
+metadata:
+  name: {{ include "gbif-chart-lib.fullname" . }}
+  labels:
+    {{- include "gbif-chart-lib.labels" . | nindent 4 }}
+spec:
+  version: {{ default .Chart.AppVersion .Values.image.tag}}
+  image: {{ default "docker.gbif.org/" .Values.image.repository }}{{ default .Chart.Name .Values.appName }}:{{ default .Chart.AppVersion .Values.image.tag}}
+  sparkImage: "docker.stackable.tech/stackable/spark-k8s:{{ required "Specific which spark / operator version to use" .Values.stackTag }}"
+  mode: {{ .Values.mode }}
+  mainApplicationFile: local:///stackable/spark/jobs/kvs-indexing.jar
+  mainClass: {{ .Values.appClass }}
+  deps:
+    repositories:
+      - https://repository.gbif.org/repository/central/
+    packages:
+      - org.apache.spark:spark-avro_2.12:3.4.0
+  args:
+    - "--runner=SparkRunner"
+    - "--hbaseZk=sc4n1.gbif.org:31228,sc4n2.gbif.org:31228,sc4n3.gbif.org:31228"
+    - "--table=occurrence_collections"
+    - "--targetTable=grscicoll_lookup_kv"
+    - "--baseApiUrl=http://api.gbif-uat.org/v1/"
+    - "--trinoServer=130.226.238.141:31843"
+    - "--trinoUser=gbif"
+    - "--trinoPassword=gbifP2023"
+    - "--trinoDbName=marcos"
+    - "--trinoTargetTable=occurrence_collections"
+    - "--saltedKeyBuckets=9"
+    - "--apiTimeOut=6000"
+    - "--restClientCacheMaxSize=64"
+  sparkConf:
+     "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+     "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+     "spark.jars.ivy": "/tmp"
+     "spark.broadcast.compress": "true"
+     "spark.checkpoint.compress": "true"
+     "spark.executor.memoryOverhead": "4096"
+     "spark.executor.heartbeatInterval": "10s"
+     "spark.network.timeout": "60s"
+     "spark.io.compression.codec": "lz4"
+     "spark.rdd.compress": "true"
+     "spark.driver.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/etc/gbif/"
+     "spark.executor.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/etc/gbif/"
+     "spark.kubernetes.authenticate.driver.serviceAccountName": "gbif-spark-sa"
+  volumes:
+    - name: gbif-config
+      configMap:
+        name: {{ include "gbif-chart-lib.name" . }}-conf
+    - name: hadoop-env
+      configMap:
+        name: {{ .Values.hdfs.clusterName }}
+        items:
+        - key: core-site.xml
+          path: core-site.xml
+        - key: hdfs-site.xml
+          path: hdfs-site.xml
+    - name: hive-env
+      configMap:
+        name: {{ .Values.hive.clusterName }}-custom
+        items:
+        - key: hive-site.xml
+          path: hive-site.xml
+    - name: hbase-env
+      configMap:
+        name: {{ .Values.hbase.clusterName }}
+        items:
+        - key: hbase-site.xml
+          path: hbase-site.xml
+  driver:
+    resources:
+      cpu:
+        min: "100m"
+        max: {{ .Values.driver.core }}
+      memory:
+        limit: {{ .Values.driver.mem }}
+    volumeMounts:
+      - name: gbif-config
+        mountPath: /etc/gbif
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf/core-site.xml
+        subPath: core-site.xml
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf/hdfs-site.xml
+        subPath: hdfs-site.xml
+      - name: hive-env
+        mountPath: /etc/hadoop/conf/hive-site.xml
+        subPath: hive-site.xml
+      - name: hbase-env
+        mountPath: /etc/hadoop/conf/hbase-site.xml
+        subPath: hbase-site.xml
+  executor:
+    instances: {{ .Values.executor.instances }}
+    resources:
+      cpu:
+        min: "100m"
+        max: {{ .Values.executor.core }}
+      memory:
+        limit: {{ .Values.executor.mem }}
+    volumeMounts:
+      - name: gbif-config
+        mountPath: /etc/gbif
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf/core-site.xml
+        subPath: core-site.xml
+      - name: hadoop-env
+        mountPath: /etc/hadoop/conf/hdfs-site.xml
+        subPath: hdfs-site.xml
+      - name: hive-env
+        mountPath: /etc/hadoop/conf/hive-site.xml
+        subPath: hive-site.xml
+      - name: hbase-env
+        mountPath: /etc/hadoop/conf/hbase-site.xml
+        subPath: hbase-site.xml
+{{- end }}
