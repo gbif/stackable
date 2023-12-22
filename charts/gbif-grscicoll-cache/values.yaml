@@ -34,4 +34,8 @@ executor:
   # Number of executors.
   instances: 6
 
+hdfs:
+  # Name of the Stackabl HdfsCluster in the namespace.
+  clusterName: gbif-hdfs
+
 # Application configs
