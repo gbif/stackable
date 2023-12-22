@@ -32,7 +32,7 @@ spec:
     - "--apiTimeOut=6000"
     - "--restClientCacheMaxSize=64"
   sparkConf:
-     "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+    "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
      "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
      "spark.jars.ivy": "/tmp"
      "spark.broadcast.compress": "true"
@@ -45,6 +45,7 @@ spec:
      "spark.driver.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/etc/gbif/"
      "spark.executor.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/etc/gbif/"
      "spark.kubernetes.authenticate.driver.serviceAccountName": "gbif-spark-sa"
+     "spark.dynamicAllocation.enable":"false"
   volumes:
     - name: gbif-config
       configMap:
