@@ -39,3 +39,19 @@ hdfs:
   clusterName: gbif-hdfs
 
 # Application configs
+api:
+  baseUrl:
+  timeOut:
+  restClientCacheMaxSize:
+
+hbase:
+  zk:
+  targetTable:
+  saltedKeyBuckets:
+
+trino:
+  server:
+  user:
+  password:
+  dbName:
+  targetTable:
