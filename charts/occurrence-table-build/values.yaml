@@ -1,0 +1,78 @@
+# Default values for GBIF Spark application for process data and prepare map tiles.
+# Name of the application, chart uses the name to find the .jar file.
+appName: "occurrence-table-builder-spark"
+# Repository and tag for finding the image if selfhosted.
+image:
+  repository: ""
+  tag: "1.0.0"
+
+# Stackable tag to use for the Spark application.
+stackTag: 3.3.4-stackable23.7.0
+# Spark running mode, currently only cluster is supported.
+mode: cluster
+# Main class for starting the Spark process.
+appClass: org.gbif.occurrence.table.backfill.TableBackfill
+
+# Ressource configuration for spark driver.
+driver:
+  # Number of cores for the Spark driver.
+  core: "4000m"
+  # Memory for the Spark driver.
+  mem: "3Gi"
+
+# Ressource configuration for spark executors.
+executor:
+  # Number of cores for each executor.
+  core: "6000m"
+  # Memory for each executor.
+  mem: "12Gi"
+  # Number of executors.
+  instances: 6
+
+nameOverride: ""
+fullnameOverride: ""
+
+#Mode for installing. This is a implemtantion for selecting which objects to install.
+## all: Installs both spark application and configmaps - will fail if configmap already exists
+## config: Installs the configmaps maps into a namespace
+## app: Installs the spark application
+# The use case is for enabling templating only the application for use in Airflows or start an instance of spark within necessary updating the configsmaps
+installMode: config
+
+hdfs:
+  # Name of the Stackabl HdfsCluster in the namespace.
+  clusterName: gbif-hdfs
+  # Directory of the source data, needs to be created beforehand in the HDFS cluster.
+  sourceDir: /data/hdfsview/
+  # Source directory of the data loaded into the HDFS cluster.
+  sourceSubDir: occurrence
+  # Target directory for the produced HFiles from the Spark application. Currently needs to be cleaned afeter each run.
+  targetDir: /hive/
+  # Space in zookeeper to place the lock
+  namespace: KUBE_index
+  # Path to place the lock
+  lockPath: /hive/
+  # Lock name
+  lockName: hdfsview
+  # Timeout time for each try, set in ms.
+  sleepMs: 100
+  # Number of retries
+  retries: 5
+
+zookeeper:
+  quorum: ""
+  
+hive:
+  # Name of the hive database
+  databaseName: gbif
+  # Name of the table to create and store the information in
+  tableName: KUBE
+  # Number of partitioning to use for the table - Set to nothing if you want to disable partitioning of the table
+  partition: 10
+  # Name of the hive cluster
+  clusterName: gbif-hive
+
+hbase:
+  # Name of the hbase cluster
+  clusterName: gbif-hbase
+  

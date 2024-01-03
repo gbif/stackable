@@ -1,0 +1,26 @@
+{{- if or (eq (lower .Values.installMode) "all") (eq (lower .Values.installMode) "config")  }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "gbif-chart-lib.name" . }}-conf
+data:
+  config.yaml: |
+    appName: map-builder
+    snapshotDirectory: hdfs://{{ .Values.hdfs.clusterName }}/{{ .Values.hdfs.snapshotDir }}
+    sourceSubdirectory: {{ .Values.hdfs.sourceSubDir }}
+    targetDirectory: hdfs://{{ .Values.hdfs.clusterName }}/{{ .Values.hdfs.targetDir }}
+    tilesThreshold: {{ .Values.map.tileThreshold }}
+    hiveDB: {{ .Values.hive.schema }}
+    maxZoom: {{ .Values.map.zoom }}
+    tileSize: {{ .Values.map.tileSize }}
+    tileBufferSize: {{ .Values.map.tileBuffer }}
+    hbase:
+      keySaltModulus: {{ .Values.hbase.saltModulus }}
+      tableName: {{ .Values.hbase.tableName }}
+    hdfsLockConfig:
+      namespace: {{ .Values.hdfs.namespace }}
+      lockingPath: {{ .Values.hdfs.lockPath }}
+      lockName: {{ .Values.hdfs.lockName }}
+      sleepTimeMs: {{ .Values.hdfs.sleepMs }}
+      maxRetries: {{ .Values.hdfs.retries }}
+{{- end }}
