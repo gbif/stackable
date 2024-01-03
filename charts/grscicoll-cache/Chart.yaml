@@ -1,6 +1,6 @@
 apiVersion: v2
-name: gbif-grscicoll-cache
-description: Chart for deploying a Stackable Spark application for creating table in registry with a list of gridded datasets
+name: grscicoll-cache
+description: Chart for deploying a Stackable Spark application for creating the grscicoll cache
 
 # A chart can be either an 'application' or a 'library' chart.
 #

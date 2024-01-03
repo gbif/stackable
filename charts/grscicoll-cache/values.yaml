@@ -1,6 +1,6 @@
 # Default values for the GBIF Spark application for creating a table in the registry with a list of gridded datasets.
 # Name of the application, chart uses the name to find the .jar file.
-appName: "gbif-grscicoll-cache"
+appName: "grscicoll-cache"
 
 # Repository and tag for finding the image if selfhosted.
 image:
