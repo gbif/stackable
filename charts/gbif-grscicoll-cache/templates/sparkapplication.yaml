@@ -19,18 +19,17 @@ spec:
       - org.apache.spark:spark-avro_2.12:3.4.0
   args:
     - "--runner=SparkRunner"
-    - "--hbaseZk=sc4n1.gbif.org:31228,sc4n2.gbif.org:31228,sc4n3.gbif.org:31228"
-    - "--table=occurrence_collections"
-    - "--targetTable=grscicoll_lookup_kv"
-    - "--baseApiUrl=http://api.gbif-uat.org/v1/"
-    - "--trinoServer=130.226.238.141:31843"
-    - "--trinoUser=gbif"
-    - "--trinoPassword=gbifP2023"
-    - "--trinoDbName=marcos"
-    - "--trinoTargetTable=occurrence_collections"
-    - "--saltedKeyBuckets=9"
-    - "--apiTimeOut=6000"
-    - "--restClientCacheMaxSize=64"
+    - "--hbaseZk="{{ .Values.hbase.zk }}
+    - "--targetTable="{{ .Values.hbase.targetTable }}
+    - "--baseApiUrl="{{ .Values.api.baseUrl }}
+    - "--trinoServer="{{ .Values.trino.server }}
+    - "--trinoUser="{{ .Values.trino.user }}
+    - "--trinoPassword="{{ .Values.trino.password }}
+    - "--trinoDbName="{{ .Values.trino.dbName }}
+    - "--trinoTargetTable="{{ .Values.trino.targetTable }}
+    - "--saltedKeyBuckets="{{ .Values.hbase.saltedKeyBuckets }}
+    - "--apiTimeOut="{{ .Values.api.timeOut }}
+    - "--restClientCacheMaxSize="{{ .Values.api.restClientCacheMaxSize }}
   sparkConf:
     "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
      "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
