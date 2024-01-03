@@ -2,6 +2,11 @@
 # Name of the application, chart uses the name to find the .jar file.
 appName: "gbif-grscicoll-cache"
 
+# Repository and tag for finding the image if selfhosted.
+image:
+  repository: ""
+  tag: "1.0.0"
+
 # Stackable tag to use for the Spark application.
 stackTag: 3.3.0-stackable23.1.0
 
@@ -16,7 +21,7 @@ mode: cluster
 ## config: Installs the configmaps maps into a namespace
 ## app: Installs the spark application
 # The use case is for enabling templating only the application for use in Airflows or start an instance of spark within necessary updating the configsmaps
-installMode: config
+installMode: all
 
 # Ressource configuration for spark driver.
 driver:
@@ -40,18 +45,20 @@ hdfs:
 
 # Application configs
 api:
-  baseUrl:
-  timeOut:
-  restClientCacheMaxSize:
+  baseUrl: http://api.gbif-dev.org/v1/
+  timeOut: 6000
+  restClientCacheMaxSize: 64
 
 hbase:
-  zk:
-  targetTable:
-  saltedKeyBuckets:
+  # Name of the hbase cluster
+  clusterName: gbif-hbase
+  zk: zookeeper-node
+  targetTable: grscicoll_lookup_kv
+  saltedKeyBuckets: 9
 
 trino:
-  server:
-  user:
-  password:
-  dbName:
-  targetTable:
+  server: trino-default.service
+  user: user
+  password: 
+  dbName: database
+  targetTable: target

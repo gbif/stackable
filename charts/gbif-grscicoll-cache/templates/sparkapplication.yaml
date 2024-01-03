@@ -18,33 +18,22 @@ spec:
     packages:
       - org.apache.spark:spark-avro_2.12:3.4.0
   args:
-    - "--runner=SparkRunner"
-    - "--hbaseZk="{{ .Values.hbase.zk }}
-    - "--targetTable="{{ .Values.hbase.targetTable }}
-    - "--baseApiUrl="{{ .Values.api.baseUrl }}
-    - "--trinoServer="{{ .Values.trino.server }}
-    - "--trinoUser="{{ .Values.trino.user }}
-    - "--trinoPassword="{{ .Values.trino.password }}
-    - "--trinoDbName="{{ .Values.trino.dbName }}
-    - "--trinoTargetTable="{{ .Values.trino.targetTable }}
-    - "--saltedKeyBuckets="{{ .Values.hbase.saltedKeyBuckets }}
-    - "--apiTimeOut="{{ .Values.api.timeOut }}
-    - "--restClientCacheMaxSize="{{ .Values.api.restClientCacheMaxSize }}
+    - "/etc/gbif/config.yml"
   sparkConf:
     "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
-     "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
-     "spark.jars.ivy": "/tmp"
-     "spark.broadcast.compress": "true"
-     "spark.checkpoint.compress": "true"
-     "spark.executor.memoryOverhead": "4096"
-     "spark.executor.heartbeatInterval": "10s"
-     "spark.network.timeout": "60s"
-     "spark.io.compression.codec": "lz4"
-     "spark.rdd.compress": "true"
-     "spark.driver.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/etc/gbif/"
-     "spark.executor.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/etc/gbif/"
-     "spark.kubernetes.authenticate.driver.serviceAccountName": "gbif-spark-sa"
-     "spark.dynamicAllocation.enable":"false"
+    "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+    "spark.jars.ivy": "/tmp"
+    "spark.broadcast.compress": "true"
+    "spark.checkpoint.compress": "true"
+    "spark.executor.memoryOverhead": "4096"
+    "spark.executor.heartbeatInterval": "10s"
+    "spark.network.timeout": "60s"
+    "spark.io.compression.codec": "lz4"
+    "spark.rdd.compress": "true"
+    "spark.driver.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/etc/gbif/"
+    "spark.executor.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/etc/gbif/"
+    "spark.kubernetes.authenticate.driver.serviceAccountName": "gbif-spark-sa"
+    "spark.dynamicAllocation.enable": "false"
   volumes:
     - name: gbif-config
       configMap:
@@ -57,12 +46,6 @@ spec:
           path: core-site.xml
         - key: hdfs-site.xml
           path: hdfs-site.xml
-    - name: hive-env
-      configMap:
-        name: {{ .Values.hive.clusterName }}-custom
-        items:
-        - key: hive-site.xml
-          path: hive-site.xml
     - name: hbase-env
       configMap:
         name: {{ .Values.hbase.clusterName }}
@@ -85,9 +68,6 @@ spec:
       - name: hadoop-env
         mountPath: /etc/hadoop/conf/hdfs-site.xml
         subPath: hdfs-site.xml
-      - name: hive-env
-        mountPath: /etc/hadoop/conf/hive-site.xml
-        subPath: hive-site.xml
       - name: hbase-env
         mountPath: /etc/hadoop/conf/hbase-site.xml
         subPath: hbase-site.xml
@@ -108,9 +88,6 @@ spec:
       - name: hadoop-env
         mountPath: /etc/hadoop/conf/hdfs-site.xml
         subPath: hdfs-site.xml
-      - name: hive-env
-        mountPath: /etc/hadoop/conf/hive-site.xml
-        subPath: hive-site.xml
       - name: hbase-env
         mountPath: /etc/hadoop/conf/hbase-site.xml
         subPath: hbase-site.xml
