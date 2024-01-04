@@ -43,24 +43,30 @@ airflowRedis:
   pass: ""
 
 nodes:
-  webservers:
+  webserver:
     replicas: '1'
     cpu:
       min: '100m'
       max: '2000m'
     memory: '4Gi'
-  workers:
+    # Port for setting up node port given node - Leave empty to not setup port
+    ports: {}
+  worker:
     replicas: '3'
     cpu:
       min: '100m'
       max: '3000m'
     memory: '8Gi'
-  schedulers:
+    # Port for setting up node port given node - Leave empty to not setup port
+    ports: {}
+  scheduler:
     replicas: '1'
     cpu:
       min: '100m'
       max: '1000m'
     memory: '2Gi'
+    # Port for setting up node port given node - Leave empty to not setup port
+    ports: {}
 
 storageCapacity: '2Gi'
 
