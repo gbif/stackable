@@ -9,6 +9,14 @@ spec:
     tls:
       selfSignedCertificate:
         disabled: true
+  # Setting Elastic to read secrets for fileRealm if they exists in the values files
+  {{- if .Values.customUsers }}
+  auth:
+    fileRealm:
+  {{- range $index, $value := .Values.customUsers }}
+    - secretName: {{ include "gbif-chart-lib.name" $ }}-user-{{ $index }} 
+  {{- end }}
+  {{- end }}
   nodeSets:
   - name: managers
     count: {{ .Values.nodes.manager.replicas }}

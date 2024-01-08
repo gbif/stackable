@@ -5,6 +5,18 @@ fullnameOverride: ""
 
 memoryPagingAllow: true
 
+# users that should be created for the cluster at cluster creation time
+# example of who it could look:
+# customUsers:
+# - name: test1
+#   password: test1Password
+#   roles: "a_role"
+# - name: test2
+#   password: test2Password
+#   roles: "another_role"
+
+customUsers: []
+
 nodes:
   manager:
     replicas: 1
@@ -16,11 +28,7 @@ nodes:
       storage:
         class: local-path
         capacity: '25Gi'
-    #GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
-    ports:
-      tcp:
-        appPort: 9200
-        nodePort: 31920
+    ports: {}
   worker:
     replicas: 1
     resources:
