@@ -10,7 +10,7 @@ spec:
   image: {{ default "docker.gbif.org/" .Values.image.repository }}{{ default .Chart.Name .Values.appName }}:{{ default .Chart.AppVersion .Values.image.tag}}
   sparkImage: "docker.stackable.tech/stackable/spark-k8s:{{ required "Specific which spark / operator version to use" .Values.stackTag }}"
   mode: {{ .Values.mode }}
-  mainApplicationFile: local:///stackable/spark/jobs/kvs-indexing.jar
+  mainApplicationFile: local:///stackable/spark/jobs/gbif-occurrence-table.jar
   mainClass: {{ .Values.appClass }}
   deps:
     repositories:
@@ -18,20 +18,11 @@ spec:
     packages:
       - org.apache.spark:spark-avro_2.12:3.4.0
   args:
-    - "--runner=SparkRunner"
-    - "--hbaseZk="{{ .Values.hbase.zk }}
-    - "--targetTable="{{ .Values.hbase.targetTable }}
-    - "--baseApiUrl="{{ .Values.api.baseUrl }}
-    - "--trinoServer="{{ .Values.trino.server }}
-    - "--trinoUser="{{ .Values.trino.user }}
-    - "--trinoPassword="{{ .Values.trino.password }}
-    - "--trinoDbName="{{ .Values.trino.dbName }}
-    - "--trinoTargetTable="{{ .Values.trino.targetTable }}
-    - "--saltedKeyBuckets="{{ .Values.hbase.saltedKeyBuckets }}
-    - "--apiTimeOut="{{ .Values.api.timeOut }}
-    - "--restClientCacheMaxSize="{{ .Values.api.restClientCacheMaxSize }}
+    - "config.yml"
+    - "CREATE"
+    - "table"
   sparkConf:
-    "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
+     "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
      "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
      "spark.jars.ivy": "/tmp"
      "spark.broadcast.compress": "true"
@@ -41,12 +32,11 @@ spec:
      "spark.network.timeout": "60s"
      "spark.io.compression.codec": "lz4"
      "spark.rdd.compress": "true"
-     "spark.driver.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/etc/gbif/"
-     "spark.executor.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/etc/gbif/"
+     "spark.driver.extraClassPath": "/etc/gbif/:/etc/hadoop/conf/:/stackable/spark/extra-jars/*"
+     "spark.executor.extraClassPath": "/etc/gbif/:/etc/hadoop/conf/:/stackable/spark/extra-jars/*"
      "spark.kubernetes.authenticate.driver.serviceAccountName": "gbif-spark-sa"
-     "spark.dynamicAllocation.enable":"false"
   volumes:
-    - name: gbif-config
+    - name: occurrence-config
       configMap:
         name: {{ include "gbif-chart-lib.name" . }}-conf
     - name: hadoop-env
@@ -77,7 +67,7 @@ spec:
       memory:
         limit: {{ .Values.driver.mem }}
     volumeMounts:
-      - name: gbif-config
+      - name: occurrence-config
         mountPath: /etc/gbif
       - name: hadoop-env
         mountPath: /etc/hadoop/conf/core-site.xml
@@ -100,7 +90,7 @@ spec:
       memory:
         limit: {{ .Values.executor.mem }}
     volumeMounts:
-      - name: gbif-config
+      - name: occurrence-config
         mountPath: /etc/gbif
       - name: hadoop-env
         mountPath: /etc/hadoop/conf/core-site.xml
