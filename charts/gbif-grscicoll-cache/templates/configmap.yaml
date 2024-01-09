@@ -11,6 +11,7 @@ data:
     hbaseZk={{ .Values.hbase.zk }}
     hbaseTargetTable={{ .Values.hbase.targetTable }}
     hbaseSaltedKeyBuckets={{ .Values.hbase.saltedKeyBuckets }}
+    hbaseZkNode={{ .Values.hbase.zkNode }}
     trinoServer={{ .Values.trino.server }}
     trinoUser={{ .Values.trino.user }}
     trinoPassword={{ .Values.trino.password }}
