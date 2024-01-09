@@ -48,7 +48,7 @@ hbase:
   zk:
   targetTable:
   saltedKeyBuckets:
-  zkNode: /znode-a18f3508-1c3f-470f-b3fe-392d52b79eff/hbase
+  zkNode: 
 
 trino:
   server:
