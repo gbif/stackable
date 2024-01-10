@@ -16,9 +16,9 @@ spec:
     repositories:
       - https://repository.gbif.org/repository/central/
     packages:
-      - org.apache.spark:spark-avro_2.12:3.4.0
+      - org.apache.spark:spark-avro_2.12:3.3.0
   args:
-    - "/etc/gbif/config.yml"
+    - "/etc/gbif/config.properties"
   sparkConf:
     "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
     "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
