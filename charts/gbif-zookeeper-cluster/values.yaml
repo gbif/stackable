@@ -12,22 +12,26 @@ stackVersion: "23.7.0"
 # Enable logging via the vector aggregator
 # Needs the name of configmap for discovery of the aggregator
 logging:
+  # property for enable vector logging
   enabled: false
+  # DisoveryMap for the connection the aggregator pod
   discoveryMap: "gbif-vector-aggregator-discovery"
+  # Configured which vector itself logs on its own.
+  vectorLogLevel: "WARN"
 
 nodes:
   server:
     # Number of instances
     replicas: 3
-    resources:
-      # CPU allocation in milicores for each instance
-      cpu:
-        min: '100m'
-        max: '2000m'
-      # Memory allocation for each instance
-      memory: '4Gi'
-      # Storage allocation for each instance
-      storage: '5Gi'
+    # CPU allocation in milicores for each instance
+    cpu:
+      min: '100m'
+      max: '2000m'
+    # Memory allocation for each instance
+    memory: '4Gi'
+    logLevel: 'INFO'
+    # Storage allocation for each instance
+    storage: '5Gi'
     #GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
     ports:
       tcp:

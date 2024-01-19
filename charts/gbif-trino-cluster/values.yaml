@@ -63,8 +63,12 @@ customUsers: []
 # Enable logging via the vector aggregator
 # Needs the name of configmap for discovery of the aggregator
 logging:
+  # property for enable vector logging
   enabled: false
+  # DisoveryMap for the connection the aggregator pod
   discoveryMap: "gbif-vector-aggregator-discovery"
+  # Configured which vector itself logs on its own.
+  vectorLogLevel: "WARN"
 
 nodes:
   coordinator:
@@ -73,6 +77,7 @@ nodes:
       min: '100m'
       max: '2000m'
     memory: '2Gi'
+    logLevel: "INFO"
     storage:
       capacity: '4Gi'
     #GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
@@ -86,6 +91,7 @@ nodes:
       min: '100m'
       max: '6000m'
     memory: '8Gi'
+    logLevel: "INFO"
     storage:
       capacity: '8Gi'
     #GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster

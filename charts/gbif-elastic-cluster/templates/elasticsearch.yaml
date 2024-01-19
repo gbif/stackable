@@ -10,11 +10,19 @@ spec:
       selfSignedCertificate:
         disabled: true
   # Setting Elastic to read secrets for fileRealm if they exists in the values files
-  {{- if .Values.customUsers }}
+  {{- if or .Values.customUsers .Values.customRoles }}
   auth:
+  {{- if .Values.customUsers }}
     fileRealm:
   {{- range $index, $value := .Values.customUsers }}
     - secretName: {{ include "gbif-chart-lib.name" $ }}-user-{{ $index }} 
+  {{- end }}
+  {{- end }}
+   {{- if .Values.customUsers }}
+    roles:
+  {{- range $index, $value := .Values.customRoles }}
+    - secretName: {{ include "gbif-chart-lib.name" $ }}-role-{{ $index }} 
+  {{- end }}
   {{- end }}
   {{- end }}
   nodeSets:

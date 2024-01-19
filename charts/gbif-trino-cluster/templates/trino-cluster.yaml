@@ -14,9 +14,6 @@ spec:
   clusterConfig:
 {{- if .Values.logging.enabled  }}     
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
-    databaseInitialization:
-      logging:
-        enableVectorAgent: true
 {{- end }}
     authentication:
     - authenticationClass: {{ include "gbif-chart-lib.name" . }}-auth
@@ -37,6 +34,22 @@ spec:
             storage:
               data:
                 capacity: {{ .Values.nodes.coordinator.storage.capacity }}
+{{- if .Values.logging.enabled  }}
+          logging:
+            enableVectorAgent: true
+            containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
+              trino:
+                console:
+                  level: {{ .Values.nodes.coordinator.logLevel }}
+                file:
+                  level: {{ .Values.nodes.coordinator.logLevel }}
+                loggers:
+                  io.trino:
+                    level: {{ .Values.nodes.coordinator.logLevel }}
+{{- end }}
 {{- if .Values.persistedGeocodeLayerStorage.enabled }}
         podOverrides:
           spec:
@@ -69,6 +82,22 @@ spec:
             storage:
               data:
                 capacity: {{ .Values.nodes.worker.storage.capacity }}
+{{- if .Values.logging.enabled  }}
+          logging:
+            enableVectorAgent: true
+            containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
+              trino:
+                console:
+                  level: {{ .Values.nodes.worker.logLevel }}
+                file:
+                  level: {{ .Values.nodes.worker.logLevel }}
+                loggers:
+                  io.trino:
+                    level: {{ .Values.nodes.worker.logLevel }}
+{{- end }}
 {{- if .Values.persistedGeocodeLayerStorage.enabled }}
         podOverrides:
           spec:

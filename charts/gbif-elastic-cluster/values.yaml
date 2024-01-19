@@ -5,7 +5,7 @@ fullnameOverride: ""
 
 memoryPagingAllow: true
 
-# users that should be created for the cluster at cluster creation time
+# users that should be created for the cluster at creation
 # example of who it could look:
 # customUsers:
 # - name: test1
@@ -13,9 +13,14 @@ memoryPagingAllow: true
 #   roles: "a_role"
 # - name: test2
 #   password: test2Password
-#   roles: "another_role"
+#   roles: another_role,a_third_role
 
 customUsers: []
+
+# Roles that should be created for the cluster at creation
+# WIP simple structure for a single role so no example yet
+
+customRoles: []
 
 nodes:
   manager:

@@ -70,8 +70,12 @@ airflowRedis:
 # Enable logging via the vector aggregator
 # Needs the name of configmap for discovery of the aggregator
 logging:
+  # property for enable vector logging
   enabled: false
+  # DisoveryMap for the connection the aggregator pod
   discoveryMap: "gbif-vector-aggregator-discovery"
+  # Configured which vector itself logs on its own.
+  vectorLogLevel: "WARN"
 
 nodes:
   webservers:

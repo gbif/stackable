@@ -11,9 +11,6 @@ spec:
     dfsReplication: {{ .Values.dataReplication }}
 {{- if .Values.logging.enabled  }}     
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
-    databaseInitialization:
-      logging:
-        enableVectorAgent: true
 {{- end }}
   nameNodes:
     roleGroups:
@@ -29,7 +26,23 @@ spec:
                 capacity: {{ .Values.nodes.namenode.storage.capacity }}
             memory:
               limit: {{ .Values.nodes.namenode.memory }}
-          {{- if eq .Values.useNodeAffinity true}}
+{{- if .Values.logging.enabled  }}
+          logging:
+            enableVectorAgent: true
+            containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
+              namenode:
+                console:
+                  level: {{ .Values.nodes.namenode.logLevel }}
+                file:
+                  level: {{ .Values.nodes.namenode.logLevel }}
+                loggers:
+                  ROOT:
+                    level: {{ .Values.nodes.namenode.logLevel }}
+{{- end }}
+{{- if eq .Values.useNodeAffinity true}}
           affinity:
             nodeAffinity: 
               requiredDuringSchedulingIgnoredDuringExecution:
@@ -39,7 +52,7 @@ spec:
                     operator: In
                     values:
                     - enabled
-          {{- end }}
+{{- end }}
         configOverrides:
           hdfs-site.xml:
             dfs.client.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
@@ -76,7 +89,23 @@ spec:
               data:
                 capacity: {{ .Values.nodes.datanode.storage.capacity }}
             {{- end }}
-          {{- if eq .Values.useNodeAffinity true }}
+{{- if .Values.logging.enabled  }}
+          logging:
+            enableVectorAgent: true
+            containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
+              datanode:
+                console:
+                  level: {{ .Values.nodes.datanode.logLevel }}
+                file:
+                  level: {{ .Values.nodes.datanode.logLevel }}
+                loggers:
+                  ROOT:
+                    level: {{ .Values.nodes.datanode.logLevel }}
+{{- end }}
+{{- if eq .Values.useNodeAffinity true }}
           affinity:
             nodeAffinity: 
               requiredDuringSchedulingIgnoredDuringExecution:
@@ -86,7 +115,7 @@ spec:
                     operator: In
                     values:
                     - enabled
-          {{- end }}
+{{- end }}
         configOverrides:
           hdfs-site.xml:
             dfs.client.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
@@ -112,6 +141,22 @@ spec:
             storage:
               data:
                 capacity: {{ .Values.nodes.journalnode.storage.capacity }}
+{{- if .Values.logging.enabled  }}
+          logging:
+            enableVectorAgent: true
+            containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
+              journalnode:
+                console:
+                  level: {{ .Values.nodes.journalnode.logLevel }}
+                file:
+                  level: {{ .Values.nodes.journalnode.logLevel }}
+                loggers:
+                  ROOT:
+                    level: {{ .Values.nodes.journalnode.logLevel }}
+{{- end }}
         configOverrides:
           hdfs-site.xml:
             dfs.client.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"

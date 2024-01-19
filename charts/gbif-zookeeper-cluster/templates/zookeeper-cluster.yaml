@@ -9,9 +9,6 @@ spec:
   clusterConfig:
 {{- if .Values.logging.enabled  }}     
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
-    databaseInitialization:
-      logging:
-        enableVectorAgent: true
 {{- end }}
   servers:
     roleGroups:
@@ -20,13 +17,31 @@ spec:
         config:
           resources:
             cpu:
-              max: {{ .Values.nodes.server.resources.cpu.max }}
-              min: {{ .Values.nodes.server.resources.cpu.min }}
+              max: {{ .Values.nodes.server.cpu.max }}
+              min: {{ .Values.nodes.server.cpu.min }}
             storage:
               data:
-                capacity: {{ .Values.nodes.server.resources.storage }}
+                capacity: {{ .Values.nodes.server.storage }}
             memory:
-              limit: {{ .Values.nodes.server.resources.memory }}
+              limit: {{ .Values.nodes.server.memory }}
+{{- if .Values.logging.enabled  }}
+          logging:
+            enableVectorAgent: true
+            containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
+              zookeeper:
+                console:
+                  level: {{ .Values.nodes.server.logLevel }}
+                file:
+                  level: {{ .Values.nodes.server.logLevel }}
+                loggers:
+                  ROOT:
+                    level: {{ .Values.nodes.server.logLevel }}
+                  org.apache.zookeeper.server.NettyServerCnxn:
+                    level: NONE
+{{- end }}
           affinity:
             nodeAffinity: 
               requiredDuringSchedulingIgnoredDuringExecution:

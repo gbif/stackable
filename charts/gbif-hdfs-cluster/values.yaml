@@ -29,8 +29,12 @@ useNodeAffinity: true
 # Enable logging via the vector aggregator
 # Needs the name of configmap for discovery of the aggregator
 logging:
+  # property for enable vector logging
   enabled: false
+  # DisoveryMap for the connection the aggregator pod
   discoveryMap: "gbif-vector-aggregator-discovery"
+  # Configured which vector itself logs on its own.
+  vectorLogLevel: "WARN"
 
 # Note describing configurations for NFS and HTTPFS to propergate to the hadoop cluster
 gateway:
@@ -48,6 +52,7 @@ gateway:
     directoryToExport: "/occurrence-download/some-directory"
     # Hosts and their access to the system
     exportAccess: "* ro"
+    
 nodes:
   datanode:
     replicas: 1
@@ -55,6 +60,7 @@ nodes:
       min: '100m'
       max: '1000m'
     memory: '2Gi'
+    logLevel: "INFO"
     # The storage structure allows for defining node specific drives created by the cluster administrator
     # If you want to let the cluster deploy the storage, you can do the following:
     # storage:
@@ -82,6 +88,7 @@ nodes:
       min: '100m'
       max: '2000m'
     memory: '3Gi'
+    logLevel: "INFO"
     storage:
       capacity: '15Gi'
     # Allow for specifying nodeports for exposing the pods to VMs outside the kubenetes cluster on the internal network
@@ -100,6 +107,7 @@ nodes:
       min: '100m'
       max: '2000m'
     memory: '2Gi'
+    logLevel: "INFO"
     storage:
       capacity: '15Gi'
     # Currently no support for external port in our service template for journalnode exposure

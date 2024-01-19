@@ -32,9 +32,6 @@ spec:
 {{- end }}
 {{- if .Values.logging.enabled  }}     
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
-    databaseInitialization:
-      logging:
-        enableVectorAgent: true
 {{- end }}
   webservers:
     roleGroups:
@@ -55,7 +52,14 @@ spec:
           logging:
             enableVectorAgent: true
             containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
               airflow:
+                console:
+                  level: {{ .Values.nodes.webservers.logLevel }}
+                file:
+                  level: {{ .Values.nodes.webservers.logLevel }}
                 loggers:
                   "flask_appbuilder":
                     level: {{ .Values.nodes.webservers.logLevel }}
@@ -79,7 +83,14 @@ spec:
           logging:
             enableVectorAgent: true
             containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
               airflow:
+                console:
+                  level: {{ .Values.nodes.workers.logLevel }}
+                file:
+                  level: {{ .Values.nodes.workers.logLevel }}
                 loggers:
                   "airflow.processor":
                     level: {{ .Values.nodes.workers.logLevel }}
@@ -103,7 +114,14 @@ spec:
           logging:
             enableVectorAgent: true
             containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
               airflow:
+                console:
+                  level: {{ .Values.nodes.schedulers.logLevel }}
+                file:
+                  level: {{ .Values.nodes.schedulers.logLevel }}
                 loggers:
                   "airflow.processor_manager":
                     level: {{ .Values.nodes.schedulers.logLevel }}
