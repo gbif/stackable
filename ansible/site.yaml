@@ -1,3 +1,0 @@
-# Main playbook containing playbooks for the two nodes
-- import_playbook: controllernodes.yaml
-- import_playbook: workernodes.yaml

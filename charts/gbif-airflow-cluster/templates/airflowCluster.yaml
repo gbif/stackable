@@ -12,8 +12,6 @@ spec:
     stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
 {{- end }}
   clusterConfig:
-    statsdExporterVersion: v{{ .Values.statsdVersion }}
-    executor: {{ .Values.executor }}
     loadExamples: {{ .Values.examples }}
     exposeConfig: {{ .Values.exposeConfigs }}
     credentialsSecret: {{ include "gbif-chart-lib.name" . }}-credentials
@@ -64,7 +62,7 @@ spec:
                   "flask_appbuilder":
                     level: {{ .Values.nodes.webservers.logLevel }}
 {{- end }}
-  workers:
+  celeryExecutors:
     roleGroups:
       default:
 {{- if .Values.airflowEnvOverrides }}
