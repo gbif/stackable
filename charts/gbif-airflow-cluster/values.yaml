@@ -41,16 +41,7 @@ exposeConfigs: false
 #     token: a_token
 #     
 
-
-git: 
-  repository: test
-  branch: my
-  dagFolder: some folder
-  depth: 1
-  wait: 30
-  auth: 
-    name: my_user
-    token: my_password
+git: {}
 
 # Admin user for Airflow, will be created as a secret
 admin:
