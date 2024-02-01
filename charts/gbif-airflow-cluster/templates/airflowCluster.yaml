@@ -22,8 +22,8 @@ spec:
         gitFolder: {{ .Values.git.dagFolder }} 
         depth: {{ .Values.git.depth }}
         wait: {{ .Values.git.wait }}
-{{- if .Values.git.secret }}
-        credentialsSecret: .Values.git.secret
+{{- if .Values.git.auth }}
+        credentialsSecret: {{ include "gbif-chart-lib.name" . }}-gitsync
 {{- end }}
         gitSyncConf: 
           --rev: HEAD 

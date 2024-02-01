@@ -35,10 +35,22 @@ exposeConfigs: false
 #   depth: 10
 #   # wait time between syncs
 #   wait: 30
-#   # secret is the name of the kubernetes secret containing the login info to access the git repository
-#   secret: my_secret
+#   # If auth is defined a create will be created with provided info that gitsync will use to checkout repository
+#   auth:
+#     user: a_github_user
+#     token: a_token
+#     
 
-git: {}
+
+git: 
+  repository: test
+  branch: my
+  dagFolder: some folder
+  depth: 1
+  wait: 30
+  auth: 
+    name: my_user
+    token: my_password
 
 # Admin user for Airflow, will be created as a secret
 admin:
