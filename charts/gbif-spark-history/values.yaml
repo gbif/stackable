@@ -6,13 +6,39 @@ nameOverride: ""
 fullnameOverride: ""
 
 # Stackable versioning to override the version of the Stack component.
-stackProduct: "3.3.0"
-stackVersion: "23.1.0"
+stackProduct: "3.4.0"
+stackVersion: "23.11.0"
 
-hdfs:
-  clusterId: "gbif-hdfs"
+# Configuration for a bucket to store logs in
+# Supports exactly one existing bucket - no more, no less
+bucket:
+  name: test-bucket
+  # IMPORTANT NOTE
+  # The prefix must eixsts the history server can start properly 
+  prefix: sparkjobs-logs/
+  # S3 connection configurations
+  connection:
+    host: a-test-minio
+    port: 9000
+    credentials:
+      # Ensure the user has read&write access for the bucket
+      user: a_user
+      password: a_password
 
-cpu:
-  min: '100m'
-  max: '1500m'
-memory: 2Gi
+nodes:
+  historyServer:
+    replicas: 1
+    cpu:
+      min: '100m'
+      max: '1500m'
+    memory: 2Gi
+
+# Used to pass spark configuration
+# Below there is an example on how to do it
+#sparkConf:
+#  "spark.hadoop.fs.s3a.path.style.access": "true"
+#  "spark.com.amazonaws.services.s3.enableV4": "true"
+#  "spark.hadoop.com.amazonaws.services.s3.enableV4": "true"
+#  "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
+
+sparkConf: {}

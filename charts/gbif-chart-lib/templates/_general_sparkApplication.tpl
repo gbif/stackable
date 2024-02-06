@@ -1,7 +1,7 @@
-{{/*
+{{- /*
 Standard Sparkapplication to import in different sub charts, uses values to determine how final chart looks.
 */}}
-{{- define "gbif-chart-lib.name" -}}
+{{- define "gbif-chart-lib.sparkapplication.tpl" -}}
 apiVersion: spark.stackable.tech/v1alpha1
 kind: SparkApplication
 metadata:
@@ -9,148 +9,207 @@ metadata:
   labels:
     {{- include "gbif-chart-lib.labels" . | nindent 4 }}
 spec:
-  version: {{ .Values.version }}
-  image: docker.gbif.org/{{ .Values.component }}:{{ .Values.version }}
-{{/*
-Add comments plus make the stackable version configuable
-*/}}
-  sparkImage: docker.stackable.tech/stackable/spark-k8s:3.3.0-stackable23.7.0
+  version: {{ .Chart.AppVersion | quote }}
+{{- if .Values.image }}
+  image: {{ cat .Values.image.repository .Values.image.name ":" .Values.image.version | nospace }}
+{{- else }}
+  image: ""
+{{- end }}
+  sparkImage:
+    productVersion: {{ .Values.stackProduct }}
+    stackableVersion: {{ .Values.stackVersion }}
   mode: cluster
-  mainApplicationFile: local:///stackable/spark/jobs/{{ .Values.component }}.jar
-  mainClass: {{ .Values.main }}
+  mainApplicationFile: local:///stackable/spark/jobs/{{ .Values.image.name }}.jar
+  mainClass: {{ .Values.mainClass }}
+{{- if .Values.logging.enabled }}
+  vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
+{{- end }}
+{{- if .Values.bucket }}
+  s3connection:
+    inline:
+      host: {{ .Values.bucket.connection.host }}
+      port: {{ .Values.bucket.connection.port }}
+      accessStyle: Path
+      credentials:
+        secretClass: {{ .Values.bucket.connection.sparkHistoryName }}-credentials-class
+  logFileDirectory:
+    s3:
+      prefix: {{ .Values.bucket.prefix }}
+      bucket:
+        inline:
+          bucketName: {{ .Values.bucket.name }}     
+{{- end }}
+{{- if .Values.args }}
   args:
-{{- for arg in .Values.args }}
-    - "{{arg}}"
-{{- endfor }}
-  deps:
-    repositories:
-      - https://repository.gbif.org/repository/central/
-    packages:
-      - org.apache.spark:spark-avro_2.12:3.4.0
+{{- tpl (.Values.args | toYaml) . | nindent 4 }}
+{{- end }}
+{{- if .Values.sparkConf }}
   sparkConf:
-     "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
-     "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
-     "spark.jars.ivy": "/tmp"
-     "spark.broadcast.compress": "true"
-     "spark.checkpoint.compress": "true"
-     "spark.executor.memoryOverhead": "4096"
-     "spark.executor.heartbeatInterval": "10s"
-     "spark.network.timeout": "60s"
-     "spark.io.compression.codec": "lz4"
-     "spark.rdd.compress": "true"
-     "spark.driver.extraClassPath": "/etc/hadoop/conf/:/etc/gbif/:/stackable/spark/extra-jars/*"
-     "spark.executor.extraClassPath": "/etc/hadoop/conf/:/etc/gbif/:/stackable/spark/extra-jars/*"
-     "spark.kubernetes.authenticate.driver.serviceAccountName": "gbif-spark-sa"
-{{- if .Values.componentConfig or .Values.hdfsClusterName or .Values.hiveClusterName .Values.hbaseClusterName }}
+{{- tpl (.Values.sparkConf | toYaml) . | nindent 4 }}
+{{- end }}
   volumes:
-{{- if .Values.componentConfig }}
+{{- /*
+The template assumes that a sparkjob has one config map that default gets mapped into the spark pods.
+If something different is required either use the customProperty to confgiure it or overwrite it within the file including the template
+*/}}
+{{- if not .Values.customProperties }}
     - name: gbif-config
       configMap:
-        name: {{ .Values.componentConfig }}-conf
+        name: {{ include "gbif-chart-lib.name" . }}-conf
 {{- end }}
-{{- if .Values.componentProperty }}
-    - name: gbif-property
+{{- if .Values.customProperties }}
+    - name: custom-proerties
       configMap:
-        name: {{ .Values.componentProperty.propertyName }}-conf
+        name: {{ .Values.customProperties.configmapName }}
 {{- end }}
-{{- if .Values.hdfsClusterName }}
+{{- if .Values.hdfs.clusterName }}
     - name: hdfs-env
       configMap:
-        name: {{ .Values.hdfsClusterName }}
+        name: {{ .Values.hdfs.clusterName }}
         items:
         - key: core-site.xml
           path: core-site.xml
         - key: hdfs-site.xml
           path: hdfs-site.xml
 {{- end }}
-{{- if .Values.hiveClusterName }}
+{{- if .Values.hive.clusterName }}
     - name: hive-env
       configMap:
-        name: {{ .Values.hiveClusterName }}-custom
+        name: {{ .Values.hive.clusterName }}-custom
         items:
         - key: hive-site.xml
           path: hive-site.xml
 {{- end }}
-{{- if .Values.hbaseClusterName }}
+{{- if .Values.hbase.clusterName }}
     - name: hbase-env
       configMap:
-        name: {{ .Values.hbaseClusterName }}
+        name: {{ .Values.hbase.clusterName }}
         items:
         - key: hbase-site.xml
           path: hbase-site.xml
 {{- end }}
-{{- end }}
   driver:
-    resources:
-      cpu:
-        min: "100m"
-        max: "{{ .Values.driverCores }}"
-      memory:
-        limit: "{{ .Values.driverMemory }}"
-    volumeMounts:
-{{- if .Values.componentConfig }}
-      - name: gbif-config
-        mountPath: /etc/gbif/config.yaml
-        subPath: config.yaml
+{{- if and .Values.image (contains .Values.image.version "SNAPSHOT") }}
+    podOverrides:
+      spec:
+        initContainers:
+        - name: job
+          imagePullPolicy: Always
 {{- end }}
-{{- if .Values.componentProperty }}
-    - name: gbif-property
-      mountPath: {{ .Values.componentProperty.path }}{{ .Values.componentProperty.file }}
-      subPath: {{ .Values.componentProperty.file }}
+    config:
+      resources:
+        cpu:
+          min: "{{ .Values.nodes.driver.cpu.min }}"
+          max: "{{ .Values.nodes.driver.cpu.max }}"
+        memory:
+          limit: "{{ .Values.nodes.driver.memory }}"
+{{- if .Values.logging.enabled  }}
+      logging:
+        enableVectorAgent: true
+        containers:
+          vector:
+            file:
+              level: {{ .Values.logging.vectorLogLevel }}
+          spark:
+            console:
+              level: {{ .Values.nodes.driver.logLevel }}
+            file:
+              level: {{ .Values.nodes.driver.logLevel }}
+            loggers:
+              ROOT:
+                level: {{ .Values.nodes.driver.logLevel }}
 {{- end }}
-{{- if .Values.hdfsClusterName }}
-      - name: hdfs-env
-        mountPath: /etc/hadoop/conf/core-site.xml
-        subPath: core-site.xml
-      - name: hdfs-env
-        mountPath: /etc/hadoop/conf/hdfs-site.xml
-        subPath: hdfs-site.xml
+      volumeMounts:
+{{- if not .Values.customProperties }}
+        - name: gbif-config
+          mountPath: /etc/gbif/config.yaml
+          subPath: config.yaml
 {{- end }}
-{{- if .Values.hiveClusterName }}
-      - name: hive-env
-        mountPath: /etc/hadoop/conf/hive-site.xml
-        subPath: hive-site.xml
+{{- if .Values.customProperties }}
+        - name: custom-proerties
+          mountPath: {{ .Values.customProperties.path }}{{ .Values.customProperties.file }}
+          subPath: {{ .Values.customProperties.file }}
 {{- end }}
-{{- if .Values.hbaseClusterName }}
-      - name: hbase-env
-        mountPath: /etc/hadoop/conf/hbase-site.xml
-        subPath: hbase-site.xml
+{{- if .Values.hdfs.clusterName }}
+        - name: hdfs-env
+          mountPath: /etc/hadoop/conf/core-site.xml
+          subPath: core-site.xml
+        - name: hdfs-env
+          mountPath: /etc/hadoop/conf/hdfs-site.xml
+          subPath: hdfs-site.xml
+{{- end }}
+{{- if .Values.hive.clusterName }}
+        - name: hive-env
+          mountPath: /etc/hadoop/conf/hive-site.xml
+          subPath: hive-site.xml
+{{- end }}
+{{- if .Values.hbase.clusterName }}
+        - name: hbase-env
+          mountPath: /etc/hadoop/conf/hbase-site.xml
+          subPath: hbase-site.xml
 {{- end }}
   executor:
-    instances: {{ .Values.executorInstances }}
-    resources:
-      cpu:
-        min: "100m"
-        max: "{{ .Values.executorCores }}"
-      memory:
-        limit: "{{ .Values.executorMemory }}"
-    volumeMounts:
-{{- if .Values.componentConfig }}
-      - name: gbif-config
-        mountPath: /etc/gbif/config.yaml
-        subPath: config.yaml
+{{- if and .Values.image (contains .Values.image.version "SNAPSHOT") }}
+    podOverrides:
+      spec:
+        initContainers:
+        - name: job
+          imagePullPolicy: Always
 {{- end }}
-{{- if .Values.componentProperty }}
-    - name: gbif-property
-      mountPath: {{ .Values.componentProperty.path }}{{ .Values.componentProperty.file }}
-      subPath: {{ .Values.componentProperty.file }}
+    replicas: {{ .Values.nodes.executor.replicas }}
+    config:
+      resources:
+        cpu:
+          min: "{{ .Values.nodes.executor.cpu.min }}"
+          max: "{{ .Values.nodes.executor.cpu.max }}"
+        memory:
+          limit: "{{ .Values.nodes.executor.memory }}"
+{{- if .Values.logging.enabled  }}
+      logging:
+        enableVectorAgent: true
+        containers:
+          vector:
+            file:
+              level: {{ .Values.logging.vectorLogLevel }}
+          spark:
+            console:
+              level: {{ .Values.nodes.executor.logLevel }}
+            file:
+              level: {{ .Values.nodes.executor.logLevel }}
+            loggers:
+              ROOT:
+                level: {{ .Values.nodes.executor.logLevel }}
 {{- end }}
-{{- if .Values.hdfsClusterName }}
-      - name: hdfs-env
-        mountPath: /etc/hadoop/conf/core-site.xml
-        subPath: core-site.xml
-      - name: hdfs-env
-        mountPath: /etc/hadoop/conf/hdfs-site.xml
-        subPath: hdfs-site.xml
+      volumeMounts:
+{{- if not .Values.customProperties }}
+        - name: gbif-config
+          mountPath: /etc/gbif/config.yaml
+          subPath: config.yaml
 {{- end }}
-{{- if .Values.hiveClusterName }}
-      - name: hive-env
-        mountPath: /etc/hadoop/conf/hive-site.xml
-        subPath: hive-site.xml
+{{- if .Values.customProperties }}
+        - name: custom-proerties
+          mountPath: {{ .Values.customProperties.path }}{{ .Values.customProperties.file }}
+          subPath: {{ .Values.customProperties.file }}
 {{- end }}
-{{- if .Values.hbaseClusterName }}
-      - name: hbase-env
-        mountPath: /etc/hadoop/conf/hbase-site.xml
-        subPath: hbase-site.xml
+{{- if .Values.hdfs.clusterName }}
+        - name: hdfs-env
+          mountPath: /etc/hadoop/conf/core-site.xml
+          subPath: core-site.xml
+        - name: hdfs-env
+          mountPath: /etc/hadoop/conf/hdfs-site.xml
+          subPath: hdfs-site.xml
+{{- end }}
+{{- if .Values.hive.clusterName }}
+        - name: hive-env
+          mountPath: /etc/hadoop/conf/hive-site.xml
+          subPath: hive-site.xml
+{{- end }}
+{{- if .Values.hbase.clusterName }}
+        - name: hbase-env
+          mountPath: /etc/hadoop/conf/hbase-site.xml
+          subPath: hbase-site.xml
 {{- end }}
 {{- end }}
+{{- define "gbif-chart-lib.sparkapplication" -}}
+{{- include "gbif-chart-list.util.merge" (append . "gbif-chart-lib.sparkapplication.tpl") -}}
+{{- end -}}

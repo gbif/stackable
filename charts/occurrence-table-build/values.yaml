@@ -1,36 +1,103 @@
 # Default values for GBIF Spark application for process data and prepare map tiles.
 # Name of the application, chart uses the name to find the .jar file.
 appName: "occurrence-table-builder-spark"
-# Repository and tag for finding the image if selfhosted.
-image:
-  repository: ""
-  tag: "1.0.0"
 
-# Stackable tag to use for the Spark application.
-stackTag: 3.3.4-stackable23.7.0
+# Override name of the cluster
+nameOverride: ""
+# Override fullname of the cluster
+fullnameOverride: ""
+
+# Repository, image name and version for finding the image containing the application jar
+# Example
+# image:
+#  repository: "test.docker.org/a_folder"
+#  #The template assumes the name of the jar is the same as the images name
+#  name: "MySupercoolImage"
+#  version: "1.0.0"
+image: {}
+
+# Stackable versioning to override the version of the Stack component.
+stackProduct: "3.4.0"
+stackVersion: "23.11.0"
+
 # Spark running mode, currently only cluster is supported.
 mode: cluster
 # Main class for starting the Spark process.
-appClass: org.gbif.occurrence.table.backfill.TableBackfill
+mainClass: org.gbif.occurrence.table.backfill.TableBackfill
+
+# The list of arguments to pass to the spark process
+# Example
+#args:
+#  - my_first_argument
+#  - my_second_argument
+args: []
+
+# sparkConf is used to pass spark configuration to spark submitter, driver and executor
+# Example of how it could look
+# sparkConf:
+#  "spark.driver.extraClassPath": "/etc/hadoop/conf/:/etc/gbif/:/stackable/spark/extra-jars/*"
+#  "spark.executor.extraClassPath": "/etc/hadoop/conf/:/etc/gbif/:/stackable/spark/extra-jars/*"
+#  "spark.kubernetes.authenticate.driver.serviceAccountName": "gbif-spark-sa"
+#  "spark.kubernetes.scheduler.name": "yunikorn"
+#  "spark.kubernetes.driver.label.queue": "root.default"
+#  "spark.kubernetes.executor.label.queue": "root.default"
+#  "spark.kubernetes.driver.annotation.yunikorn.apache.org/app-id": "{{`{{APP_ID}}`}}"
+#  "spark.kubernetes.executor.annotation.yunikorn.apache.org/app-id": "{{`{{APP_ID}}`}}"
+
+sparkConf: {}
+
+# Configuration for a bucket to store logs in
+# Supports one existing bucket
+# Example of how it could be configured
+#bucket:
+#  name: test-bucket
+#  # IMPORTANT NOTE
+#  # The prefix must eixsts the history server can start properly
+#  prefix: sparkjobs-logs/
+#  # S3 connection configurations
+#  connection:
+#    host: a-test-minio
+#    port: 9000
+#    # Name of the spark history installation in the cluster
+#    sparkHistoryName: "a-spark-history-server"
+
+bucket: {}
+
+# Enable logging via the vector aggregator
+# Needs the name of configmap for discovery of the aggregator
+logging:
+  # property for enable vector logging
+  enabled: false
+  # DisoveryMap for the connection the aggregator pod
+  discoveryMap: "gbif-vector-aggregator-discovery"
+  # Configured which vector itself logs on its own.
+  vectorLogLevel: "WARN"
 
 # Ressource configuration for spark driver.
-driver:
-  # Number of cores for the Spark driver.
-  core: "4000m"
-  # Memory for the Spark driver.
-  mem: "3Gi"
+nodes:
+  driver:
+    # CPU settings for the driver 
+    cpu: 
+      min: "100m"
+      max: "4000m"
+    # Memory for the Spark driver.
+    memory: "3Gi"
+    # Log level for driver
+    logLevel: "INFO"
 
-# Ressource configuration for spark executors.
-executor:
-  # Number of cores for each executor.
-  core: "6000m"
-  # Memory for each executor.
-  mem: "12Gi"
-  # Number of executors.
-  instances: 6
-
-nameOverride: ""
-fullnameOverride: ""
+  # Ressource configuration for spark executors.
+  executor:
+    # CPU settings for per executor. 
+    # To get total reosurce consumtion by executors, multiple max cpi and mem with number of replicas.
+    cpu:
+      min: "100m" 
+      max: "6000m"
+    # Memory for each executor.
+    memory: "12Gi"
+    # Number of executors.
+    replicas: 2
+    # Log level for executor
+    logLevel: "INFO"
 
 #Mode for installing. This is a implemtantion for selecting which objects to install.
 ## all: Installs both spark application and configmaps - will fail if configmap already exists
@@ -38,6 +105,15 @@ fullnameOverride: ""
 ## app: Installs the spark application
 # The use case is for enabling templating only the application for use in Airflows or start an instance of spark within necessary updating the configsmaps
 installMode: config
+
+# As the chart assumes a default structure for providing properties to the application it is possible to configure a way to provide your own format
+# Example of how to describe you own file (You have to create this configmap yourself for now)
+# customProperties:
+#  configmapName: "my-cool-configmap"
+#  path: "/some/path/on/pod/"
+#  file: "my-super-cool-file.properties"
+
+customProperties: {}
 
 hdfs:
   # Name of the Stackabl HdfsCluster in the namespace.
@@ -68,9 +144,10 @@ hive:
   # Name of the table to create and store the information in
   tableName: KUBE
   # Number of partitioning to use for the table - Set to nothing if you want to disable partitioning of the table
-  partition: 10
+  # Set 0 to disable
+  partition: 0
   # Name of the hive cluster
-  clusterName: gbif-hive
+  clusterName: gbif-hive-metastore
 
 hbase:
   # Name of the hbase cluster

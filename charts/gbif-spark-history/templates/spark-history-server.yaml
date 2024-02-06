@@ -8,31 +8,30 @@ spec:
     stackableVersion: {{ .Values.stackVersion }}
   logFileDirectory:
     s3:
-      prefix: /
+      prefix: {{ .Values.bucket.prefix }}
       bucket:
         inline:
-          bucketName: dev-minio-history
+          bucketName: {{ .Values.bucket.name }}
           connection:
             inline:
-              host: minio
-              port: 443
+              host: {{ .Values.bucket.connection.host }}
+              port: {{ .Values.bucket.connection.port }}
               accessStyle: Path
               credentials:
-                secretClass: s3-credentials-class
+                secretClass: {{ include "gbif-chart-lib.name" . }}-credentials-class
+{{- if .Values.sparkConf }}
   sparkConf:
-    "spark.hadoop.fs.s3a.path.style.access": "true"
-    "spark.com.amazonaws.services.s3.enableV4": "true"
-    "spark.hadoop.com.amazonaws.services.s3.enableV4": "true"
-    "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
+{{- tpl (.Values.sparkConf | toYaml) . | nindent 4 }}
+{{- end }}
   nodes:
     roleGroups:
       default:
-        replicas: 1
+        replicas: {{ .Values.nodes.historyServer.replicas }}
         config:
           cleaner: true
           resources:
             cpu:
-              min: {{ .Values.cpu.min }}
-              max: {{ .Values.cpu.max }}
+              min: {{ .Values.nodes.historyServer.cpu.min }}
+              max: {{ .Values.nodes.historyServer.cpu.max }}
             memory:
-              limit: {{ .Values.memory }}
+              limit: {{ .Values.nodes.historyServer.memory }}

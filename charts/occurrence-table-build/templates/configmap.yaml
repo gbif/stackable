@@ -1,4 +1,5 @@
 {{- if or (eq (lower .Values.installMode) "all") (eq (lower .Values.installMode) "config")  }}
+{{- if not .Values.customProperties }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -16,11 +17,12 @@ data:
     tablePartitions: {{ .Values.hive.partition }}
     sourceDirectory: {{ .Values.hdfs.sourceDir }}
     targetDirectory: {{ .Values.hdfs.targetDir }}
-    {{- if .Values.hive.partition }}
+    {{- if gt (.Values.hive.partition | int64) 0 }}
     usePartitionedTable: true
     {{- else }}
     usePartitionedTable: false
     {{- end }}
     coreName: {{ .Values.hdfs.sourceSubDir }}
     tableName: {{ .Values.hive.tableName }}
+{{- end }}
 {{- end }}
