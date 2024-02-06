@@ -1,0 +1,16 @@
+{{- if or (eq (lower .Values.installMode) "all") (eq (lower .Values.installMode) "config")  }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "gbif-chart-lib.name" . }}-conf
+data:
+  config.properties: |
+    hiveDB={{ .Values.hiveDB }}
+    sourceTable={{ .Values.sourceTable }}
+    hiveTablePrefix={{ .Values.hiveTablePrefix }}
+    hbaseTable={{ .Values.hbase.table }}
+    hbaseRegions={{ .Values.hbase.regions }}
+    hbaseZK={{ .Values.hbase.ZK }}
+    targetDir={{ .Values.targetDir }}
+    hashCountThreshold={{ .Values.hashCountThreshold }}
+{{- end }}

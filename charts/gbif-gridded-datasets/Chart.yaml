@@ -1,5 +1,5 @@
 apiVersion: v2
-name: gridded-datasets
+name: gbif-gridded-datasets
 description: Chart for deploying a Stackable Spark application for creating table in registry with a list of gridded datasets
 
 # A chart can be either an 'application' or a 'library' chart.

@@ -104,7 +104,7 @@ nodes:
 ## config: Installs the configmaps maps into a namespace
 ## app: Installs the spark application
 # The use case is for enabling templating only the application for use in Airflows or start an instance of spark within necessary updating the configsmaps
-installMode: all
+installMode: config
 
 # As the chart assumes a default structure for providing properties to the application it is possible to configure a way to provide your own format
 # Example of how to describe you own file (You have to create this configmap yourself for now)

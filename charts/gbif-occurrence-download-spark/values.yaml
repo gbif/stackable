@@ -1,0 +1,101 @@
+# Default values for the GBIF Spark application for creating occurrence downloads
+# Name of the application, chart uses the name to find the .jar file.
+appName: "gbif-occurrence-download-spark"
+
+# Stackable tag to use for the Spark application.
+stackTag: 3.3.0-stackable23.1.0
+
+# Artifact name without extension
+jarName: "occurrence-download-spark"
+
+# Main class for starting the Spark process.
+appClass: org.gbif.occurrence.download.spark.SparkDownloads
+
+# Spark mode
+mode: cluster
+
+# Mode for installing. This is an implemtantion for selecting which objects to install.
+## all: Installs both spark application and configmaps - will fail if configmap already exists
+## config: Installs the configmaps maps into a namespace
+## app: Installs the spark application
+# The use case is for enabling templating only the application for use in Airflows or start an instance of spark within necessary updating the configsmaps
+installMode: config
+
+# Ressource configuration for spark driver.
+driver:
+  # Number of cores for the Spark driver.
+  core: 2
+  # Memory for the Spark driver.
+  mem: 2048m
+
+# Ressource configuration for spark executors.
+executor:
+  # Number of cores for each executor.
+  core: 6
+  # Memory for each executor.
+  mem: 10240m
+  # Number of executors.
+  instances: 6
+
+# Application configs
+apiUrl: ""
+coreTermName: Occurrence
+createTablesDynamically: false
+es:
+  connectTimeout: 7000
+  hosts: ""
+  index:
+    nested: false
+    type: OCCURRENCE
+    name: ""
+  socketTimeout: 120000
+hadoopJobtracker: ""
+hbaseTable: occurrence
+hdfs:
+  lock:
+    connection:
+      maxRetries: 5
+      sleepTimeMs: 100
+    name: hdfsview
+    namespace: ""
+    path: /hive/
+  namenode: ""
+hive:
+  db: ""
+  metastoreUris: ""
+  server2: ""
+  user: ""
+  warehouseDir: ""
+occurrence:
+  download:
+    bionomiaReducer:
+      memory: ""
+      opts: ""
+    fileMaxRecords: ""
+    hdfsTmpDir: /tmp/
+    hdfsOutputPath: ""
+    hiveHdfsOut: ""
+    job:
+      maxThreads: 3
+      minRecords: 200
+    link: ""
+    maxConnectionPool: 10
+    maxGlobalThreads: 10
+    tmpDir: /tmp/
+    ws:
+      password: ""
+      username: ""
+    zookeeper:
+      downloadsNamespace: ""
+      indicesNamespace: ""
+      lockName: occDownloadJobsCounter
+      maxRetries: 10
+      sleepTime: 1000
+  envPrefix: ""
+  environment: ""
+  hdfsBuildFrequency: ${coord\:days(1)}
+registryWsUrl: ""
+synctables: false
+tableName: occurrence
+wfPrefix: occurrence
+zkConnectionString: ""

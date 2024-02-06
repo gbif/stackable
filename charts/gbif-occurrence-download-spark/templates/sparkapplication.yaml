@@ -10,15 +10,16 @@ spec:
   image: {{ default "docker.gbif.org/" .Values.image.repository }}{{ default .Chart.Name .Values.appName }}:{{ default .Chart.AppVersion .Values.image.tag}}
   sparkImage: "docker.stackable.tech/stackable/spark-k8s:{{ required "Specific which spark / operator version to use" .Values.stackTag }}"
   mode: {{ .Values.mode }}
-  mainApplicationFile: local:///stackable/spark/jobs/gridded-datasets.jar
+  mainApplicationFile: local:///stackable/spark/jobs/{{ .Values.jarName }}.jar
   mainClass: {{ .Values.appClass }}
   deps:
     repositories:
       - https://repository.gbif.org/repository/central/
     packages:
-      - org.apache.spark:spark-avro_2.12:3.4.0
+      - org.apache.spark:spark-avro_2.12:3.3.0
   args:
-    - "/etc/gbif/config.yml"
+    - "Occurrence"
+    - "/stackable/spark/jobs/download.properties"
   sparkConf:
      "spark.driver.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
      "spark.executor.extraJavaOptions": "-XX:+UseConcMarkSweepGC"
@@ -30,8 +31,8 @@ spec:
      "spark.network.timeout": "60s"
      "spark.io.compression.codec": "lz4"
      "spark.rdd.compress": "true"
-     "spark.driver.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/etc/gbif/"
-     "spark.executor.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/etc/gbif/"
+     "spark.driver.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/stackable/spark/jobs/"
+     "spark.executor.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/stackable/spark/jobs/"
      "spark.kubernetes.authenticate.driver.serviceAccountName": "gbif-spark-sa"
   volumes:
     - name: gbif-config
@@ -66,7 +67,8 @@ spec:
         limit: {{ .Values.driver.mem }}
     volumeMounts:
       - name: gbif-config
-        mountPath: /etc/gbif
+        mountPath: /stackable/spark/jobs/download.properties
+        subPath: download.properties
       - name: hadoop-env
         mountPath: /etc/hadoop/conf/core-site.xml
         subPath: core-site.xml
@@ -89,7 +91,8 @@ spec:
         limit: {{ .Values.executor.mem }}
     volumeMounts:
       - name: gbif-config
-        mountPath: /etc/gbif
+        mountPath: /stackable/spark/jobs/download.properties
+        subPath: download.properties
       - name: hadoop-env
         mountPath: /etc/hadoop/conf/core-site.xml
         subPath: core-site.xml

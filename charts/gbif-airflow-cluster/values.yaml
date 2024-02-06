@@ -75,13 +75,14 @@ logging:
   vectorLogLevel: "WARN"
 
 nodes:
-  webservers:
+  webserver:
     replicas: '1'
     cpu:
       min: '100m'
       max: '2000m'
     memory: '2Gi'
     logLevel: "INFO"
+    # Port for setting up node port given node - Leave empty to not setup port
     ports: {}
   workers:
     replicas: '1'
@@ -90,6 +91,7 @@ nodes:
       max: '3000m'
     memory: '4Gi'
     logLevel: "INFO"
+    # Port for setting up node port given node - Leave empty to not setup port
     ports: {}
   schedulers:
     replicas: '1'
@@ -98,6 +100,7 @@ nodes:
       max: '1000m'
     memory: '2Gi'
     logLevel: "INFO"
+    # Port for setting up node port given node - Leave empty to not setup port
     ports: {}
 
 # Example of how the airflowEnvOverrides can look like. Every line gets added to env override for all type of nodes

@@ -1,0 +1,20 @@
+{{- if or (eq (lower .Values.installMode) "all") (eq (lower .Values.installMode) "config")  }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "gbif-chart-lib.name" . }}-conf
+data:
+  config.properties: |
+    apiBaseUrl={{ .Values.api.baseUrl }}
+    apiTimeOut={{ .Values.api.timeOut }}
+    apiRestClientCacheMaxSize={{ .Values.api.restClientCacheMaxSize }}
+    hbaseZk={{ .Values.hbase.zk }}
+    hbaseTargetTable={{ .Values.hbase.targetTable }}
+    hbaseSaltedKeyBuckets={{ .Values.hbase.saltedKeyBuckets }}
+    hbaseZkNode={{ .Values.hbase.zkNode }}
+    trinoServer={{ .Values.trino.server }}
+    trinoUser={{ .Values.trino.user }}
+    trinoPassword={{ .Values.trino.password }}
+    trinoDbName={{ .Values.trino.dbName }}
+    trinoTargetTable={{ .Values.trino.targetTable }}
+{{- end }}
