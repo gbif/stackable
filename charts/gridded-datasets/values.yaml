@@ -1,6 +1,6 @@
 # Default values for GBIF Spark application for process data and prepare map tiles.
 # Name of the application, chart uses the name to find the .jar file.
-appName: "grscicoll-cache"
+appName: "gridded-datasets"
 
 # Override name of the cluster
 nameOverride: ""
@@ -16,17 +16,17 @@ fullnameOverride: ""
 #  version: "1.0.0"
 image: 
   repository: "docker.gbif.org/"
-  name: "kvs-indexing"
-  version: "1.33-H3-SNAPSHOT"
+  name: "gridded-datasets"
+  version: "1.1.0-SNAPSHOT"
 
 # Stackable versioning to override the version of the Stack component.
-stackProduct: "3.3.0"
-stackVersion: "23.7.0"
+stackProduct: "3.4.0"
+stackVersion: "23.11.0"
 
 # Spark running mode, currently only cluster is supported.
 mode: cluster
 # Main class for starting the Spark process.
-mainClass: org.gbif.kvs.indexing.grscicoll.GrscicollPipelineWorkflow
+mainClass: org.gbif.gridded.datasets.GriddedDatasets
 
 # The list of arguments to pass to the spark process
 # Example
@@ -34,7 +34,7 @@ mainClass: org.gbif.kvs.indexing.grscicoll.GrscicollPipelineWorkflow
 #  - my_first_argument
 #  - my_second_argument
 args:
-  - "/etc/gbif/config.properties"
+  - "config.yaml"
 
 # sparkConf is used to pass spark configuration to spark submitter, driver and executor
 # Example of how it could look
@@ -120,32 +120,31 @@ installMode: config
 #  path: "/some/path/on/pod/"
 #  file: "my-super-cool-file.properties"
 
-customProperties: 
-  configmapName: "grscicoll-cache-conf"
-  path: "/etc/gbif"
-  file: "config.properties"
+customProperties: {}
 
 hdfs:
   # Name of the Stackable HdfsCluster in the namespace.
   clusterName: gbif-hdfs
 
 # Application configs
-api:
-  baseUrl:
-  timeOut:
-  restClientCacheMaxSize:
+hive:
+  # Name of the hive cluster
+  clusterName: gbif-hive-metastore
+  # Name of the hive database
+  schema: dev
+  # Name of the table to get the information from
+  table: occurrence
 
 hbase:
-  # Name of the Stackable Hbase cluster in the namespace.
+  # Name of the hbase cluster
   clusterName: gbif-hbase
-  zk:
-  targetTable:
-  saltedKeyBuckets:
-  zkNode: 
 
-trino:
-  server:
-  user:
-  password:
-  dbName:
-  targetTable:
+registry:
+  # JDBC connection string
+  jdbc: ""
+  # JDBC connection username
+  user: ""
+  # JDBC connection password
+  password: ""
+  # Table name to which to push the data
+  table: public.dataset_gridded

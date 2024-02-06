@@ -1,6 +1,6 @@
 # Default values for GBIF Spark application for process data and prepare map tiles.
 # Name of the application, chart uses the name to find the .jar file.
-appName: "occurrence-table-builder-spark"
+appName: "occurrence-table-build"
 
 # Override name of the cluster
 nameOverride: ""
@@ -14,7 +14,10 @@ fullnameOverride: ""
 #  #The template assumes the name of the jar is the same as the images name
 #  name: "MySupercoolImage"
 #  version: "1.0.0"
-image: {}
+image: 
+  repository: "docker.gbif.org/"
+  name: "occurrence-table-build-spark"
+  version: "1.1.28"
 
 # Stackable versioning to override the version of the Stack component.
 stackProduct: "3.4.0"
@@ -30,8 +33,11 @@ mainClass: org.gbif.occurrence.table.backfill.TableBackfill
 #args:
 #  - my_first_argument
 #  - my_second_argument
-args: []
-
+args:
+  - "/etc/gbif/config.yaml"
+  - "CREATE"
+  - "ALL"
+  
 # sparkConf is used to pass spark configuration to spark submitter, driver and executor
 # Example of how it could look
 # sparkConf:
@@ -44,7 +50,10 @@ args: []
 #  "spark.kubernetes.driver.annotation.yunikorn.apache.org/app-id": "{{`{{APP_ID}}`}}"
 #  "spark.kubernetes.executor.annotation.yunikorn.apache.org/app-id": "{{`{{APP_ID}}`}}"
 
-sparkConf: {}
+sparkConf: 
+  "spark.driver.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/etc/gbif/"
+  "spark.executor.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/etc/gbif/"
+  "spark.kubernetes.authenticate.driver.serviceAccountName": "gbif-spark-sa"
 
 # Configuration for a bucket to store logs in
 # Supports one existing bucket
@@ -116,7 +125,7 @@ installMode: config
 customProperties: {}
 
 hdfs:
-  # Name of the Stackabl HdfsCluster in the namespace.
+  # Name of the Stackable HdfsCluster in the namespace.
   clusterName: gbif-hdfs
   # Directory of the source data, needs to be created beforehand in the HDFS cluster.
   sourceDir: /data/hdfsview/

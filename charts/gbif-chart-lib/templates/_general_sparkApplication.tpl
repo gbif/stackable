@@ -62,7 +62,7 @@ If something different is required either use the customProperty to confgiure it
       configMap:
         name: {{ .Values.customProperties.configmapName }}
 {{- end }}
-{{- if .Values.hdfs.clusterName }}
+{{- if and .Values.hdfs .Values.hdfs.clusterName }}
     - name: hdfs-env
       configMap:
         name: {{ .Values.hdfs.clusterName }}
@@ -72,7 +72,7 @@ If something different is required either use the customProperty to confgiure it
         - key: hdfs-site.xml
           path: hdfs-site.xml
 {{- end }}
-{{- if .Values.hive.clusterName }}
+{{- if and .Values.hive .Values.hive.clusterName }}
     - name: hive-env
       configMap:
         name: {{ .Values.hive.clusterName }}-custom
@@ -80,7 +80,7 @@ If something different is required either use the customProperty to confgiure it
         - key: hive-site.xml
           path: hive-site.xml
 {{- end }}
-{{- if .Values.hbase.clusterName }}
+{{- if and .Values.hbase .Values.hbase.clusterName }}
     - name: hbase-env
       configMap:
         name: {{ .Values.hbase.clusterName }}
@@ -89,7 +89,7 @@ If something different is required either use the customProperty to confgiure it
           path: hbase-site.xml
 {{- end }}
   driver:
-{{- if and .Values.image (contains .Values.image.version "SNAPSHOT") }}
+{{- if and .Values.image (contains "SNAPSHOT" .Values.image.version) }}
     podOverrides:
       spec:
         initContainers:
@@ -130,7 +130,7 @@ If something different is required either use the customProperty to confgiure it
           mountPath: {{ .Values.customProperties.path }}{{ .Values.customProperties.file }}
           subPath: {{ .Values.customProperties.file }}
 {{- end }}
-{{- if .Values.hdfs.clusterName }}
+{{- if and .Values.hdfs .Values.hdfs.clusterName }}
         - name: hdfs-env
           mountPath: /etc/hadoop/conf/core-site.xml
           subPath: core-site.xml
@@ -138,18 +138,18 @@ If something different is required either use the customProperty to confgiure it
           mountPath: /etc/hadoop/conf/hdfs-site.xml
           subPath: hdfs-site.xml
 {{- end }}
-{{- if .Values.hive.clusterName }}
+{{- if and .Values.hive .Values.hive.clusterName }}
         - name: hive-env
           mountPath: /etc/hadoop/conf/hive-site.xml
           subPath: hive-site.xml
 {{- end }}
-{{- if .Values.hbase.clusterName }}
+{{- if and .Values.hbase .Values.hbase.clusterName }}
         - name: hbase-env
           mountPath: /etc/hadoop/conf/hbase-site.xml
           subPath: hbase-site.xml
 {{- end }}
   executor:
-{{- if and .Values.image (contains .Values.image.version "SNAPSHOT") }}
+{{- if and .Values.image (contains "SNAPSHOT" .Values.image.version) }}
     podOverrides:
       spec:
         initContainers:
@@ -191,7 +191,7 @@ If something different is required either use the customProperty to confgiure it
           mountPath: {{ .Values.customProperties.path }}{{ .Values.customProperties.file }}
           subPath: {{ .Values.customProperties.file }}
 {{- end }}
-{{- if .Values.hdfs.clusterName }}
+{{- if and .Values.hdfs .Values.hdfs.clusterName }}
         - name: hdfs-env
           mountPath: /etc/hadoop/conf/core-site.xml
           subPath: core-site.xml
@@ -199,12 +199,12 @@ If something different is required either use the customProperty to confgiure it
           mountPath: /etc/hadoop/conf/hdfs-site.xml
           subPath: hdfs-site.xml
 {{- end }}
-{{- if .Values.hive.clusterName }}
+{{- if and .Values.hive .Values.hive.clusterName }}
         - name: hive-env
           mountPath: /etc/hadoop/conf/hive-site.xml
           subPath: hive-site.xml
 {{- end }}
-{{- if .Values.hbase.clusterName }}
+{{- if and .Values.hbase .Values.hbase.clusterName }}
         - name: hbase-env
           mountPath: /etc/hadoop/conf/hbase-site.xml
           subPath: hbase-site.xml
