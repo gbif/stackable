@@ -1,8 +1,11 @@
-{{- if gt (len .Values.nodes.datanode.storage.drives) 0 }}
+{{- range $datanodeKey, $datanodeValue := .Values.nodes.datanode.groups }}
+{{- if gt (len $datanodeValue.storage.drives) 0 }}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: {{ $.Values.nodes.datanode.storage.class }}
+  name: {{ $datanodeValue.storage.class }}
 provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
+---
+{{- end }}
 {{- end }}

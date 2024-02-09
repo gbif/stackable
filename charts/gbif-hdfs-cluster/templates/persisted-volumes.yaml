@@ -1,6 +1,7 @@
-{{- if gt (len .Values.nodes.datanode.storage.drives) 0 }}
-{{- range $label := .Values.nodes.datanode.storage.labels }}
-{{- range $drive := $.Values.nodes.datanode.storage.drives }}
+{{- range $datanodeKey, $datanodeValue := .Values.nodes.datanode.groups }}
+{{- if gt (len $datanodeValue.storage.drives) 0 }}
+{{- range $label := $datanodeValue.storage.labels }}
+{{- range $drive := $datanodeValue.storage.drives }}
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -9,12 +10,12 @@ metadata:
     "helm.sh/resource-policy": keep
 spec:
   capacity:
-    storage: {{ $.Values.nodes.datanode.storage.capacity }}
+    storage: {{ $datanodeValue.storage.capacity }}
   volumeMode: Filesystem
   accessModes:
   - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: {{ $.Values.nodes.datanode.storage.class }}
+  storageClassName: {{ $datanodeValue.storage.class }}
   local:
     path: /data/{{ $drive }}
   nodeAffinity:
@@ -26,6 +27,7 @@ spec:
           values:
           - {{ $label }}
 ---
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

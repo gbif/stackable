@@ -33,7 +33,7 @@ spec:
               vector:
                 file:
                   level: {{ .Values.logging.vectorLogLevel }}
-              namenode:
+              hdfs:
                 console:
                   level: {{ .Values.nodes.namenode.logLevel }}
                 file:
@@ -65,68 +65,71 @@ spec:
             hadoop.proxyuser.stackable.hosts: "{{ .Values.gateway.httpfs.proxyHosts }}"
             hadoop.proxyuser.stackable.groups: "{{ .Values.gateway.httpfs.proxyGroup }}"
   dataNodes:
+    config:
+{{- if .Values.logging.enabled  }}
+      logging:
+        enableVectorAgent: true
+        containers:
+          vector:
+            file:
+              level: {{ .Values.logging.vectorLogLevel }}
+          hdfs:
+            console:
+              level: {{ .Values.nodes.datanode.logLevel }}
+            file:
+              level: {{ .Values.nodes.datanode.logLevel }}
+            loggers:
+              ROOT:
+                level: {{ .Values.nodes.datanode.logLevel }}
+{{- end }}
+{{- if eq .Values.useNodeAffinity true }}
+      affinity:
+        nodeAffinity: 
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: datanodes
+                operator: In
+                values:
+                - enabled
+{{- end }}
+    configOverrides:
+      hdfs-site.xml:
+        dfs.client.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
+        dfs.datanode.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
+        nfs.superuser: "{{ .Values.gateway.nfs.user }}"
+        nfs.dump.dir: "{{ .Values.gateway.nfs.localDirectory }}"
+        nfs.exports.allowed.hosts: "{{ .Values.gateway.nfs.exportAccess }}"
+        nfs.export.point: "{{ .Values.gateway.nfs.directoryToExport }}"
+      core-site.xml:
+        hadoop.proxyuser.stackable.hosts: "{{ .Values.gateway.httpfs.proxyHosts }}"
+        hadoop.proxyuser.stackable.groups: "{{ .Values.gateway.httpfs.proxyGroup }}"
     roleGroups:
-      default:
-        replicas: {{ .Values.nodes.datanode.replicas }}
+{{- range $datanodeKey, $datanodeValue := .Values.nodes.datanode.groups }}
+      {{ $datanodeKey }}:
+        replicas: {{ $datanodeValue.replicas }}
         config:
           resources:
             cpu:
-              max: {{ .Values.nodes.datanode.cpu.max }}
-              min: {{ .Values.nodes.datanode.cpu.min }}
+              max: {{ $datanodeValue.cpu.max }}
+              min: {{ $datanodeValue.cpu.min }}
             memory:
-              limit: {{ .Values.nodes.datanode.memory }}
-            {{- if gt (len .Values.nodes.datanode.storage.drives) 0 }}
+              limit: {{ $datanodeValue.memory }}
+            {{- if gt (len $datanodeValue.storage.drives) 0 }}
             storage:
               data:
                 count: 0 # Setting count to 0 disables the default PVCs
-              hard-disks:
-                count: {{ len .Values.nodes.datanode.storage.drives }}
-                capacity: {{ .Values.nodes.datanode.storage.capacity }} # Currently the same for all disks but in the future it could easily be different for different types of disks
-                storageClass: {{ .Values.nodes.datanode.storage.class }}
-                hdfsStorageType: {{ .Values.nodes.datanode.storage.type }}
+              disks:
+                count: {{ len $datanodeValue.storage.drives }}
+                capacity: {{ $datanodeValue.storage.capacity }} # Currently the same for all disks but in the future it could easily be different for different types of disks
+                storageClass: {{ $datanodeValue.storage.class }}
+                hdfsStorageType: {{ $datanodeValue.storage.type }}
             {{- else }}
             storage:
               data:
-                capacity: {{ .Values.nodes.datanode.storage.capacity }}
+                capacity: {{ $datanodeValue.storage.capacity }}
             {{- end }}
-{{- if .Values.logging.enabled  }}
-          logging:
-            enableVectorAgent: true
-            containers:
-              vector:
-                file:
-                  level: {{ .Values.logging.vectorLogLevel }}
-              datanode:
-                console:
-                  level: {{ .Values.nodes.datanode.logLevel }}
-                file:
-                  level: {{ .Values.nodes.datanode.logLevel }}
-                loggers:
-                  ROOT:
-                    level: {{ .Values.nodes.datanode.logLevel }}
 {{- end }}
-{{- if eq .Values.useNodeAffinity true }}
-          affinity:
-            nodeAffinity: 
-              requiredDuringSchedulingIgnoredDuringExecution:
-                nodeSelectorTerms:
-                - matchExpressions:
-                  - key: datanodes
-                    operator: In
-                    values:
-                    - enabled
-{{- end }}
-        configOverrides:
-          hdfs-site.xml:
-            dfs.client.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
-            dfs.datanode.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
-            nfs.superuser: "{{ .Values.gateway.nfs.user }}"
-            nfs.dump.dir: "{{ .Values.gateway.nfs.localDirectory }}"
-            nfs.exports.allowed.hosts: "{{ .Values.gateway.nfs.exportAccess }}"
-            nfs.export.point: "{{ .Values.gateway.nfs.directoryToExport }}"
-          core-site.xml:
-            hadoop.proxyuser.stackable.hosts: "{{ .Values.gateway.httpfs.proxyHosts }}"
-            hadoop.proxyuser.stackable.groups: "{{ .Values.gateway.httpfs.proxyGroup }}"
   journalNodes:
     roleGroups:
       default:
@@ -148,7 +151,7 @@ spec:
               vector:
                 file:
                   level: {{ .Values.logging.vectorLogLevel }}
-              journalnode:
+              hdfs:
                 console:
                   level: {{ .Values.nodes.journalnode.logLevel }}
                 file:
