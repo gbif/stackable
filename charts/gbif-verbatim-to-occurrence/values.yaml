@@ -40,5 +40,5 @@ fullnameOverride: ""
 installMode: all
 
 hdfs:
-  # Name of the Stackabl HdfsCluster in the namespace.
+  # Name of the Stackable HdfsCluster in the namespace.
   clusterName: gbif-hdfs

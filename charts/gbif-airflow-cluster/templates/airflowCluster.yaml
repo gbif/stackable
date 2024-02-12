@@ -4,22 +4,33 @@ metadata:
   name: {{ include "gbif-chart-lib.name" . }}
 spec:
   image:
+{{- if .Values.customImage }}
+    productVersion: {{ .Values.stackProduct }}
+    custom: {{ .Values.customImage.repository }}/{{ .Values.customImage.image }}:{{ .Values.customImage.tag }}
+{{- else }}
     productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
     stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
+{{- end }}
   clusterConfig:
-    statsdExporterVersion: v{{ .Values.statsdVersion }}
-    executor: {{ .Values.executor }}
     loadExamples: {{ .Values.examples }}
     exposeConfig: {{ .Values.exposeConfigs }}
     credentialsSecret: {{ include "gbif-chart-lib.name" . }}-credentials
-    volumes:
-      - name: external-dags
-        persistentVolumeClaim:
-          claimName: {{ include "gbif-chart-lib.name" .}}-dag
-          readOnly: true
-    volumeMounts:
-      - name: external-dags
-        mountPath: {{ .Values.externalData }}
+{{- if .Values.git }}
+    dagsGitSync: 
+      - repo: {{ .Values.git.repository }} 
+        branch: {{ .Values.git.branch }}
+        gitFolder: {{ .Values.git.dagFolder }} 
+        depth: {{ .Values.git.depth }}
+        wait: {{ .Values.git.wait }}
+{{- if .Values.git.auth }}
+        credentialsSecret: {{ include "gbif-chart-lib.name" . }}-gitsync
+{{- end }}
+        gitSyncConf: 
+          --rev: HEAD 
+{{- end }}
+{{- if .Values.logging.enabled  }}     
+    vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
+{{- end }}
   webservers:
     roleGroups:
       default:
@@ -35,7 +46,23 @@ spec:
               max: {{ .Values.nodes.webservers.cpu.max }}
             memory: 
               limit: {{ .Values.nodes.webservers.memory }}
-  workers:
+{{- if .Values.logging.enabled  }}
+          logging:
+            enableVectorAgent: true
+            containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
+              airflow:
+                console:
+                  level: {{ .Values.nodes.webservers.logLevel }}
+                file:
+                  level: {{ .Values.nodes.webservers.logLevel }}
+                loggers:
+                  "flask_appbuilder":
+                    level: {{ .Values.nodes.webservers.logLevel }}
+{{- end }}
+  celeryExecutors:
     roleGroups:
       default:
 {{- if .Values.airflowEnvOverrides }}
@@ -50,6 +77,22 @@ spec:
               max: {{ .Values.nodes.workers.cpu.max }}
             memory: 
               limit: {{ .Values.nodes.workers.memory }}
+{{- if .Values.logging.enabled  }}
+          logging:
+            enableVectorAgent: true
+            containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
+              airflow:
+                console:
+                  level: {{ .Values.nodes.workers.logLevel }}
+                file:
+                  level: {{ .Values.nodes.workers.logLevel }}
+                loggers:
+                  "airflow.processor":
+                    level: {{ .Values.nodes.workers.logLevel }}
+{{- end }}
   schedulers:
     roleGroups:
       default:
@@ -65,3 +108,19 @@ spec:
               max: {{ .Values.nodes.schedulers.cpu.max }}
             memory: 
               limit: {{ .Values.nodes.schedulers.memory }}
+{{- if .Values.logging.enabled  }}
+          logging:
+            enableVectorAgent: true
+            containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
+              airflow:
+                console:
+                  level: {{ .Values.nodes.schedulers.logLevel }}
+                file:
+                  level: {{ .Values.nodes.schedulers.logLevel }}
+                loggers:
+                  "airflow.processor_manager":
+                    level: {{ .Values.nodes.schedulers.logLevel }}
+{{- end }}

@@ -1,13 +1,42 @@
+{{- if .Values.catalogs }}
+{{- if .Values.catalogs.hive }}
 apiVersion: trino.stackable.tech/v1alpha1
 kind: TrinoCatalog
 metadata:
-  name: {{ .Values.catalog }}
+  name: hive
   labels:
 {{ include "gbif-chart-lib.selectorLabels" . | indent 4}}
 spec:
   connector:
     hive:
       metastore:
-        configMap: {{ .Values.hiveMetastoreName }}
+        configMap: {{ .Values.catalogs.hive.metastoreName }}
       hdfs:
-        configMap: {{ .Values.hdfsClusterName }}
+        configMap: {{ .Values.catalogs.hive.hdfsClusterName }}
+---
+{{- end }}
+{{if .Values.catalogs.postgresql }}
+apiVersion: trino.stackable.tech/v1alpha1
+kind: TrinoCatalog
+metadata:
+  name: psql
+  labels:
+{{ include "gbif-chart-lib.selectorLabels" . | indent 4}}
+spec:
+  connector:
+    generic:
+      connectorName: postgresql
+      properties:
+        connection-url: 
+          value: {{ .Values.catalogs.postgresql.url }}
+        connection-user:
+          valueFromSecret:
+            name: {{ include "gbif-chart-lib.name" . }}-trino-psql-user
+            key: user
+        connection-password:
+          valueFromSecret:
+            name: {{ include "gbif-chart-lib.name" . }}-trino-psql-user
+            key: password
+---
+{{- end }}
+{{- end }}

@@ -6,6 +6,10 @@ spec:
   image:
     productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
     stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
+  clusterConfig:
+{{- if .Values.logging.enabled  }}     
+    vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
+{{- end }}
   servers:
     roleGroups:
       default:
@@ -13,13 +17,31 @@ spec:
         config:
           resources:
             cpu:
-              max: {{ .Values.nodes.server.ressources.cpu.max }}
-              min: {{ .Values.nodes.server.ressources.cpu.min }}
+              max: {{ .Values.nodes.server.cpu.max }}
+              min: {{ .Values.nodes.server.cpu.min }}
             storage:
               data:
-                capacity: {{ .Values.nodes.server.ressources.storage }}
+                capacity: {{ .Values.nodes.server.storage }}
             memory:
-              limit: {{ .Values.nodes.server.ressources.memory }}
+              limit: {{ .Values.nodes.server.memory }}
+{{- if .Values.logging.enabled  }}
+          logging:
+            enableVectorAgent: true
+            containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
+              zookeeper:
+                console:
+                  level: {{ .Values.nodes.server.logLevel }}
+                file:
+                  level: {{ .Values.nodes.server.logLevel }}
+                loggers:
+                  ROOT:
+                    level: {{ .Values.nodes.server.logLevel }}
+                  org.apache.zookeeper.server.NettyServerCnxn:
+                    level: NONE
+{{- end }}
           affinity:
             nodeAffinity: 
               requiredDuringSchedulingIgnoredDuringExecution:

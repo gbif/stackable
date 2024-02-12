@@ -9,6 +9,9 @@ spec:
   clusterConfig:
     hdfsConfigMapName: {{ .Values.hdfsClusterName }}
     zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}-znode
+{{- if .Values.logging.enabled  }}     
+    vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
+{{- end }}
   masters:
     configOverrides:
       hbase-site.xml:
@@ -26,6 +29,22 @@ spec:
                 capacity: {{ .Values.nodes.master.storage.capacity }}
             memory:
               limit: {{ .Values.nodes.master.memory }}
+{{- if .Values.logging.enabled  }}
+          logging:
+            enableVectorAgent: true
+            containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
+              hbase:
+                console:
+                  level: {{ .Values.nodes.master.logLevel }}
+                file:
+                  level: {{ .Values.nodes.master.logLevel }}
+                loggers:
+                  ROOT:
+                    level: {{ .Values.nodes.master.logLevel }}
+{{- end }}
   regionServers:
     configOverrides:
       hbase-site.xml:
@@ -43,6 +62,22 @@ spec:
                 capacity: {{ .Values.nodes.region.storage.capacity }}
             memory:
               limit: {{ .Values.nodes.region.memory }}
+{{- if .Values.logging.enabled  }}
+          logging:
+            enableVectorAgent: true
+            containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
+              hbase:
+                console:
+                  level: {{ .Values.nodes.region.logLevel }}
+                file:
+                  level: {{ .Values.nodes.region.logLevel }}
+                loggers:
+                  ROOT:
+                    level: {{ .Values.nodes.region.logLevel }}
+{{- end }}
   restServers:
     configOverrides:
       hbase-site.xml:
@@ -60,3 +95,19 @@ spec:
                 capacity: {{ .Values.nodes.rest.storage.capacity }}
             memory:
               limit: {{ .Values.nodes.rest.memory }}
+{{- if .Values.logging.enabled  }}
+          logging:
+            enableVectorAgent: true
+            containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
+              hbase:
+                console:
+                  level: {{ .Values.nodes.rest.logLevel }}
+                file:
+                  level: {{ .Values.nodes.rest.logLevel }}
+                loggers:
+                  ROOT:
+                    level: {{ .Values.nodes.rest.logLevel }}
+{{- end }}

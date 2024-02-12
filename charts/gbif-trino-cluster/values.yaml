@@ -9,14 +9,35 @@ fullnameOverride: ""
 stackProduct: "414"
 stackVersion: "23.7.0"
 
-# Name of the hive metastore
-hiveMetastoreName: "gbif-hive-metastore"
+# Custom version for extended version airflow
+# Uses the stackProduct value to tell the operator what version of configurations to use with the custom image
+# Example of how to set custom image
+# customImage: 
+#  repository: docker.gbif.org
+#  image: gbif/extended-stack-trino-image
+#  tag: "1.0.0"
 
-# Name of the HDFS cluster
-hdfsClusterName: "gbif-hdfs"
+customImage: {}
 
-# Name of catalog used in GBIF
-catalog: "gbif"
+# List of catalogs to configure
+# Current supports hive and postgresql
+# Leaving the nodes empty will result in the catalog for the specific node being skipped
+# Example 
+# catalogs:
+#  hive:
+#    # Name of the hive metastore
+#    metastoreName: "gbif-hive-metastore"
+#    # Name of the HDFS cluster
+#    hdfsClusterName: "gbif-hdfs"
+#  postgresql:
+#    # Connection string for the postgres
+#    url: "jdbc:postgresql://gbif.example:5432/a-database"
+#    # User for the postgres
+#    user: "a-user"
+#    # Password for the postgres user
+#    # Currently password is put into the catalog itself which isn't optimal, so be caution and use a minimal service user
+#    password: "some-password"
+catalogs: {}
 
 # limit for per-node usage for queries
 memPerNode: "5GB"
@@ -24,16 +45,30 @@ memPerNode: "5GB"
 # headroom + limit per-node shouldn't exceed the total memory set per worker.
 memHeadroom: "1GB"
 
+persistedGeocodeLayerStorage:
+  # If enabled will try to create a PVC for the given storage class. The storage class should be a volume that can be accessed by multiple containers
+  enabled: false
+  # Size of the pv
+  capacity: '1Gi'
+  # Storage class for the PVC to look for storage. Requirement that it can be accessed by multiple containers at the same time
+  storageClass: nfs-client
+
 # users that should be created for the cluster at cluster creation time
 # example of who it could look:
 # customUsers:
 #   test1: test1Password
 #   test2: test2Password
-customUsers:
+customUsers: []
 
-#GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
-appPort: 9083
-nodePort: 31908
+# Enable logging via the vector aggregator
+# Needs the name of configmap for discovery of the aggregator
+logging:
+  # property for enable vector logging
+  enabled: false
+  # DisoveryMap for the connection the aggregator pod
+  discoveryMap: "gbif-vector-aggregator-discovery"
+  # Configured which vector itself logs on its own.
+  vectorLogLevel: "WARN"
 
 nodes:
   coordinator:
@@ -42,15 +77,24 @@ nodes:
       min: '100m'
       max: '2000m'
     memory: '2Gi'
+    logLevel: "INFO"
     storage:
       capacity: '4Gi'
+    #GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
+    ports:
+      tcp:
+        appPort: 8443
+        nodePort: 31443
   worker:
-    replicas: 6
+    replicas: 1
     cpu:
       min: '100m'
       max: '6000m'
     memory: '8Gi'
+    logLevel: "INFO"
     storage:
       capacity: '8Gi'
+    #GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
+    ports: []
   
 nodeSelector: {}

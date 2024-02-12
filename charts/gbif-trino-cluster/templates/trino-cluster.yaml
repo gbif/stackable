@@ -4,12 +4,20 @@ metadata:
   name: {{ include "gbif-chart-lib.name" . }}
 spec:
   image:
-    productVersion: {{ default .Chart.AppVersion .Values.stackProduct | quote }}
+{{- if .Values.customImage }}
+    productVersion: "{{ .Values.stackProduct }}"
+    custom: {{ .Values.customImage.repository }}/{{ .Values.customImage.image }}:{{ .Values.customImage.tag }}
+{{- else }}
+    productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
     stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
+{{- end }}
   clusterConfig:
+{{- if .Values.logging.enabled  }}     
+    vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
+{{- end }}
+    authentication:
+    - authenticationClass: {{ include "gbif-chart-lib.name" . }}-auth
     catalogLabelSelector:
-      authentication:
-        - authenticationClass: {{ include "gbif-chart-lib.name" . }}-auth
       matchLabels:
 {{ include "gbif-chart-lib.selectorLabels" . | indent 8}}
   coordinators:
@@ -26,6 +34,36 @@ spec:
             storage:
               data:
                 capacity: {{ .Values.nodes.coordinator.storage.capacity }}
+{{- if .Values.logging.enabled  }}
+          logging:
+            enableVectorAgent: true
+            containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
+              trino:
+                console:
+                  level: {{ .Values.nodes.coordinator.logLevel }}
+                file:
+                  level: {{ .Values.nodes.coordinator.logLevel }}
+                loggers:
+                  io.trino:
+                    level: {{ .Values.nodes.coordinator.logLevel }}
+{{- end }}
+{{- if .Values.persistedGeocodeLayerStorage.enabled }}
+        podOverrides:
+          spec:
+            containers:
+            - name: trino
+              volumeMounts:
+              - name: gbif-geocode-layers
+                mountPath: /gbif/geocode-layers
+            volumes:
+            - name: gbif-geocode-layers
+              persistentVolumeClaim:
+                claimName: {{ include "gbif-chart-lib.name" .}}-geocode-layers
+                readOnly: true
+{{- end }}
   workers:
     configOverrides:
       config.properties:
@@ -44,3 +82,33 @@ spec:
             storage:
               data:
                 capacity: {{ .Values.nodes.worker.storage.capacity }}
+{{- if .Values.logging.enabled  }}
+          logging:
+            enableVectorAgent: true
+            containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
+              trino:
+                console:
+                  level: {{ .Values.nodes.worker.logLevel }}
+                file:
+                  level: {{ .Values.nodes.worker.logLevel }}
+                loggers:
+                  io.trino:
+                    level: {{ .Values.nodes.worker.logLevel }}
+{{- end }}
+{{- if .Values.persistedGeocodeLayerStorage.enabled }}
+        podOverrides:
+          spec:
+            containers:
+            - name: trino
+              volumeMounts:
+              - name: gbif-geocode-layers
+                mountPath: /gbif/geocode-layers
+            volumes:
+            - name: gbif-geocode-layers
+              persistentVolumeClaim:
+                claimName: {{ include "gbif-chart-lib.name" .}}-geocode-layers
+                readOnly: true
+{{- end }}

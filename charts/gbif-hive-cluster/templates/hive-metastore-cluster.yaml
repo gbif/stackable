@@ -7,6 +7,9 @@ spec:
     productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
     stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
   clusterConfig:
+{{- if .Values.logging.enabled  }}     
+    vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
+{{- end }}
     hdfs:
       configMap: {{ .Values.hdfsClusterName }}
     database:
@@ -22,14 +25,30 @@ spec:
         metastore.storage.schema.reader.impl: "org.apache.hadoop.hive.metastore.SerDeStorageSchemaReader"
     roleGroups:
       default:
-        replicas: {{ .Values.replicas }}
+        replicas: {{ .Values.nodes.metastore.replicas }}
         config:
           resources:
             cpu:
-              max: {{ .Values.metastore.cpu.max }}
-              min: {{ .Values.metastore.cpu.min }}
+              max: {{ .Values.nodes.metastore.cpu.max }}
+              min: {{ .Values.nodes.metastore.cpu.min }}
             storage:
               data:
-                capacity: {{ .Values.metastore.storage.capacity }}
+                capacity: {{ .Values.nodes.metastore.storage.capacity }}
             memory:
-              limit: {{ .Values.metastore.memory }}
+              limit: {{ .Values.nodes.metastore.memory }}
+{{- if .Values.logging.enabled  }}
+          logging:
+            enableVectorAgent: true
+            containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
+              hive:
+                console:
+                  level: {{ .Values.nodes.metastore.logLevel }}
+                file:
+                  level: {{ .Values.nodes.metastore.logLevel }}
+                loggers:
+                  ROOT:
+                    level: {{ .Values.nodes.metastore.logLevel }}
+{{- end }}

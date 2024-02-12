@@ -5,34 +5,53 @@ fullnameOverride: ""
 
 memoryPagingAllow: true
 
-#GBIF specified nodeports for exposing the infrastructure to VMs outside the kubenetes cluster
-appPort: 9200
-nodePort: 31920
+# users that should be created for the cluster at creation
+# example of who it could look:
+# customUsers:
+# - name: test1
+#   password: test1Password
+#   roles: "a_role"
+# - name: test2
+#   password: test2Password
+#   roles: another_role,a_third_role
+
+customUsers: []
+
+# Roles that should be created for the cluster at creation
+# WIP simple structure for a single role so no example yet
+
+customRoles: []
 
 nodes:
   manager:
-    replicas: 3
-    cpu:
-      min: '500m'
-      max: '2000m'
-    memory: 3072
-    storage:
-      class: local-path
-      capacity: '25Gi'
+    replicas: 1
+    resources:
+      cpu:
+        min: '500m'
+        max: '2000m'
+      memory: 3072
+      storage:
+        class: local-path
+        capacity: '25Gi'
+    ports: {}
   worker:
-    replicas: 3
-    cpu:
-      min: '1000m'
-      max: '4000m'
-    memory: 4096
-    storage:
-      drives: []
-      labels: []
-      class: elastic-storage
-      capacity: '100Gi'
+    replicas: 1
+    resources:
+      cpu:
+        min: '1000m'
+        max: '4000m'
+      memory: 4096
+      storage:
+        drives: []
+        labels: []
+        class: elastic-storage
+        capacity: '100Gi'
+    ports: {}
   kibana:
     replicas: 1
-    cpu:
-      min: '500m'
-      max: '2000m'
-    memory: 2048
+    resources:
+      cpu:
+        min: '500m'
+        max: '2000m'
+      memory: 2048
+    ports: {}

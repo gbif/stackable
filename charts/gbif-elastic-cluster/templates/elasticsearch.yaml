@@ -4,9 +4,30 @@ metadata:
   name: {{ include "gbif-chart-lib.name" . }}
 spec:
   version: {{ .Chart.AppVersion | default "8.5.3" | quote }}
+  # Currently disabled tls on the http port to make it easier to connect vector
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+  # Setting Elastic to read secrets for fileRealm if they exists in the values files
+  {{- if or .Values.customUsers .Values.customRoles }}
+  auth:
+  {{- if .Values.customUsers }}
+    fileRealm:
+  {{- range $index, $value := .Values.customUsers }}
+    - secretName: {{ include "gbif-chart-lib.name" $ }}-user-{{ $index }} 
+  {{- end }}
+  {{- end }}
+   {{- if .Values.customUsers }}
+    roles:
+  {{- range $index, $value := .Values.customRoles }}
+    - secretName: {{ include "gbif-chart-lib.name" $ }}-role-{{ $index }} 
+  {{- end }}
+  {{- end }}
+  {{- end }}
   nodeSets:
   - name: managers
-    count: {{ .Values.nodes.worker.replicas }}
+    count: {{ .Values.nodes.manager.replicas }}
     config:
       node:
         store:
@@ -20,14 +41,14 @@ spec:
             runAsUser: 1000 # Sets to the gbif user
           env:
           - name: ES_JAVA_OPTS
-            value: -Xms{{ sub .Values.nodes.manager.memory 512 }}m -Xmx{{ sub .Values.nodes.manager.memory 512 }}m
+            value: -Xms{{ sub .Values.nodes.manager.resources.memory 512 }}m -Xmx{{ sub .Values.nodes.manager.resources.memory 512 }}m
           resources:
             requests:
-              memory: {{ .Values.nodes.manager.memory }}Mi
-              cpu: {{ .Values.nodes.manager.cpu.min }}
+              memory: {{ .Values.nodes.manager.resources.memory }}Mi
+              cpu: {{ .Values.nodes.manager.resources.cpu.min }}
             limits:
-              memory: {{ .Values.nodes.manager.memory }}Mi
-              cpu: {{ .Values.nodes.manager.cpu.max }}
+              memory: {{ .Values.nodes.manager.resources.memory }}Mi
+              cpu: {{ .Values.nodes.manager.resources.cpu.max }}
     volumeClaimTemplates:
     - metadata:
         name: elasticsearch-data # Points to standard mount directory
@@ -36,8 +57,8 @@ spec:
         - ReadWriteOnce
         resources:
           requests:
-            storage: {{ $.Values.nodes.manager.storage.capacity }}
-        storageClassName: {{ $.Values.nodes.manager.storage.class }}
+            storage: {{ $.Values.nodes.manager.resources.storage.capacity }}
+        storageClassName: {{ $.Values.nodes.manager.resources.storage.class }}
   - name: workers
     count: {{ .Values.nodes.worker.replicas }}
     config:
@@ -53,14 +74,14 @@ spec:
             runAsUser: 1000 # Sets to the gbif user
           env:
           - name: ES_JAVA_OPTS
-            value: -Xms{{ sub .Values.nodes.worker.memory 512 }}m -Xmx{{ sub .Values.nodes.worker.memory 512 }}m
+            value: -Xms{{ sub .Values.nodes.worker.resources.memory 512 }}m -Xmx{{ sub .Values.nodes.worker.resources.memory 512 }}m
           resources:
             requests:
-              memory: {{ .Values.nodes.worker.memory }}Mi
-              cpu: {{ .Values.nodes.worker.cpu.min }}
+              memory: {{ .Values.nodes.worker.resources.memory }}Mi
+              cpu: {{ .Values.nodes.worker.resources.cpu.min }}
             limits:
-              memory: {{ .Values.nodes.worker.memory }}Mi
-              cpu: {{ .Values.nodes.worker.cpu.max }}
+              memory: {{ .Values.nodes.worker.resources.memory }}Mi
+              cpu: {{ .Values.nodes.worker.resources.cpu.max }}
     volumeClaimTemplates:
     - metadata:
         name: elasticsearch-data # Points to standard mount directory
@@ -69,5 +90,5 @@ spec:
         - ReadWriteOnce
         resources:
           requests:
-            storage: {{ $.Values.nodes.worker.storage.capacity }}
-        storageClassName: {{ $.Values.nodes.worker.storage.class }}
+            storage: {{ $.Values.nodes.worker.resources.storage.capacity }}
+        storageClassName: {{ $.Values.nodes.worker.resources.storage.class }}

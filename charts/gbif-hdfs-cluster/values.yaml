@@ -7,7 +7,7 @@ fullnameOverride: ""
 
 # Stackable versioning to override the version of the Stack component.
 stackProduct: "3.3.4"
-stackVersion: "23.7.0"
+stackVersion: "23.11.0"
 
 # Name of the zookeeper cluster
 zookeeperClusterName: "gbif-zookeeper"
@@ -26,6 +26,16 @@ useDataNodeHostName: "true"
 # For making node available for datanode, add label datanodes=enabled to the node
 useNodeAffinity: true
 
+# Enable logging via the vector aggregator
+# Needs the name of configmap for discovery of the aggregator
+logging:
+  # property for enable vector logging
+  enabled: false
+  # DisoveryMap for the connection the aggregator pod
+  discoveryMap: "gbif-vector-aggregator-discovery"
+  # Configured which vector itself logs on its own.
+  vectorLogLevel: "WARN"
+
 # Note describing configurations for NFS and HTTPFS to propergate to the hadoop cluster
 gateway:
   httpfs:
@@ -42,40 +52,71 @@ gateway:
     directoryToExport: "/occurrence-download/some-directory"
     # Hosts and their access to the system
     exportAccess: "* ro"
+    
 nodes:
   datanode:
-    replicas: 1
-    cpu:
-      min: '100m'
-      max: '1000m'
-    memory: '2Gi'
-    # The storage structure allows for defining node specific drives created by the cluster administrator
-    # If you want to let the cluster deploy the storage, you can do the following:
-    # storage:
-    #   capacity: '50Gi'
-    storage:
-      drives: []
-      labels: []
-      class: hdfs-datanode-storage
-      capacity: '100Gi'
-      type: "Disk"
+    logLevel: "INFO"
     # Allow for specifying nodeports for exposing the pods to VMs outside the kubenetes cluster on the internal network
-    tcpPort: 9864
-    icpPort: 9867
-    dataPort: 9866
-    # List of IPs hosting the specific nodes.
-    # Example server1 host datanode2 and server2 host datanode1
-    # Then it should look like:
-    # ips:
-    #  - server2_ip
-    #  - server1_ip
-    ips: []
+    ports:
+      tcpPort: 9864
+      icpPort: 9867
+      dataPort: 9866
+    groups:
+      default:
+        replicas: 1
+        cpu:
+          min: '100m'
+          max: '1000m'
+        memory: '2Gi'
+        # The storage structure allows for defining node specific drives created by the cluster administrator
+        # If you want to let the cluster deploy the storage, you can do the following:
+        # storage:
+        #   capacity: '50Gi'
+        storage:
+          drives: []
+          labels: []
+          class: hdfs-datanode-storage
+          capacity: '100Gi'
+          type: "Disk"
+        # List of IPs hosting the specific nodes.
+        # Example server1 host datanode2 and server2 host datanode1
+        # Then it should look like:
+        # ips:
+        #  - server2_ip
+        #  - server1_ip
+        ips: []
+      # Example of how to add an additional group with a different type of disk
+      #ssdmachines:
+      #  replicas: 1
+      #  cpu:
+      #    min: '100m'
+      #    max: '2000m'
+      #  memory: '4Gi'
+      #  # The storage structure allows for defining node specific drives created by the cluster administrator
+      #  # If you want to let the cluster deploy the storage, you can do the following:
+      #  # storage:
+      #  #   capacity: '50Gi'
+      #  storage:
+      #    drives: []
+      #    labels: []
+      #    class: hdfs-datanode-ssd-storage
+      #    capacity: '300Gi'
+      #    type: "SSD"
+      #  # List of IPs hosting the specific nodes.
+      #  # Since the actual pods aren't hardcoded to a specific node but the general storageClass - Create the pods first then add the ips to create the services
+      #  # Example server1 host datanode2 and server2 host datanode1
+      #  # Then it should look like:
+      #  # ips:
+      #  #  - server2_ip
+      #  #  - server1_ip
+      #  ips: []
   namenode:
     replicas: 1
     cpu:
       min: '100m'
       max: '2000m'
     memory: '3Gi'
+    logLevel: "INFO"
     storage:
       capacity: '15Gi'
     # Allow for specifying nodeports for exposing the pods to VMs outside the kubenetes cluster on the internal network
@@ -94,6 +135,7 @@ nodes:
       min: '100m'
       max: '2000m'
     memory: '2Gi'
+    logLevel: "INFO"
     storage:
       capacity: '15Gi'
     # Currently no support for external port in our service template for journalnode exposure

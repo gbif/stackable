@@ -9,11 +9,15 @@ fullnameOverride: ""
 stackProduct: "2.6.1"
 stackVersion: "23.7.0"
 
-# Executor airflow should use
-executor: CeleryExecutor
+# Custom version for extended version airflow
+# Uses the stackProduct value to tell the operator what version of configurations to use with the custom image
+# Example of how to set custom image
+# customImage: 
+#  repository: docker.gbif.org
+#  image: gbif/extended-stack-airflow
+#  tag: "2.6.1"
 
-# Version of statsd exporter to use
-statsdVersion: 0.22.4
+customImage: {}
 
 # Should load examples
 examples: false
@@ -21,7 +25,25 @@ examples: false
 # Expose configs
 exposeConfigs: false
 
-#Admin user for Airflow
+# If configured, will use git to sync dags to the pods
+# Example of how to configure git
+# git: 
+#   repository: https://github.com/my_org/my_repo
+#   branch: main
+#   dagFolder: root_of_repo/my/dag/folder
+#   # size of the history the repo should keep locally
+#   depth: 10
+#   # wait time between syncs
+#   wait: 30
+#   # If auth is defined a create will be created with provided info that gitsync will use to checkout repository
+#   auth:
+#     user: a_github_user
+#     token: a_token
+#     
+
+git: {}
+
+# Admin user for Airflow, will be created as a secret
 admin:
   firstName: ""
   lastName: ""
@@ -30,17 +52,27 @@ admin:
   password: ""
   secret: ""
 
-#Database information for Airflows state database
+# Database information for Airflows state database
 airflowDB:
   name: ""
   user: ""
   pass: ""
   db: airflow
 
-#Redis information for Airflows queue system
+# Redis information for Airflows queue system
 airflowRedis:
   name: airflow-redis
   pass: ""
+
+# Enable logging via the vector aggregator
+# Needs the name of configmap for discovery of the aggregator
+logging:
+  # property for enable vector logging
+  enabled: false
+  # DisoveryMap for the connection the aggregator pod
+  discoveryMap: "gbif-vector-aggregator-discovery"
+  # Configured which vector itself logs on its own.
+  vectorLogLevel: "WARN"
 
 nodes:
   webserver:
@@ -48,32 +80,35 @@ nodes:
     cpu:
       min: '100m'
       max: '2000m'
-    memory: '4Gi'
+    memory: '2Gi'
+    logLevel: "INFO"
     # Port for setting up node port given node - Leave empty to not setup port
     ports: {}
-  worker:
-    replicas: '3'
+  workers:
+    replicas: '1'
     cpu:
       min: '100m'
       max: '3000m'
-    memory: '8Gi'
+    memory: '4Gi'
+    logLevel: "INFO"
     # Port for setting up node port given node - Leave empty to not setup port
     ports: {}
-  scheduler:
+  schedulers:
     replicas: '1'
     cpu:
       min: '100m'
       max: '1000m'
     memory: '2Gi'
+    logLevel: "INFO"
     # Port for setting up node port given node - Leave empty to not setup port
     ports: {}
 
-storageCapacity: '2Gi'
+# Example of how the airflowEnvOverrides can look like. Every line gets added to env override for all type of nodes
+# NOTE overwriting the plugin or dag location should only be done if you have made the required changes to airflowCluster.yaml file 
+# airflowEnvOverrides:
+#  AIRFLOW__CORE__DAGS_FOLDER: "{{ .Values.externalData }}/airflow/dags"
+#  AIRFLOW__CORE__PLUGINS_FOLDER: "{{ .Values.externalData }}/airflow/plugins"
+#  AIRFLOW__CORE__EXECUTE_TASKS_NEW_PYTHON_INTERPRETER: "True"
+#  AIRFLOW_CONN_KUBERNETES_IN_CLUSTER: "kubernetes://?__extra__=%7B%22extra__kubernetes__in_cluster%22%3A+true%2C+%22extra__kubernetes__kube_config%22%3A+%22%22%2C+%22extra__kubernetes__kube_config_path%22%3A+%22%22%2C+%22extra__kubernetes__namespace%22%3A+%22%22%7D"
 
-externalData: "/gbif_external"
-
-airflowEnvOverrides:
-  AIRFLOW__CORE__DAGS_FOLDER: "{{ .Values.externalData }}/airflow/dags"
-  AIRFLOW__CORE__PLUGINS_FOLDER: "{{ .Values.externalData }}/airflow/plugins"
-  AIRFLOW__CORE__EXECUTE_TASKS_NEW_PYTHON_INTERPRETER: "True"
-  AIRFLOW_CONN_KUBERNETES_IN_CLUSTER: "kubernetes://?__extra__=%7B%22extra__kubernetes__in_cluster%22%3A+true%2C+%22extra__kubernetes__kube_config%22%3A+%22%22%2C+%22extra__kubernetes__kube_config_path%22%3A+%22%22%2C+%22extra__kubernetes__namespace%22%3A+%22%22%7D"
+airflowEnvOverrides: {}

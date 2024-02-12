@@ -18,7 +18,7 @@ service:
   type: ClusterIP
   port: 8080
 
-# Ressources for the web application
+# resources for the web application
 resources:
   limits:
     cpu: "1000m"

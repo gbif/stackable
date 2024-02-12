@@ -5,12 +5,12 @@ metadata:
   name: {{ include "gbif-chart-lib.name" . }}-conf
 data:
   config.properties: |
-    hiveDB={{ .Values.hiveDB }}
+    hiveDB={{ .Values.hive.hiveDB }}
     sourceTable={{ .Values.sourceTable }}
-    hiveTablePrefix={{ .Values.hiveTablePrefix }}
+    hiveTablePrefix={{ .Values.hive.hiveTablePrefix }}
     hbaseTable={{ .Values.hbase.table }}
     hbaseRegions={{ .Values.hbase.regions }}
-    hbaseZK={{ .Values.hbase.ZK }}
+    hbaseZK={{ .Values.ZK }}
     targetDir={{ .Values.targetDir }}
     hashCountThreshold={{ .Values.hashCountThreshold }}
 {{- end }}

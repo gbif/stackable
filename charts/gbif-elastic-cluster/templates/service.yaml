@@ -1,3 +1,1 @@
-{{- include "gbif-chart-list.service" (list . "gbif-elastic-cluster.service") -}}
-{{- define "gbif-elastic-cluster.service" -}}
-{{- end -}}
+{{- include "gbif-chart-list.nodeport-service.tpl" . -}}

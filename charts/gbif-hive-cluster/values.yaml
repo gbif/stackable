@@ -12,26 +12,32 @@ stackVersion: "23.7.0"
 # Name of the HDFS cluster
 hdfsClusterName: "gbif-hdfs"
 
-# BUG Trino can't connect to hive cluster with more than 1 replicas
-replicas: 1
-
 # Using more than 1 replica or using a different default service naming scheme, set the thrift url manually
 thriftUrl: ""
 
 # Use for setting the warehouse location
 warehouse: "/gbif/warehouse"
 
-#Values for setting ports to something different than default
-appPort: 9083
-nodePort: 31083
+# Enable logging via the vector aggregator
+# Needs the name of configmap for discovery of the aggregator
+logging:
+  # property for enable vector logging
+  enabled: false
+  # DisoveryMap for the connection the aggregator pod
+  discoveryMap: "gbif-vector-aggregator-discovery"
+  # Configured which vector itself logs on its own.
+  vectorLogLevel: "WARN"
 
-metastore:
-  cpu:
-    min: '100m'
-    max: '4000m'
-  memory: '4Gi'
-  storage:
-    capacity: '10Gi'
+nodes:
+  metastore:
+    replicas: 1
+    cpu:
+      min: '100m'
+      max: '4000m'
+    memory: '4Gi'
+    storage:
+      capacity: '10Gi'
+    logLevel: "INFO"
 
 # Connection to Hive's postgres DB
 hiveDB:

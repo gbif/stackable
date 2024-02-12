@@ -18,6 +18,16 @@ hdfsClusterName: "gbif-hdfs"
 # hbase root folder for storing data
 hbaseRootDirectory: /hbase
 
+# Enable logging via the vector aggregator
+# Needs the name of configmap for discovery of the aggregator
+logging:
+  # property for enable vector logging
+  enabled: false
+  # DisoveryMap for the connection the aggregator pod
+  discoveryMap: "gbif-vector-aggregator-discovery"
+  # Configured which vector itself logs on its own.
+  vectorLogLevel: "WARN"
+
 nodes:
   master:
     replicas: 1
@@ -25,6 +35,7 @@ nodes:
       min: '100m'
       max: '2000m'
     memory: '4Gi'
+    logLevel: "INFO"
     storage:
       capacity: '4Gi'
     # Currently no support in the service template for external ip ports for master node
@@ -35,6 +46,7 @@ nodes:
       min: '100m'
       max: '3000m'
     memory: '8Gi'
+    logLevel: "INFO"
     storage:
       capacity: '16Gi'
     tcpPort: 16020
@@ -51,6 +63,7 @@ nodes:
       min: '100m'
       max: '1000m'
     memory: '2Gi'
+    logLevel: "INFO"
     storage:
       capacity: '2Gi'
     # Currently no support in the service template for external ip ports for rest node

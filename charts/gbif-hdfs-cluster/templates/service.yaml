@@ -1,4 +1,4 @@
-{{ range $n := until (len .Values.nodes.namenode.ips) }}
+{{- range $n := until (len .Values.nodes.namenode.ips) }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -18,30 +18,32 @@ spec:
   externalIPs: 
   - {{ (index $.Values.nodes.namenode.ips $n) }}
 ---
-{{ end }}
+{{- end }}
 
-{{ range $n := until (len .Values.nodes.datanode.ips) }}
+{{- range $datanodeKey, $datanodeValue := .Values.nodes.datanode.groups }}
+{{- range $n := until (len $datanodeValue.ips) }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ printf "%s-%s-%d" $.Release.Name "data-local" $n }}
+  name: {{ printf "%s-%s-%d" $datanodeKey "local-port" $n }}
 spec:
   selector:
-    statefulset.kubernetes.io/pod-name: {{ printf "%s-datanode-default-%d" ( include "gbif-chart-lib.name" $ ) $n }}
+    statefulset.kubernetes.io/pod-name: {{ printf "%s-datanode-%s-%d" ( include "gbif-chart-lib.name" $ ) $datanodeKey $n }}
   ports:
   - name: gbif-tcp
     protocol: TCP
-    port: {{ $.Values.nodes.datanode.tcpPort }}
-    targetPort: {{ $.Values.nodes.datanode.tcpPort }}
+    port: {{ $.Values.nodes.datanode.ports.tcpPort }}
+    targetPort: {{ $.Values.nodes.datanode.ports.tcpPort }}
   - name: gbif-icp
     protocol: TCP
-    port: {{ $.Values.nodes.datanode.icpPort }}
-    targetPort: {{ $.Values.nodes.datanode.icpPort }}
+    port: {{ $.Values.nodes.datanode.ports.icpPort }}
+    targetPort: {{ $.Values.nodes.datanode.ports.icpPort }}
   - name: gbif-data
     protocol: TCP
-    port: {{ $.Values.nodes.datanode.dataPort }}
-    targetPort: {{ $.Values.nodes.datanode.dataPort }}
+    port: {{ $.Values.nodes.datanode.ports.dataPort }}
+    targetPort: {{ $.Values.nodes.datanode.ports.dataPort }}
   externalIPs: 
-  - {{ (index $.Values.nodes.datanode.ips $n) }}
+  - {{ (index $datanodeValue.ips $n) }}
 ---
-{{ end }}
+{{- end }}
+{{- end }}
