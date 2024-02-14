@@ -51,3 +51,10 @@ spec:
                     operator: In
                     values:
                     - enabled
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: zookeeper
+                  app.kubernetes.io/instance: {{ include "gbif-chart-lib.name" . }}
+                  app.kubernetes.io/component: server

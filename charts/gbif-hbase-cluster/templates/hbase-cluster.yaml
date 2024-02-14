@@ -46,6 +46,16 @@ spec:
                     level: {{ .Values.nodes.master.logLevel }}
 {{- end }}
   regionServers:
+    config:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: hbase
+                app.kubernetes.io/instance: {{ include "gbif-chart-lib.name" . }}
+                app.kubernetes.io/component: regionserver
+            topologyKey: kubernetes.io/hostname
     configOverrides:
       hbase-site.xml:
         hbase.rootdir: hdfs://{{ .Values.hdfsClusterName }}{{ .Values.hbaseRootDirectory }}
