@@ -1,1 +1,19 @@
-{{- include "gbif-chart-list.nodeport-service.tpl" . -}}
+{{- range $zookeeperKey, $zookeeperValue := .Values.nodes }}
+{{- range $n := until (len $zookeeperValue.ips) }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-%s-%d" $zookeeperKey "local-port" $n }}
+spec:
+  selector:
+    statefulset.kubernetes.io/pod-name: {{ printf "%s-%s-default-%d" ( include "gbif-chart-lib.name" $ ) $zookeeperKey $n }}
+  ports:
+  - name: gbif-tcp
+    protocol: TCP
+    port: {{ $zookeeperValue.ports.tcpPort }}
+    targetPort: {{ $zookeeperValue.ports.tcpPort }}
+  externalIPs: 
+  - {{ (index $zookeeperValue.ips $n) }}
+---
+{{- end }}
+{{- end }}
