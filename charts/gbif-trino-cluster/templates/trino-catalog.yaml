@@ -39,4 +39,35 @@ spec:
             key: password
 ---
 {{- end }}
+{{- if .Values.catalogs.tpch }}
+{{- if .Values.catalogs.tpch.enabled }}
+apiVersion: trino.stackable.tech/v1alpha1
+kind: TrinoCatalog
+metadata:
+  name: tpch
+  labels:
+{{ include "gbif-chart-lib.selectorLabels" . | indent 4}}
+spec:
+  connector:
+    tpch:
+      column-naming: STANDARD
+---
+{{- end }}
+{{- end }}
+{{- if .Values.catalogs.iceberg }}
+apiVersion: trino.stackable.tech/v1alpha1
+kind: TrinoCatalog
+metadata:
+  name: iceberg
+  labels:
+{{ include "gbif-chart-lib.selectorLabels" . | indent 4}}
+spec:
+  connector:
+    iceberg:
+      metastore:
+        configMap: {{ .Values.catalogs.iceberg.metastoreName }}
+      hdfs:
+        configMap: {{ .Values.catalogs.iceberg.hdfsClusterName }}
+---
+{{- end }}
 {{- end }}

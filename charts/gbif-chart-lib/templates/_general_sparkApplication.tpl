@@ -1,7 +1,7 @@
 {{- /*
 Standard Sparkapplication to import in different sub charts, uses values to determine how final chart looks.
 */}}
-{{- define "gbif-chart-lib.sparkapplication.tpl" -}}
+{{- define "gbif-chart-lib.sparkapplication.tpl" }}
 apiVersion: spark.stackable.tech/v1alpha1
 kind: SparkApplication
 metadata:
@@ -19,7 +19,7 @@ spec:
     productVersion: {{ .Values.stackProduct }}
     stackableVersion: {{ .Values.stackVersion }}
   mode: cluster
-  mainApplicationFile: local:///stackable/spark/jobs/{{ .Values.image.name }}.jar
+  mainApplicationFile: local:///stackable/spark/jobs/{{ .Values.image.name }}-{{ .Values.image.version }}.jar
   mainClass: {{ .Values.mainClass }}
 {{- if .Values.logging.enabled }}
   vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
@@ -43,9 +43,21 @@ spec:
   args:
 {{- tpl (.Values.args | toYaml) . | nindent 4 }}
 {{- end }}
+{{- if .Values.deps }}
+  deps:
+{{- if .Values.deps.repositories }}
+    repositories:
+{{- tpl (.Values.deps.repositories | toYaml) . | nindent 6 }}
+{{- end }}
+{{- if .Values.deps.packages }}
+    packages:
+{{- tpl (.Values.deps.packages | toYaml) . | nindent 6 }}
+{{- end }}
+{{- end }}
 {{- if .Values.sparkConf }}
   sparkConf:
-{{- tpl (.Values.sparkConf | toYaml) . | nindent 4 }}
+{{- $standardConf := fromYaml (include "gbif-chart-lib.sparkStandardConf" .) }}
+{{- tpl ( (merge .Values.sparkConf $standardConf) | toYaml) . | nindent 4 }}
 {{- end }}
   volumes:
 {{- /*
@@ -89,13 +101,6 @@ If something different is required either use the customProperty to confgiure it
           path: hbase-site.xml
 {{- end }}
   driver:
-{{- if and .Values.image (contains "SNAPSHOT" .Values.image.version) }}
-    podOverrides:
-      spec:
-        initContainers:
-        - name: job
-          imagePullPolicy: Always
-{{- end }}
     config:
       resources:
         cpu:
@@ -149,14 +154,11 @@ If something different is required either use the customProperty to confgiure it
           subPath: hbase-site.xml
 {{- end }}
   executor:
-{{- if and .Values.image (contains "SNAPSHOT" .Values.image.version) }}
-    podOverrides:
-      spec:
-        initContainers:
-        - name: job
-          imagePullPolicy: Always
-{{- end }}
+{{- if .Values.yunikorn.dynamicResources.enabled }}
+    replicas: {{ .Values.yunikorn.dynamicResources.executor.min }}
+{{- else }}
     replicas: {{ .Values.nodes.executor.replicas }}
+{{- end }}
     config:
       resources:
         cpu:
@@ -209,7 +211,16 @@ If something different is required either use the customProperty to confgiure it
           mountPath: /etc/hadoop/conf/hbase-site.xml
           subPath: hbase-site.xml
 {{- end }}
+
 {{- end }}
-{{- define "gbif-chart-lib.sparkapplication" -}}
-{{- include "gbif-chart-list.util.merge" (append . "gbif-chart-lib.sparkapplication.tpl") -}}
-{{- end -}}
+
+{{- define "gbif-chart-lib.sparkapplicationCollected" }}
+{{- $mainTemplate := fromYaml (include "gbif-chart-lib.sparkapplication.tpl" .) }}
+{{- $podOverrides := fromYaml (include "gbif-chart-lib.sparkPodOverride" .) }}
+{{- $total := merge $mainTemplate $podOverrides }}
+{{ toYaml $total }}
+{{- end }}
+
+{{- define "gbif-chart-lib.sparkapplication" }}
+{{ include "gbif-chart-list.util.merge" (append . "gbif-chart-lib.sparkapplicationCollected") }}
+{{- end }}

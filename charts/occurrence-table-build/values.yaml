@@ -17,7 +17,7 @@ fullnameOverride: ""
 image: 
   repository: "docker.gbif.org/"
   name: "occurrence-table-build-spark"
-  version: "1.1.28"
+  version: "0.195.0-H3-SNAPSHOT"
 
 # Stackable versioning to override the version of the Stack component.
 stackProduct: "3.4.0"
@@ -37,7 +37,15 @@ args:
   - "/etc/gbif/config.yaml"
   - "CREATE"
   - "ALL"
-  
+# deps describes the dependencies the spark-submit pod should pull before starting execution
+# the section consists on a list of repositories and a list of packages
+# Example 
+#deps:
+#  repositories:
+#    - "https://some_maven_repo/repository/central/"
+#  packages:
+#    - "org.apache.spark:spark-avro_2.12:3.3.0"
+
 # sparkConf is used to pass spark configuration to spark submitter, driver and executor
 # Example of how it could look
 # sparkConf:
@@ -50,10 +58,7 @@ args:
 #  "spark.kubernetes.driver.annotation.yunikorn.apache.org/app-id": "{{`{{APP_ID}}`}}"
 #  "spark.kubernetes.executor.annotation.yunikorn.apache.org/app-id": "{{`{{APP_ID}}`}}"
 
-sparkConf: 
-  "spark.driver.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/etc/gbif/"
-  "spark.executor.extraClassPath": "/etc/hadoop/conf/:/stackable/spark/extra-jars/*:/etc/gbif/"
-  "spark.kubernetes.authenticate.driver.serviceAccountName": "gbif-spark-sa"
+sparkConf: {}
 
 # Configuration for a bucket to store logs in
 # Supports one existing bucket
@@ -87,7 +92,7 @@ nodes:
   driver:
     # CPU settings for the driver 
     cpu: 
-      min: "100m"
+      min: "1000m"
       max: "4000m"
     # Memory for the Spark driver.
     memory: "3Gi"
@@ -99,10 +104,10 @@ nodes:
     # CPU settings for per executor. 
     # To get total reosurce consumtion by executors, multiple max cpi and mem with number of replicas.
     cpu:
-      min: "100m" 
-      max: "6000m"
+      min: "1000m" 
+      max: "4000m"
     # Memory for each executor.
-    memory: "12Gi"
+    memory: "8Gi"
     # Number of executors.
     replicas: 2
     # Log level for executor
@@ -114,6 +119,21 @@ nodes:
 ## app: Installs the spark application
 # The use case is for enabling templating only the application for use in Airflows or start an instance of spark within necessary updating the configsmaps
 installMode: config
+
+#Support for Yunikorn scheduling together with dynamic resource allocation with the help from yunikorn.
+#By default both options are disabled.
+yunikorn:
+  enabled: false
+  driver:
+    queue: "root.default"
+  executor:
+    queue: "root.default"
+  dynamicResources:
+    enabled: false
+    executor:
+      initial: 2
+      min: 1
+      max: 4
 
 # As the chart assumes a default structure for providing properties to the application it is possible to configure a way to provide your own format
 # Example of how to describe you own file (You have to create this configmap yourself for now)

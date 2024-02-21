@@ -2,12 +2,7 @@
 # This chart specific named template has precedence over the general template
 # Be aware that the whole node gets overwritten
 {{- define "grscicoll-cache.sparkapplication" -}}
-spec:
-  deps:
-    repositories:
-      - https://repository.gbif.org/repository/central/
-    packages:
-      - org.apache.spark:spark-avro_2.12:3.3.0
+
 {{- end -}}
 
 {{- if or (eq (lower .Values.installMode) "all") (eq (lower .Values.installMode) "app")  -}}

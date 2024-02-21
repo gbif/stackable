@@ -49,3 +49,11 @@ Selector labels
 app.kubernetes.io/name: {{ include "gbif-chart-lib.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{- define "gbif-chart-lib.yunikornName" -}}
+{{- if .Values.fullnameOverride }}
+{{- .Values.fullnameOverride | trunc 54 | trimSuffix "-" }}
+{{- else }}
+{{- .Values.appName | trunc 54 | trimSuffix "-" }}
+{{- end }}
+{{- end }}
