@@ -14,7 +14,7 @@ fullnameOverride: ""
 #  #The template assumes the name of the jar is the same as the images name
 #  name: "MySupercoolImage"
 #  version: "1.0.0"
-image: 
+image:
   repository: "docker.gbif.org/"
   name: "clustering"
   version: "2.19.0-H3-SNAPSHOT"
@@ -37,7 +37,7 @@ args:
   - "/etc/gbif/config.properties"
 # deps describes the dependencies the spark-submit pod should pull before starting execution
 # the section consists on a list of repositories and a list of packages
-# Example 
+# Example
 #deps:
 #  repositories:
 #    - "https://some_maven_repo/repository/central/"
@@ -88,8 +88,8 @@ logging:
 # Ressource configuration for spark driver.
 nodes:
   driver:
-    # CPU settings for the driver 
-    cpu: 
+    # CPU settings for the driver
+    cpu:
       min: "1000m"
       max: "2000m"
     # Memory for the Spark driver.
@@ -99,10 +99,10 @@ nodes:
 
   # Ressource configuration for spark executors.
   executor:
-    # CPU settings for per executor. 
+    # CPU settings for per executor.
     # To get total reosurce consumtion by executors, multiple max cpi and mem with number of replicas.
     cpu:
-      min: "1000m" 
+      min: "1000m"
       max: "4000m"
     # Memory for each executor.
     memory: "6Gi"
@@ -140,7 +140,7 @@ yunikorn:
 #  path: "/some/path/on/pod/"
 #  file: "my-super-cool-file.properties"
 
-customProperties: 
+customProperties:
   configmapName: "clustering-conf"
   path: "/etc/gbif"
   file: "config.properties"
@@ -158,7 +158,7 @@ hive:
 
 hbase:
 # Name of the Stackable hbase cluster in the namespace.
-  clusterName: gibf-hbase
+  clusterName: gbif-hbase
   table:
   regions:
 
