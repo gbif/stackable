@@ -1,13 +1,92 @@
-overrideName: ""
+# Override name of the cluster
+nameOverride: ""
+# Override fullname of the cluster
+fullnameOverride: ""
+
 label: "spark-shell"
-image: "docker.stackable.tech/stackable/spark-k8s:3.3.0-stackable23.4.1"
-ports:
-  standard: 7078
-  blockmanager: 7089
-  ui: 4040
+
+# Stackable versioning to override the version of the Stack component.
+stackProduct: "3.4.0"
+stackVersion: "23.11.0"
+
+# Logging isn't implemented for the spark-client yet as it requires to volume / init container magic to properly work
+# Configuration for a bucket to store logs in
+# Supports one existing bucket
+# Example of how it could be configured
+#bucket:
+#  name: test-bucket
+#  # IMPORTANT NOTE
+#  # The prefix must eixsts the history server can start properly
+#  prefix: sparkjobs-logs/
+#  # S3 connection configurations
+#  connection:
+#    host: a-test-minio
+#    port: 9000
+#    # Name of the spark history installation in the cluster
+#    sparkHistoryName: "a-spark-history-server"
+
+#bucket: {}
+
+# Enable logging via the vector aggregator
+# Needs the name of configmap for discovery of the aggregator
+#logging:
+  # property for enable vector logging
+  # enabled: false
+  # DisoveryMap for the connection the aggregator pod
+  # discoveryMap: "gbif-vector-aggregator-discovery"
+  # Configured which vector itself logs on its own.
+  # vectorLogLevel: "WARN"
+
+# Ressource configuration for spark driver.
+nodes:
+  # Client deployment diff
+  client:
+    # Number of pods for the client
+    replicas: 1
+    # CPU settings for the driver  
+    cpu:
+      min: "1000m"
+      max: "3000m"
+    # Memory for the Spark driver.
+    memory: "2Gi"
+    # Ports used to create service
+    ports:
+    - name: standrad
+      value: 7078
+    - name: blockmanager
+      value: 7089
+    - name: ui
+      value: 4040
+
+  driver:
+    # CPU settings for the driver 
+    cpu: 
+      min: "1000m"
+      max: "4000m"
+    # Memory for the Spark driver.
+    memory: "3Gi"
+    # Log level for driver
+    logLevel: "INFO"
+
+  # Ressource configuration for spark executors.
+  executor:
+    # CPU settings for per executor. 
+    # To get total reosurce consumtion by executors, multiple max cpi and mem with number of replicas.
+    cpu:
+      min: "1000m" 
+      max: "4000m"
+    # Memory for each executor.
+    memory: "8Gi"
+    # Number of executors.
+    replicas: 2
+    # Log level for executor
+    logLevel: "INFO"
 
 hdfs:
-  clusterId: "gbif-hdfs"
+  clusterName: "gbif-hdfs"
 
 hive:
-  clusterId: "gbif-hive-metastore"
+  clusterName: "gbif-hive-metastore"
+
+hbase:
+  clusterName: "gbif-hbase"

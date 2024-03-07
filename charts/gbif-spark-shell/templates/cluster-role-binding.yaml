@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ default .Chart.Name .Values.overrideName }}
+  name: {{ include "gbif-chart-lib.releaseName" . }}
   namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
@@ -9,5 +9,5 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 subjects:
 - kind: ServiceAccount
-  name: {{ default .Chart.Name .Values.overrideName }}
+  name: {{ include "gbif-chart-lib.releaseName" . }}
   namespace: {{ .Release.Namespace }}

@@ -18,6 +18,7 @@ image:
   repository: "docker.gbif.org/"
   name: "occurrence-table-build-spark"
   version: "0.195.0-H3-SNAPSHOT"
+  alwaysPull: false
 
 # Stackable versioning to override the version of the Stack component.
 stackProduct: "3.4.0"
@@ -124,6 +125,9 @@ installMode: config
 #By default both options are disabled.
 yunikorn:
   enabled: false
+  user: "a-spark-user"
+  # List of groups that should propergated to the yunikorn user.info
+  grops: ["group-1", "groups-2"]
   driver:
     queue: "root.default"
   executor:

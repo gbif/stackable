@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ default .Chart.Name .Values.overrideName }}
+  name: {{ include "gbif-chart-lib.releaseName" . }}
   labels:
     app: {{ .Values.label }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.nodes.client.replicas }}
   selector:
     matchLabels:
       app: {{ .Values.label }}
@@ -14,50 +14,63 @@ spec:
       labels:
         app: {{ .Values.label }}
     spec:
-      serviceAccountName: {{ default .Chart.Name .Values.overrideName }}
+      serviceAccountName: {{ include "gbif-chart-lib.releaseName" . }}
       securityContext:
         fsGroup: 1000
         runAsGroup: 1000
         runAsUser: 1000
       volumes:
-        - name: {{ default .Chart.Name .Values.overrideName }}-pod-template
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-pod-templates
           configMap:
-            name: {{ default .Chart.Name .Values.overrideName }}-pod-template
-        - name: {{ default .Chart.Name .Values.overrideName }}-core
+            name: {{ include "gbif-chart-lib.releaseName" . }}-pod-templates
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-hdfs
           configMap:
-            name: {{ .Values.hdfs.clusterId }}
+            name: {{ .Values.hdfs.clusterName }}
             items:
             - key: core-site.xml
               path: core-site.xml
             - key: hdfs-site.xml
               path: hdfs-site.xml
-        - name: {{ default .Chart.Name .Values.overrideName }}-hive
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-hive
           configMap:
-            name: {{ .Values.hive.clusterId }}-custom
+            name: {{ .Values.hive.clusterName }}-custom
             items:
             - key: hive-site.xml
               path: hive-site.xml 
-        - name: {{ default .Chart.Name .Values.overrideName }}-spark-env
+        - name: {{ include "gbif-chart-lib.fulreleaseNamelname" . }}-hbase
           configMap:
-            name: {{ default .Chart.Name .Values.overrideName }}-env-script
+            name: {{ .Values.hbase.clusterName }}
+            items:
+            - key: hbase-site.xml
+              path: hbase-site.xml 
       containers:
-      - name: {{ default .Chart.Name .Values.overrideName }}-container
-        image: {{ .Values.image }}
+      - name: {{ include "gbif-chart-lib.releaseName" . }}-container
+        image: "docker.stackable.tech/stackable/spark-k8s:{{ .Values.stackProduct }}-stackable{{ .Values.stackVersion }}"
         command: ['sh', '-c', 'exec tail -f /dev/null']
+        resources:
+          requests:
+            cpu: {{ .Values.nodes.client.cpu.min }}
+            memory: {{ .Values.nodes.client.memory }}
+          limits:
+            cpu: {{ .Values.nodes.client.cpu.max }}
+            memory: {{ .Values.nodes.client.memory }}
         env:
-          - name: SPARK_CONF_DIR
-            value: /stackable/spark/conf
-          - name: HADOOP_CONF_DIR
-            value: /etc/hadoop/conf
+        - name: SPARK_CONF_DIR
+          value: /stackable/spark/conf
+        - name: HADOOP_CONF_DIR
+          value: /etc/hadoop/conf
         volumeMounts:
-        - name: {{ default .Chart.Name .Values.overrideName }}-pod-template
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-pod-templates
           mountPath: /etc/template
-        - name: {{ default .Chart.Name .Values.overrideName }}-core
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-hdfs
           mountPath: /etc/hadoop/conf/core-site.xml
           subPath: core-site.xml
-        - name: {{ default .Chart.Name .Values.overrideName }}-core
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-hdfs
           mountPath: /etc/hadoop/conf/hdfs-site.xml
           subPath: hdfs-site.xml
-        - name: {{ default .Chart.Name .Values.overrideName }}-hive
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-hive
           mountPath: /etc/hadoop/conf/hive-site.xml
           subPath: hive-site.xml
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-hbase
+          mountPath: /etc/hadoop/conf/hbase-site.xml
+          subPath: hbase-site.xml

@@ -19,7 +19,7 @@ spec:
     productVersion: {{ .Values.stackProduct }}
     stackableVersion: {{ .Values.stackVersion }}
   mode: cluster
-  mainApplicationFile: local:///stackable/spark/jobs/{{ .Values.image.name }}-{{ .Values.image.version }}.jar
+  mainApplicationFile: local:///stackable/spark/jobs/{{ .Values.image.name }}.jar
   mainClass: {{ .Values.mainClass }}
 {{- if .Values.logging.enabled }}
   vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
@@ -57,7 +57,7 @@ spec:
 {{- if .Values.sparkConf }}
   sparkConf:
 {{- $standardConf := fromYaml (include "gbif-chart-lib.sparkStandardConf" .) }}
-{{- tpl ( (merge .Values.sparkConf $standardConf) | toYaml) . | nindent 4 }}
+{{- (merge .Values.sparkConf $standardConf) | toYaml | nindent 4 }}
 {{- end }}
   volumes:
 {{- /*
