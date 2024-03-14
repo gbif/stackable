@@ -51,7 +51,7 @@ nodes:
     memory: "2Gi"
     # Ports used to create service
     ports:
-    - name: standrad
+    - name: standard
       value: 7078
     - name: blockmanager
       value: 7089

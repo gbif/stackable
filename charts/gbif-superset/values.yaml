@@ -1,0 +1,68 @@
+# Default values for GBIF airflow cluster using Stackable airflow operator.
+
+# Override name of the cluster
+nameOverride: ""
+# Override fullname of the cluster
+fullnameOverride: ""
+
+# Stackable versioning to override the version of the Stack component.
+stackProduct: "3.0.1"
+stackVersion: "23.11.0"
+
+# Custom version for extended version airflow
+# Uses the stackProduct value to tell the operator what version of configurations to use with the custom image
+# Example of how to set custom image
+# customImage: 
+#  repository: docker.gbif.org
+#  image: gbif/extended-stack-superset
+#  tag: "3.0.1"
+
+customImage: {}
+
+# Admin user for Superset, will be created as a secret
+admin:
+  firstname: ""
+  lastname: ""
+  email: ""
+  user: ""
+  password: ""
+
+# Unfathomable long string of random charecters
+# Used to sign session cookies
+SecretSalt: ""
+
+# Database information for Superset state database
+supersetDB:
+  host: ""
+  user: ""
+  pass: ""
+  databaseName: superset
+
+# Enable logging via the vector aggregator
+# Needs the name of configmap for discovery of the aggregator
+logging:
+  # property for enable vector logging
+  enabled: false
+  # DisoveryMap for the connection the aggregator pod
+  discoveryMap: "gbif-vector-aggregator-discovery"
+  # Configured which vector itself logs on its own.
+  vectorLogLevel: "WARN"
+
+nodes:
+  supersetNode:
+    replicas: 1
+    cpu:
+      min: '250m'
+      max: '2000m'
+    memory: '2Gi'
+    logLevel: "INFO"
+    # Port for setting up node port given node - Leave empty to not setup port
+    ports: {}
+
+# Used to provide a custom defined set of superset configurations to overwrite.
+# Currently works on role group level
+supersetConfigOverride: {}
+
+# Used to provide a custom defined set of envrionment variable to provide for superset pods
+# Used across all the different role groups
+supersetEnvOverride: {}

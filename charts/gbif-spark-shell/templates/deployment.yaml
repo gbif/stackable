@@ -37,7 +37,7 @@ spec:
             items:
             - key: hive-site.xml
               path: hive-site.xml 
-        - name: {{ include "gbif-chart-lib.fulreleaseNamelname" . }}-hbase
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-hbase
           configMap:
             name: {{ .Values.hbase.clusterName }}
             items:
