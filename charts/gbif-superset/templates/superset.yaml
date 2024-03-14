@@ -1,0 +1,16 @@
+apiVersion: superset.stackable.tech/v1alpha1
+kind: SupersetCluster
+metadata:
+  name: gbif-superset
+spec:
+  image:
+    productVersion: 3.0.1
+  clusterConfig:
+    credentialsSecret: gbif-superset-credentials
+    listenerClass: internal-stable
+  nodes:
+    roleGroups:
+      default:
+        config:
+          rowLimit: 10000
+          webserverTimeout: 300
