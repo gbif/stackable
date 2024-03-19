@@ -222,5 +222,5 @@ If something different is required either use the customProperty to confgiure it
 {{- end }}
 
 {{- define "gbif-chart-lib.sparkapplication" }}
-{{ include "gbif-chart-list.util.merge" (append . "gbif-chart-lib.sparkapplicationCollected") }}
+{{ include "gbif-chart-lib.util.merge" (append . "gbif-chart-lib.sparkapplicationCollected") }}
 {{- end }}

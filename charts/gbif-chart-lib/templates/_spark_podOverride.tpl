@@ -13,8 +13,8 @@ spec:
                         "name": "{{ include "gbif-chart-lib.yunikornName" . }}-driver",
                         "minMember": 1,
                         "minResource": {
-                            "cpu": "{{ .Values.nodes.driver.cpu.min }}",
-                            "memory": "{{ .Values.nodes.driver.memory }}"
+                            "cpu": "{{ include "gbif-chart-lib.calculate-cpu" .Values.nodes.driver.cpu.min }}",
+                            "memory": "{{ include "gbif-chart-lib.calculate-memory" .Values.nodes.driver.memory }}"
                         }
                         },
                         {
@@ -25,8 +25,8 @@ spec:
                         "minMember": 1
 {{- end }}
                         "minResource": {
-                            "cpu": "{{ .Values.nodes.executor.cpu.min }}",
-                            "memory": "{{ .Values.nodes.executor.memory }}"
+                            "cpu": "{{ include "gbif-chart-lib.calculate-cpu" .Values.nodes.executor.cpu.min }}",
+                            "memory": "{{ include "gbif-chart-lib.calculate-memory" .Values.nodes.executor.memory }}"
                         }
                         },
                         ]
