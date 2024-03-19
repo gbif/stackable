@@ -13,7 +13,7 @@ spec:
 {{- end }}
   clusterConfig:
     credentialsSecret: gbif-superset-credentials
-    listenerClass: internal-stable
+    listenerClass: {{ .Values.exposure }}
 {{- if .Values.logging.enabled  }}     
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}

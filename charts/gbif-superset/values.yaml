@@ -29,7 +29,7 @@ admin:
 
 # Unfathomable long string of random charecters
 # Used to sign session cookies
-SecretSalt: ""
+secretSalt: ""
 
 # Database information for Superset state database
 supersetDB:
@@ -47,6 +47,9 @@ logging:
   discoveryMap: "gbif-vector-aggregator-discovery"
   # Configured which vector itself logs on its own.
   vectorLogLevel: "WARN"
+
+# ListenerClassName for Stackable to create the service from
+exposure: cluster-internal
 
 nodes:
   supersetNode:
