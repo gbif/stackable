@@ -62,7 +62,7 @@ spec:
             - name: gbif-geocode-layers
               persistentVolumeClaim:
                 claimName: {{ include "gbif-chart-lib.name" .}}-geocode-layers
-                readOnly: true
+                readOnly: false
 {{- end }}
   workers:
     configOverrides:

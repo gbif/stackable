@@ -11,6 +11,11 @@ spec:
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}
   servers:
+    configOverrides:
+      zoo.cfg:
+        maxClientCnxns: {{ .Values.client.maxConnections | quote }}
+        minSessionTimeout: {{ .Values.client.minSessionTimeout | quote }}
+        maxSessionTimeout: {{ .Values.client.maxSessionTimeout | quote }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.server.replicas }}

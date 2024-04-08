@@ -19,6 +19,14 @@ logging:
   # Configured which vector itself logs on its own.
   vectorLogLevel: "WARN"
 
+# Configurations for setting values for client connecting to the zookeeper cluster
+client:
+  maxConnections: 60
+  # Default is 2 x ticktime
+  minSessionTimeout: 6000
+  # Default is 20 x ticktime
+  maxSessionTimeout: 60000
+
 nodes:
   server:
     # Number of instances

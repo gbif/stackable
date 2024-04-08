@@ -15,6 +15,7 @@ rules:
   - persistentvolumeclaims
   - services
   - sparkapplications
+  - sparkapplications/status
   - events
   - status
   - statefulsets
@@ -25,3 +26,6 @@ rules:
   - watch
   - delete
   - deletecollection
+  - update
+  - logs
+  - patch
