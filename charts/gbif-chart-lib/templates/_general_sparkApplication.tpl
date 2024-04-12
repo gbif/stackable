@@ -16,8 +16,7 @@ spec:
   image: ""
 {{- end }}
   sparkImage:
-    productVersion: {{ .Values.stackProduct }}
-    stackableVersion: {{ .Values.stackVersion }}
+{{ include "gbif-chart-lib.stackableImage" . | indent 4 }}
   mode: cluster
   mainApplicationFile: local:///stackable/spark/jobs/{{ .Values.image.name }}.jar
   mainClass: {{ .Values.mainClass }}

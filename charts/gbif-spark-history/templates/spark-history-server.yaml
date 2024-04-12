@@ -4,8 +4,7 @@ metadata:
   name: {{ include "gbif-chart-lib.name" . }}
 spec:
   image:
-    productVersion: {{ .Values.stackProduct }}
-    stackableVersion: {{ .Values.stackVersion }}
+{{ include "gbif-chart-lib.stackableImage" . | indent 4 }}
   logFileDirectory:
     s3:
       prefix: {{ .Values.bucket.prefix }}
@@ -24,6 +23,10 @@ spec:
 {{- tpl (.Values.sparkConf | toYaml) . | nindent 4 }}
 {{- end }}
   nodes:
+    podOverrides:
+      metadata:
+        labels:
+{{ include "gbif-chart-lib.yunikornLabels" . | indent 10 }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.historyServer.replicas }}

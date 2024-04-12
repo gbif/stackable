@@ -43,6 +43,7 @@ helm.sh/chart: {{ include "gbif-chart-lib.chart" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
+{{ include "gbif-chart-lib.yunikornLabels" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
@@ -61,3 +62,13 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- .Values.appName | trunc 54 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
+
+{{/*
+Function to generate the image section for stackable objects
+*/}}
+{{- define "gbif-chart-lib.yunikornLabels" -}}
+{{- if .Values.yunikorn.enabled -}}
+applicationId: {{ .Values.yunikorn.appId }}
+queue: {{ .Values.yunikorn.queue }}
+{{- end -}}
+{{- end -}}

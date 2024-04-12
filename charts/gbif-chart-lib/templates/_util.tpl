@@ -76,3 +76,22 @@ Hardcoded for 125m at the moment
 {{- $result = add $originalValue 125 -}}
 {{ printf "%d%s" $result "m" }}
 {{- end -}}
+
+{{- /*
+Function to generate the image section for stackable objects
+*/}}
+{{- define "gbif-chart-lib.stackableImage" -}}
+productVersion: {{ .Values.stackProduct | quote }}
+{{- if .Values.customImage }}
+{{- if .Values.customImage.enabled }}
+{{- if .Values.customImage.extended.enabled }}
+custom: {{ .Values.customImage.repository }}/{{ .Values.customImage.extended.image }}:{{ .Values.customImage.extended.tag }}
+{{- else }}
+repo: {{ .Values.customImage.repository | quote }}
+stackableVersion: {{ .Values.stackVersion | quote }}
+{{- end }}
+{{- end }}
+{{- else }}
+stackableVersion: {{ .Values.stackVersion | quote }}
+{{- end }}
+{{- end -}}
