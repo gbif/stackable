@@ -1,0 +1,56 @@
+apiVersion: superset.stackable.tech/v1alpha1
+kind: SupersetCluster
+metadata:
+  name: gbif-superset
+spec:
+  image:
+{{- if .Values.customImage }}
+    productVersion: {{ .Values.stackProduct }}
+    custom: {{ .Values.customImage.repository }}/{{ .Values.customImage.image }}:{{ .Values.customImage.tag }}
+{{- else }}
+    productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
+    stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
+{{- end }}
+  clusterConfig:
+    credentialsSecret: gbif-superset-credentials
+    listenerClass: {{ .Values.exposure }}
+{{- if .Values.logging.enabled  }}     
+    vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
+{{- end }}
+  nodes:
+{{- if .Values.supersetEnvOverride }}
+{{- "envOverrides:" | nindent 4 }}
+{{- tpl (.Values.supersetEnvOverride | toYaml) . | nindent 6 }}
+{{- end }}
+    roleGroups:
+      default:
+        replicas: {{ .Values.nodes.supersetNode.replicas }}
+        config:
+          rowLimit: 10000
+          webserverTimeout: 300
+          resources:
+            cpu:
+              min: {{ .Values.nodes.supersetNode.cpu.min }}
+              max: {{ .Values.nodes.supersetNode.cpu.max }}
+            memory:
+              limit: {{ .Values.nodes.supersetNode.memory }}
+{{- if .Values.logging.enabled  }}
+          logging:
+            enableVectorAgent: true
+            containers:
+              vector:
+                file:
+                  level: {{ .Values.logging.vectorLogLevel }}
+              superset:
+                console:
+                  level: {{ .Values.nodes.webservers.logLevel }}
+                file:
+                  level: {{ .Values.nodes.webservers.logLevel }}
+                loggers:
+                  "flask_appbuilder":
+                    level: {{ .Values.nodes.webservers.logLevel }}
+{{- end }}
+{{- if .Values.supersetConfigOverride }}
+{{- "envOverrides:" | nindent 8 }}
+{{- tpl (.Values.supersetConfigOverride | toYaml) . | nindent 10 }}
+{{- end }}
