@@ -4,13 +4,7 @@ metadata:
   name: gbif-superset
 spec:
   image:
-{{- if .Values.customImage }}
-    productVersion: {{ .Values.stackProduct }}
-    custom: {{ .Values.customImage.repository }}/{{ .Values.customImage.image }}:{{ .Values.customImage.tag }}
-{{- else }}
-    productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
-    stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
-{{- end }}
+{{ include "gbif-chart-lib.stackableImage" . | indent 4 }}
   clusterConfig:
     credentialsSecret: gbif-superset-credentials
     listenerClass: {{ .Values.exposure }}
@@ -21,6 +15,14 @@ spec:
 {{- if .Values.supersetEnvOverride }}
 {{- "envOverrides:" | nindent 4 }}
 {{- tpl (.Values.supersetEnvOverride | toYaml) . | nindent 6 }}
+{{- end }}
+{{- if .Values.yunikorn.enabled }}
+{{- if .Values.yunikorn.enabled }}
+    podOverrides:
+      metadata:
+        labels:
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
 {{- end }}
     roleGroups:
       default:

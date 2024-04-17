@@ -637,14 +637,3 @@ vector:
     #   data:
     #     vector.json: |
     #       {{ .Files.Get "dashboards/vector.json" | fromJson | toJson }}
-
-# GBIF section to utilize chart lib to generate a service exposing the nodeport
-# In future it could be relevant to download the charts and expand to follow the same format as the rest of the repo
-# Better option would properly be using the loadbalancer section
-nodes:
-  Aggregator:
-    # Port for setting up node port given node - Leave empty to not setup port
-    ports:
-      tcp:
-        appPort: 9889
-        nodePort: 31988

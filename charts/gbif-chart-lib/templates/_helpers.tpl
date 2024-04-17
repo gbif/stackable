@@ -67,8 +67,6 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Function to generate the image section for stackable objects
 */}}
 {{- define "gbif-chart-lib.yunikornLabels" -}}
-{{- if .Values.yunikorn.enabled -}}
 applicationId: {{ .Values.yunikorn.appId }}
 queue: {{ .Values.yunikorn.queue }}
-{{- end -}}
 {{- end -}}

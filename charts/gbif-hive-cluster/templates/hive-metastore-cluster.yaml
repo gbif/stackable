@@ -17,10 +17,12 @@ spec:
       password: {{ .Values.hiveDB.password }}
       dbType: postgres
   metastore:
+{{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
         labels:
-{{ include "gbif-chart-lib.yunikornLabels" . | indent 10 }}
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
     configOverrides:
       hive-site.xml:
         metastore.storage.schema.reader.impl: "org.apache.hadoop.hive.metastore.SerDeStorageSchemaReader"

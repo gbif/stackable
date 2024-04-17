@@ -26,10 +26,12 @@ spec:
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}
   webservers:
+{{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
         labels:
-{{ include "gbif-chart-lib.yunikornLabels" . | indent 10 }}
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
     roleGroups:
       default:
 {{- if .Values.airflowEnvOverrides }}
@@ -61,10 +63,12 @@ spec:
                     level: {{ .Values.nodes.webserver.logLevel }}
 {{- end }}
   celeryExecutors:
+{{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
         labels:
-{{ include "gbif-chart-lib.yunikornLabels" . | indent 10 }}
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
     roleGroups:
       default:
 {{- if .Values.airflowEnvOverrides }}
@@ -96,10 +100,12 @@ spec:
                     level: {{ .Values.nodes.workers.logLevel }}
 {{- end }}
   schedulers:
+{{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
         labels:
-{{ include "gbif-chart-lib.yunikornLabels" . | indent 10 }}
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
     roleGroups:
       default:
 {{- if .Values.airflowEnvOverrides }}

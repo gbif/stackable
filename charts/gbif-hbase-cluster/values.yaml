@@ -45,7 +45,7 @@ logging:
 # By default it is disabled.
 # The idea with enabling yunikorn for components is that we can fence the infrastructure components from works done in Spark, Trino etc.
 yunikorn:
-  enabled: true
+  enabled: false
   # Name of the overall application for all the pods within the queue
   appId: "hbase"
   # Queue to place the pods in

@@ -9,14 +9,17 @@ fullnameOverride: ""
 stackProduct: "3.0.1"
 stackVersion: "23.11.0"
 
-# Custom version for extended version airflow
 # Uses the stackProduct value to tell the operator what version of configurations to use with the custom image
+# custom image allows customer to change the repository if they want to their own acting as a proxy or
+# use an extended version of the image
 # Example of how to set custom image
 # customImage: 
-#  repository: docker.gbif.org
-#  image: gbif/extended-stack-superset
-#  tag: "3.0.1"
-
+#  enabled: true
+#  repository: docker.gbif.org/your-team
+#  extended:
+#    enabled: true
+#    image: a-extended-stackable-image
+#    tag: "1.0.5"
 customImage: {}
 
 # Admin user for Superset, will be created as a secret
@@ -50,6 +53,16 @@ logging:
 
 # ListenerClassName for Stackable to create the service from
 exposure: cluster-internal
+
+# Support for Yunikorn queuing
+# By default it is disabled.
+# The idea with enabling yunikorn for components is that we can fence the infrastructure components from works done in Spark, Trino etc.
+yunikorn:
+  enabled: false
+  # Name of the overall application for all the pods within the queue
+  appId: "superset"
+  # Queue to place the pods in
+  queue: "root.namespace.infra"
 
 nodes:
   supersetNode:

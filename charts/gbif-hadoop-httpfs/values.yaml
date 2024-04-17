@@ -11,8 +11,8 @@ label: "httpfs"
 # Could be phased out if the additional package is included in the public Stackable repository
 product:
   repository: "docker.gbif.org"
-  artifact: "rebuilds/hadoop"
-  version: "23.7.1"
+  artifact: "extended-stackable/hadoop"
+  version: "3.3.4-stackable23.11.0"
 
 hdfs:
   clusterId: "gbif-hdfs"
@@ -21,6 +21,16 @@ hdfs:
 # To enable write:
 # accessMode: write-read
 accessMode: read-only
+
+# Support for Yunikorn queuing
+# By default it is disabled.
+# The idea with enabling yunikorn for components is that we can fence the infrastructure components from works done in Spark, Trino etc.
+yunikorn:
+  enabled: false
+  # Name of the overall application for all the pods within the queue
+  appId: "hdfs"
+  # Queue to place the pods in
+  queue: "root.namespace.infra"
 
 nodes:
   httpfs:

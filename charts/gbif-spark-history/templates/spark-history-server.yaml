@@ -23,10 +23,12 @@ spec:
 {{- tpl (.Values.sparkConf | toYaml) . | nindent 4 }}
 {{- end }}
   nodes:
+{{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
         labels:
-{{ include "gbif-chart-lib.yunikornLabels" . | indent 10 }}
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.historyServer.replicas }}

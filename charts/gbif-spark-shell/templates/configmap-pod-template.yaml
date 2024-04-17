@@ -9,7 +9,7 @@ data:
     spec:
       containers:
       - name: spark-shell-executor
-        image: "docker.stackable.tech/stackable/spark-k8s:{{ .Values.stackProduct }}-stackable{{ .Values.stackVersion }}"
+        image: "stackable-docker.gbif.org/stackable/spark-k8s:{{ .Values.stackProduct }}-stackable{{ .Values.stackVersion }}"
         resources:
           request:
             cpu: {{ .Values.nodes.executor.cpu.min }}

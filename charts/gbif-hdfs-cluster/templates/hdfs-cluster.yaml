@@ -12,10 +12,12 @@ spec:
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}
   nameNodes:
+{{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
         labels:
-{{ include "gbif-chart-lib.yunikornLabels" . | indent 10 }}
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.namenode.replicas }}
@@ -68,10 +70,12 @@ spec:
             hadoop.proxyuser.stackable.hosts: "{{ .Values.gateway.httpfs.proxyHosts }}"
             hadoop.proxyuser.stackable.groups: "{{ .Values.gateway.httpfs.proxyGroup }}"
   dataNodes:
+{{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
         labels:
-{{ include "gbif-chart-lib.yunikornLabels" . | indent 10 }}
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
     config:
 {{- if .Values.logging.enabled  }}
       logging:
@@ -138,10 +142,12 @@ spec:
             {{- end }}
 {{- end }}
   journalNodes:
+{{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
         labels:
-{{ include "gbif-chart-lib.yunikornLabels" . | indent 10 }}
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.journalnode.replicas }}

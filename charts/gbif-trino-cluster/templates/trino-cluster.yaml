@@ -15,10 +15,12 @@ spec:
       matchLabels:
 {{ include "gbif-chart-lib.selectorLabels" . | indent 8}}
   coordinators:
+{{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
         labels:
-{{ include "gbif-chart-lib.yunikornLabels" . | indent 10 }}
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
 {{- if .Values.persistedGeocodeLayerStorage.enabled }}
       spec:
         containers:
@@ -66,10 +68,12 @@ spec:
       config.properties:
         query.max-memory-per-node: {{ .Values.memPerNode }}
         memory.heap-headroom-per-node: {{ .Values.memHeadroom }}
+{{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
         labels:
-{{ include "gbif-chart-lib.yunikornLabels" . | indent 10 }}
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
 {{- if .Values.persistedGeocodeLayerStorage.enabled }}
       spec:
         containers:

@@ -45,7 +45,7 @@ spec:
               path: hbase-site.xml 
       containers:
       - name: {{ include "gbif-chart-lib.releaseName" . }}-container
-        image: "docker.stackable.tech/stackable/spark-k8s:{{ .Values.stackProduct }}-stackable{{ .Values.stackVersion }}"
+        image: "stackable-docker.gbif.org/stackable/spark-k8s:{{ .Values.stackProduct }}-stackable{{ .Values.stackVersion }}"
         command: ['sh', '-c', 'exec tail -f /dev/null']
         resources:
           requests:
