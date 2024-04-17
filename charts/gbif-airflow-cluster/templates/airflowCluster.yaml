@@ -4,13 +4,7 @@ metadata:
   name: {{ include "gbif-chart-lib.name" . }}
 spec:
   image:
-{{- if .Values.customImage }}
-    productVersion: {{ .Values.stackProduct }}
-    custom: {{ .Values.customImage.repository }}/{{ .Values.customImage.image }}:{{ .Values.customImage.tag }}
-{{- else }}
-    productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
-    stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
-{{- end }}
+{{ include "gbif-chart-lib.stackableImage" . | indent 4 }}
   clusterConfig:
     loadExamples: {{ .Values.examples }}
     exposeConfig: {{ .Values.exposeConfigs }}
@@ -32,20 +26,26 @@ spec:
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}
   webservers:
+{{- if .Values.yunikorn.enabled }}
+    podOverrides:
+      metadata:
+        labels:
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
     roleGroups:
       default:
 {{- if .Values.airflowEnvOverrides }}
 {{- "envOverrides:" | nindent 8 }}
 {{- tpl (.Values.airflowEnvOverrides | toYaml) . | nindent 10 }}
 {{- end }}
-        replicas: {{ .Values.nodes.webservers.replicas }}
+        replicas: {{ .Values.nodes.webserver.replicas }}
         config:
           resources:
             cpu: 
-              min: {{ .Values.nodes.webservers.cpu.min }}
-              max: {{ .Values.nodes.webservers.cpu.max }}
+              min: {{ .Values.nodes.webserver.cpu.min }}
+              max: {{ .Values.nodes.webserver.cpu.max }}
             memory: 
-              limit: {{ .Values.nodes.webservers.memory }}
+              limit: {{ .Values.nodes.webserver.memory }}
 {{- if .Values.logging.enabled  }}
           logging:
             enableVectorAgent: true
@@ -55,14 +55,20 @@ spec:
                   level: {{ .Values.logging.vectorLogLevel }}
               airflow:
                 console:
-                  level: {{ .Values.nodes.webservers.logLevel }}
+                  level: {{ .Values.nodes.webserver.logLevel }}
                 file:
-                  level: {{ .Values.nodes.webservers.logLevel }}
+                  level: {{ .Values.nodes.webserver.logLevel }}
                 loggers:
                   "flask_appbuilder":
-                    level: {{ .Values.nodes.webservers.logLevel }}
+                    level: {{ .Values.nodes.webserver.logLevel }}
 {{- end }}
   celeryExecutors:
+{{- if .Values.yunikorn.enabled }}
+    podOverrides:
+      metadata:
+        labels:
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
     roleGroups:
       default:
 {{- if .Values.airflowEnvOverrides }}
@@ -94,6 +100,12 @@ spec:
                     level: {{ .Values.nodes.workers.logLevel }}
 {{- end }}
   schedulers:
+{{- if .Values.yunikorn.enabled }}
+    podOverrides:
+      metadata:
+        labels:
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
     roleGroups:
       default:
 {{- if .Values.airflowEnvOverrides }}

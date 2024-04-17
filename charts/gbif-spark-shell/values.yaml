@@ -6,7 +6,7 @@ fullnameOverride: ""
 label: "spark-shell"
 
 # Stackable versioning to override the version of the Stack component.
-stackProduct: "3.4.0"
+stackProduct: "3.5.0"
 stackVersion: "23.11.0"
 
 # Logging isn't implemented for the spark-client yet as it requires to volume / init container magic to properly work
@@ -45,10 +45,10 @@ nodes:
     replicas: 1
     # CPU settings for the driver  
     cpu:
-      min: "1000m"
-      max: "3000m"
+      min: "4000m"
+      max: "4000m"
     # Memory for the Spark driver.
-    memory: "2Gi"
+    memory: "4Gi"
     # Ports used to create service
     ports:
     - name: standard
@@ -61,10 +61,10 @@ nodes:
   driver:
     # CPU settings for the driver 
     cpu: 
-      min: "1000m"
+      min: "4000m"
       max: "4000m"
     # Memory for the Spark driver.
-    memory: "3Gi"
+    memory: "4Gi"
     # Log level for driver
     logLevel: "INFO"
 

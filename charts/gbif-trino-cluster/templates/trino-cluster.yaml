@@ -4,13 +4,7 @@ metadata:
   name: {{ include "gbif-chart-lib.name" . }}
 spec:
   image:
-{{- if .Values.customImage }}
-    productVersion: "{{ .Values.stackProduct }}"
-    custom: {{ .Values.customImage.repository }}/{{ .Values.customImage.image }}:{{ .Values.customImage.tag }}
-{{- else }}
-    productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
-    stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
-{{- end }}
+{{ include "gbif-chart-lib.stackableImage" . | indent 4 }}
   clusterConfig:
 {{- if .Values.logging.enabled  }}     
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
@@ -21,6 +15,25 @@ spec:
       matchLabels:
 {{ include "gbif-chart-lib.selectorLabels" . | indent 8}}
   coordinators:
+{{- if .Values.yunikorn.enabled }}
+    podOverrides:
+      metadata:
+        labels:
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
+{{- if .Values.persistedGeocodeLayerStorage.enabled }}
+      spec:
+        containers:
+        - name: trino
+          volumeMounts:
+          - name: gbif-geocode-layers
+            mountPath: /gbif/geocode-layers
+        volumes:
+        - name: gbif-geocode-layers
+          persistentVolumeClaim:
+            claimName: {{ include "gbif-chart-lib.name" .}}-geocode-layers
+            readOnly: false
+{{- end }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.coordinator.replicas }}
@@ -50,25 +63,30 @@ spec:
                   io.trino:
                     level: {{ .Values.nodes.coordinator.logLevel }}
 {{- end }}
-{{- if .Values.persistedGeocodeLayerStorage.enabled }}
-        podOverrides:
-          spec:
-            containers:
-            - name: trino
-              volumeMounts:
-              - name: gbif-geocode-layers
-                mountPath: /gbif/geocode-layers
-            volumes:
-            - name: gbif-geocode-layers
-              persistentVolumeClaim:
-                claimName: {{ include "gbif-chart-lib.name" .}}-geocode-layers
-                readOnly: false
-{{- end }}
   workers:
     configOverrides:
       config.properties:
         query.max-memory-per-node: {{ .Values.memPerNode }}
         memory.heap-headroom-per-node: {{ .Values.memHeadroom }}
+{{- if .Values.yunikorn.enabled }}
+    podOverrides:
+      metadata:
+        labels:
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
+{{- if .Values.persistedGeocodeLayerStorage.enabled }}
+      spec:
+        containers:
+        - name: trino
+          volumeMounts:
+          - name: gbif-geocode-layers
+            mountPath: /gbif/geocode-layers
+        volumes:
+        - name: gbif-geocode-layers
+          persistentVolumeClaim:
+            claimName: {{ include "gbif-chart-lib.name" .}}-geocode-layers
+            readOnly: false
+{{- end }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.worker.replicas }}
@@ -97,18 +115,4 @@ spec:
                 loggers:
                   io.trino:
                     level: {{ .Values.nodes.worker.logLevel }}
-{{- end }}
-{{- if .Values.persistedGeocodeLayerStorage.enabled }}
-        podOverrides:
-          spec:
-            containers:
-            - name: trino
-              volumeMounts:
-              - name: gbif-geocode-layers
-                mountPath: /gbif/geocode-layers
-            volumes:
-            - name: gbif-geocode-layers
-              persistentVolumeClaim:
-                claimName: {{ include "gbif-chart-lib.name" .}}-geocode-layers
-                readOnly: true
 {{- end }}

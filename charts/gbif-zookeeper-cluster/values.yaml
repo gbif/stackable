@@ -7,7 +7,20 @@ fullnameOverride: ""
 
 # Stackable versioning to override the version of the Stack component.
 stackProduct: "3.8.1"
-stackVersion: "23.7.0"
+stackVersion: "23.11.0"
+
+# Uses the stackProduct value to tell the operator what version of configurations to use with the custom image
+# custom image allows customer to change the repository if they want to their own acting as a proxy or
+# use an extended version of the image
+# Example of how to set custom image
+# customImage: 
+#  enabled: true
+#  repository: docker.gbif.org/your-team
+#  extended:
+#    enabled: true
+#    image: a-extended-stackable-image
+#    tag: "1.0.5"
+customImage: {}
 
 # Enable logging via the vector aggregator
 # Needs the name of configmap for discovery of the aggregator
@@ -26,6 +39,16 @@ client:
   minSessionTimeout: 6000
   # Default is 20 x ticktime
   maxSessionTimeout: 60000
+
+# Support for Yunikorn queuing
+# By default it is disabled.
+# The idea with enabling yunikorn for components is that we can fence the infrastructure components from works done in Spark, Trino etc.
+yunikorn:
+  enabled: false
+  # Name of the overall application for all the pods within the queue
+  appId: "zookeeper"
+  # Queue to place the pods in
+  queue: "root.namespace.infra"
 
 nodes:
   server:

@@ -4,8 +4,7 @@ metadata:
   name: {{ include "gbif-chart-lib.name" . }}
 spec:
   image:
-    productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
-    stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
+{{ include "gbif-chart-lib.stackableImage" . | indent 4 }}
   clusterConfig:
     hdfsConfigMapName: {{ .Values.hdfsClusterName }}
     zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}-znode
@@ -16,6 +15,12 @@ spec:
     configOverrides:
       hbase-site.xml:
         hbase.rootdir: hdfs://{{ .Values.hdfsClusterName }}{{ .Values.hbaseRootDirectory }}
+{{- if .Values.yunikorn.enabled }}
+    podOverrides:
+      metadata:
+        labels:
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.master.replicas }}
@@ -59,6 +64,12 @@ spec:
     configOverrides:
       hbase-site.xml:
         hbase.rootdir: hdfs://{{ .Values.hdfsClusterName }}{{ .Values.hbaseRootDirectory }}
+{{- if .Values.yunikorn.enabled }}
+    podOverrides:
+      metadata:
+        labels:
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.region.replicas }}
@@ -92,6 +103,12 @@ spec:
     configOverrides:
       hbase-site.xml:
         hbase.rootdir: hdfs://{{ .Values.hdfsClusterName }}{{ .Values.hbaseRootDirectory }}
+{{- if .Values.yunikorn.enabled }}
+    podOverrides:
+      metadata:
+        labels:
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.rest.replicas }}

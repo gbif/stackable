@@ -4,8 +4,7 @@ metadata:
   name: {{ include "gbif-chart-lib.name" . }}
 spec:
   image:
-    productVersion: {{ default .Chart.AppVersion .Values.stackProduct }}
-    stackableVersion: {{ default "23.1.0" .Values.stackVersion }}
+{{ include "gbif-chart-lib.stackableImage" . | indent 4 }}
   clusterConfig:
     zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}-znode
     dfsReplication: {{ .Values.dataReplication }}
@@ -13,6 +12,12 @@ spec:
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}
   nameNodes:
+{{- if .Values.yunikorn.enabled }}
+    podOverrides:
+      metadata:
+        labels:
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.namenode.replicas }}
@@ -65,6 +70,12 @@ spec:
             hadoop.proxyuser.stackable.hosts: "{{ .Values.gateway.httpfs.proxyHosts }}"
             hadoop.proxyuser.stackable.groups: "{{ .Values.gateway.httpfs.proxyGroup }}"
   dataNodes:
+{{- if .Values.yunikorn.enabled }}
+    podOverrides:
+      metadata:
+        labels:
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
     config:
 {{- if .Values.logging.enabled  }}
       logging:
@@ -131,6 +142,12 @@ spec:
             {{- end }}
 {{- end }}
   journalNodes:
+{{- if .Values.yunikorn.enabled }}
+    podOverrides:
+      metadata:
+        labels:
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.journalnode.replicas }}
