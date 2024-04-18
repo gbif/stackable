@@ -1,0 +1,33 @@
+# Default values for matching-ws.
+# This is a YAML-formatted file.
+
+replicaCount: 1
+
+image:
+  repository: docker.gbif.org/matching-ws
+  pullPolicy: always
+  tag: ""
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+# Service for the web application for exposing port internally in the cluster
+service:
+  type: NodePort
+  port: 8080
+  targetPort: 8080
+  nodePort: 30080
+
+# resources for the web application
+resources:
+  limits:
+    cpu: "1000m"
+    memory: 2048Mi
+  requests:
+    cpu: "100m"
+    memory: 2048Mi
+
+nodeSelector: {}
+

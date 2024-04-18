@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gbif-chart-lib.fullname" . }}
+  labels:
+    {{- include "gbif-chart-lib.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "gbif-chart-lib.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "gbif-chart-lib.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: JAVA_OPTS
+              value: "{{ .Values.javaOpts }}"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: application-config
+          configMap:
+            name: {{ include "gbif-chart-lib.name" . }}-configuration
+            items:
+              - key: application.yml
+                path: application.yml
+        - name: bootstrap-config
+          configMap:
+            name: {{ include "gbif-chart-lib.name" . }}-bootstrap
+            items:
+              - key: bootstrap.yml
+                path: bootstrap.yml
