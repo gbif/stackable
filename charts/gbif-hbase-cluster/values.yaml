@@ -22,15 +22,6 @@ stackVersion: "23.11.0"
 #    tag: "1.0.5"
 customImage: {}
 
-# Name of the zookeeper cluster
-zookeeperClusterName: "gbif-zookeeper"
-
-# Name of the HDFS cluster
-hdfsClusterName: "gbif-hdfs"
-
-# hbase root folder for storing data
-hbaseRootDirectory: /hbase
-
 # Enable logging via the vector aggregator
 # Needs the name of configmap for discovery of the aggregator
 logging:
@@ -91,3 +82,19 @@ nodes:
       capacity: '2Gi'
     # Currently no support in the service template for external ip ports for rest node
     ips: []
+
+# Node to provide configuration overrides
+# Example of who to provde configurations to hbase-site.xml
+# configOverrides:
+#   "hbase-site.xml":
+#     "hbase.rest.threads.min": "4"
+#     "hbase.rootdir": "hdfs://gbif-hdfs/hbase"
+configOverrides: {}
+
+hdfs:
+  # Name of the Stackable HdfsCluster in the namespace.
+  clusterName: "gbif-hdfs"
+
+zookeeper:
+  # Name of the Stackable zookeeper cluster in the namespace.
+  clusterName: "gbif-zookeeper"

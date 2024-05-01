@@ -184,7 +184,9 @@ map:
   tileSize: 512
   # zoom levels goes from 0 up to limit underneath
   zoom: 16
-  
+  # Name of Zookeper node to write metadata for the table
+  metadataPath: "/dev2_maps/meta"
+
 hive:
   # Name of the hive cluster
   clusterName: gbif-hive-metastore

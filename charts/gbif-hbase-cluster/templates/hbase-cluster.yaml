@@ -6,15 +6,12 @@ spec:
   image:
 {{ include "gbif-chart-lib.stackableImage" . | indent 4 }}
   clusterConfig:
-    hdfsConfigMapName: {{ .Values.hdfsClusterName }}
-    zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}-znode
+    hdfsConfigMapName: {{ .Values.hdfs.clusterName }}
+    zookeeperConfigMapName: {{ .Values.zookeeper.clusterName }}-znode
 {{- if .Values.logging.enabled  }}     
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}
   masters:
-    configOverrides:
-      hbase-site.xml:
-        hbase.rootdir: hdfs://{{ .Values.hdfsClusterName }}{{ .Values.hbaseRootDirectory }}
 {{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
@@ -34,6 +31,10 @@ spec:
                 capacity: {{ .Values.nodes.master.storage.capacity }}
             memory:
               limit: {{ .Values.nodes.master.memory }}
+{{- if .Values.configOverrides }}
+{{- "configOverrides:" | nindent 8 }}
+{{- tpl (.Values.configOverrides | toYaml) . | nindent 10 }}
+{{- end }}
 {{- if .Values.logging.enabled  }}
           logging:
             enableVectorAgent: true
@@ -61,9 +62,6 @@ spec:
                 app.kubernetes.io/instance: {{ include "gbif-chart-lib.name" . }}
                 app.kubernetes.io/component: regionserver
             topologyKey: kubernetes.io/hostname
-    configOverrides:
-      hbase-site.xml:
-        hbase.rootdir: hdfs://{{ .Values.hdfsClusterName }}{{ .Values.hbaseRootDirectory }}
 {{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
@@ -83,6 +81,10 @@ spec:
                 capacity: {{ .Values.nodes.region.storage.capacity }}
             memory:
               limit: {{ .Values.nodes.region.memory }}
+{{- if .Values.configOverrides }}
+{{- "configOverrides:" | nindent 8 }}
+{{- tpl (.Values.configOverrides | toYaml) . | nindent 10 }}
+{{- end }}
 {{- if .Values.logging.enabled  }}
           logging:
             enableVectorAgent: true
@@ -100,9 +102,6 @@ spec:
                     level: {{ .Values.nodes.region.logLevel }}
 {{- end }}
   restServers:
-    configOverrides:
-      hbase-site.xml:
-        hbase.rootdir: hdfs://{{ .Values.hdfsClusterName }}{{ .Values.hbaseRootDirectory }}
 {{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
@@ -122,6 +121,10 @@ spec:
                 capacity: {{ .Values.nodes.rest.storage.capacity }}
             memory:
               limit: {{ .Values.nodes.rest.memory }}
+{{- if .Values.configOverrides }}
+{{- "configOverrides:" | nindent 8 }}
+{{- tpl (.Values.configOverrides | toYaml) . | nindent 10 }}
+{{- end }}
 {{- if .Values.logging.enabled  }}
           logging:
             enableVectorAgent: true
