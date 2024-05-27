@@ -175,7 +175,6 @@ es:
     type: OCCURRENCE
     name: ""
   socketTimeout: 120000
-hadoopJobtracker: ""
 hbaseTable: occurrence
 hdfs:
   lock:

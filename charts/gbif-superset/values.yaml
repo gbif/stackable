@@ -65,7 +65,7 @@ yunikorn:
   queue: "root.namespace.infra"
 
 nodes:
-  supersetNode:
+  supersetnode:
     replicas: 1
     cpu:
       min: '250m'

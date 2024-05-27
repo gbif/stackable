@@ -31,10 +31,6 @@ spec:
                 capacity: {{ .Values.nodes.master.storage.capacity }}
             memory:
               limit: {{ .Values.nodes.master.memory }}
-{{- if .Values.configOverrides }}
-{{- "configOverrides:" | nindent 8 }}
-{{- tpl (.Values.configOverrides | toYaml) . | nindent 10 }}
-{{- end }}
 {{- if .Values.logging.enabled  }}
           logging:
             enableVectorAgent: true
@@ -50,6 +46,10 @@ spec:
                 loggers:
                   ROOT:
                     level: {{ .Values.nodes.master.logLevel }}
+{{- end }}
+{{- if .Values.configOverrides }}
+{{- "configOverrides:" | nindent 8 }}
+{{- tpl (.Values.configOverrides | toYaml) . | nindent 10 }}
 {{- end }}
   regionServers:
     config:
@@ -81,10 +81,6 @@ spec:
                 capacity: {{ .Values.nodes.region.storage.capacity }}
             memory:
               limit: {{ .Values.nodes.region.memory }}
-{{- if .Values.configOverrides }}
-{{- "configOverrides:" | nindent 8 }}
-{{- tpl (.Values.configOverrides | toYaml) . | nindent 10 }}
-{{- end }}
 {{- if .Values.logging.enabled  }}
           logging:
             enableVectorAgent: true
@@ -100,6 +96,10 @@ spec:
                 loggers:
                   ROOT:
                     level: {{ .Values.nodes.region.logLevel }}
+{{- end }}
+{{- if .Values.configOverrides }}
+{{- "configOverrides:" | nindent 8 }}
+{{- tpl (.Values.configOverrides | toYaml) . | nindent 10 }}
 {{- end }}
   restServers:
 {{- if .Values.yunikorn.enabled }}
@@ -121,10 +121,6 @@ spec:
                 capacity: {{ .Values.nodes.rest.storage.capacity }}
             memory:
               limit: {{ .Values.nodes.rest.memory }}
-{{- if .Values.configOverrides }}
-{{- "configOverrides:" | nindent 8 }}
-{{- tpl (.Values.configOverrides | toYaml) . | nindent 10 }}
-{{- end }}
 {{- if .Values.logging.enabled  }}
           logging:
             enableVectorAgent: true
@@ -140,4 +136,8 @@ spec:
                 loggers:
                   ROOT:
                     level: {{ .Values.nodes.rest.logLevel }}
+{{- end }}
+{{- if .Values.configOverrides }}
+{{- "configOverrides:" | nindent 8 }}
+{{- tpl (.Values.configOverrides | toYaml) . | nindent 10 }}
 {{- end }}

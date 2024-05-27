@@ -14,7 +14,6 @@ data:
     es.index.type={{ .Values.es.index.type }}
     es.index={{ .Values.es.index.name }}
     es.socket_timeout={{ .Values.es.socketTimeout }}
-    hadoop.jobtracker={{ .Values.hadoopJobtracker }}
     hbase.table={{ .Values.hbaseTable }}
     hdfs.lock.connection.maxRetries={{ .Values.hdfs.lock.connection.maxRetries }}
     hdfs.lock.connection.sleepTimeMs={{ .Values.hdfs.lock.connection.sleepTimeMs }}
