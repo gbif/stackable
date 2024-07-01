@@ -20,7 +20,8 @@ stackVersion: "23.11.0"
 #    enabled: true
 #    image: a-extended-stackable-image
 #    tag: "1.0.5"
-customImage: {}
+customImage:
+  enabled: false
 
 # Admin user for Superset, will be created as a secret
 admin:
@@ -64,8 +65,13 @@ yunikorn:
   # Queue to place the pods in
   queue: "root.namespace.infra"
 
+ingress:
+  enabled: false
+  # Domain to create the ingress entry with
+  domain: example.org
+
 nodes:
-  supersetnode:
+  node:
     replicas: 1
     cpu:
       min: '250m'

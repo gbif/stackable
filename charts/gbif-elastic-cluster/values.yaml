@@ -22,6 +22,11 @@ customUsers: []
 
 customRoles: []
 
+ingress:
+  enabled: false
+  # Domain to create the ingress entry with
+  domain: example.org
+
 nodes:
   manager:
     replicas: 1

@@ -1,0 +1,180 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gbif-chart-lib.releaseName" . }}
+  labels:
+{{- toYaml .Values.label | nindent 4 }}
+spec:
+  replicas: {{ .Values.nodes.thrift.replicas }}
+  selector:
+    matchLabels:
+{{- toYaml .Values.label | nindent 6 }}
+  template:
+    metadata:
+      labels:
+{{- toYaml .Values.label | nindent 8 }}
+{{- if .Values.yunikorn.enabled }}
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 8 }}
+{{- end }}
+    spec:
+      serviceAccountName: {{ include "gbif-chart-lib.releaseName" . }}
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsUser: 1000
+      volumes:
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-hdfs
+          configMap:
+            name: {{ .Values.hdfs.clusterName }}
+            items:
+            - key: core-site.xml
+              path: core-site.xml
+            - key: hdfs-site.xml
+              path: hdfs-site.xml
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-hbase
+          configMap:
+            name: {{ .Values.hbase.clusterName }}-master-default
+            items:
+            - key: hbase-site.xml
+              path: hbase-site.xml
+            - key: log4j.properties
+              path: log4j.properties 
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-log-dir
+          emptyDir:
+            sizeLimit: 50Mi
+{{- if .Values.logging.enabled }}
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-vector
+          configMap:
+            name: {{ include "gbif-chart-lib.releaseName" . }}-vector
+            items:
+            - key: vector.yaml
+              path: vector.yaml
+{{- end }}
+      containers:
+      - name: {{ include "gbif-chart-lib.releaseName" . }}-container
+        image: "stackable-docker.gbif.org/stackable/hbase:{{ .Values.stackProduct }}-stackable{{ .Values.stackVersion }}"
+        args:
+        - |
+          prepare_signal_handlers()
+          {
+              unset term_child_pid
+              unset term_kill_needed
+              trap 'handle_term_signal' TERM
+          }
+
+          handle_term_signal()
+          {
+              if [ "${term_child_pid}" ]; then
+                  kill -TERM "${term_child_pid}" 2>/dev/null
+              else
+                  term_kill_needed="yes"
+              fi
+          }
+
+          wait_for_termination()
+          {
+              set +e
+              term_child_pid=$1
+              if [[ -v term_kill_needed ]]; then
+                  kill -TERM "${term_child_pid}" 2>/dev/null
+              fi
+              wait ${term_child_pid} 2>/dev/null
+              trap - TERM
+              wait ${term_child_pid} 2>/dev/null
+              set -e
+          }
+
+          rm -f /stackable/log/_vector/shutdown
+          prepare_signal_handlers
+          bin/hbase thrift &
+          wait_for_termination $!
+          mkdir -p /stackable/log/_vector && touch /stackable/log/_vector/shutdown
+        command:
+        - /bin/bash
+        - -x
+        - -euo
+        - pipefail
+        - -c
+        resources:
+          requests:
+            cpu: {{ .Values.nodes.thrift.cpu.min }}
+            memory: {{ .Values.nodes.thrift.memory }}
+          limits:
+            cpu: {{ .Values.nodes.thrift.cpu.max }}
+            memory: {{ .Values.nodes.thrift.memory }}
+        livenessProbe:
+          failureThreshold: 3
+          periodSeconds: 30
+          successThreshold: 1
+          tcpSocket:
+            port: {{ .Values.nodes.thrift.ports.thrift.appPort }}
+          timeoutSeconds: 5
+        readinessProbe:
+          failureThreshold: 3
+          periodSeconds: 30
+          successThreshold: 1
+          tcpSocket:
+            port: {{ .Values.nodes.thrift.ports.thrift.appPort }}
+          timeoutSeconds: 5
+        env:
+        - name: HBASE_CONF_DIR
+          value: /etc/hadoop/conf
+        - name: HADOOP_CONF_DIR
+          value: /etc/hadoop/conf
+        - name: HBASE_HEAPSIZE
+          value: {{ .Values.nodes.thrift.heapSize | quote }}
+        - name: HBASE_MANAGES_ZK
+          value: "false"
+        volumeMounts:
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-hdfs
+          mountPath: /etc/hadoop/conf/core-site.xml
+          subPath: core-site.xml
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-hdfs
+          mountPath: /etc/hadoop/conf/hdfs-site.xml
+          subPath: hdfs-site.xml
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-hbase
+          mountPath: /etc/hadoop/conf/hbase-site.xml
+          subPath: hbase-site.xml
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-hbase
+          mountPath: /etc/hadoop/conf/log4j.properties
+          subPath: log4j.properties
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-log-dir
+          mountPath: /stackable/log
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+{{- if .Values.logging.enabled }}
+      - name: {{ include "gbif-chart-lib.releaseName" . }}-vector
+        image: "stackable-docker.gbif.org/stackable/hbase:{{ .Values.stackProduct }}-stackable{{ .Values.stackVersion }}"
+        command:
+        - /bin/bash
+        - -x
+        - -euo
+        - pipefail
+        - -c
+        args:
+        - |
+          # Vector will ignore SIGTERM (as PID != 1) and must be shut down by writing a shutdown trigger file
+          vector --config /stackable/vector.yaml & vector_pid=$!
+          if [ ! -f "/stackable/log/_vector/shutdown" ]; then
+            mkdir -p /stackable/log/_vector && inotifywait -qq --event create /stackable/log/_vector; fi
+          sleep 1
+          kill $vector_pid
+        env:
+        - name: VECTOR_LOG
+          value: {{ .Values.logging.vectorLogLevel }}
+        resources:
+          limits:
+            cpu: 500m
+            memory: 128Mi
+          requests:
+            cpu: 250m
+            memory: 128Mi
+        volumeMounts:
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-log-dir
+          mountPath: /stackable/log
+        - name: {{ include "gbif-chart-lib.releaseName" . }}-vector
+          mountPath: /stackable/vector.yaml
+          subPath: vector.yaml
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+{{- end }}

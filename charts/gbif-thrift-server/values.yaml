@@ -1,12 +1,13 @@
-# Default values for GBIF Hive metastore using Stackable hive operator.
-
 # Override name of the cluster
 nameOverride: ""
 # Override fullname of the cluster
 fullnameOverride: ""
 
-# Stackable versioning to override the version of the Stack component.
-stackProduct: "3.1.3"
+label:
+  app.kubernetes.io/component: thrift
+  app.kubernetes.io/instance: gbif-thrift-server
+# Stackable tag to override the version of the Stack component.
+stackProduct: "2.4.12"
 stackVersion: "23.11.0"
 
 # Uses the stackProduct value to tell the operator what version of configurations to use with the custom image
@@ -23,22 +24,13 @@ stackVersion: "23.11.0"
 customImage:
   enabled: false
 
-# Name of the HDFS cluster
-hdfsClusterName: "gbif-hdfs"
-
-# Using more than 1 replica or using a different default service naming scheme, set the thrift url manually
-thriftUrl: ""
-
-# Use for setting the warehouse location
-warehouse: "/gbif/warehouse"
-
 # Enable logging via the vector aggregator
 # Needs the name of configmap for discovery of the aggregator
 logging:
   # property for enable vector logging
-  enabled: false
-  # DisoveryMap for the connection the aggregator pod
-  discoveryMap: "gbif-vector-aggregator-discovery"
+  enabled: true
+  # Service that access the vector aggregator
+  vectorService: gbif-vector-aggregator
   # Configured which vector itself logs on its own.
   vectorLogLevel: "WARN"
 
@@ -46,26 +38,38 @@ logging:
 # By default it is disabled.
 # The idea with enabling yunikorn for components is that we can fence the infrastructure components from works done in Spark, Trino etc.
 yunikorn:
-  enabled: false
+  enabled: true
   # Name of the overall application for all the pods within the queue
-  appId: "hive-metastore"
+  appId: "hbase"
   # Queue to place the pods in
-  queue: "root.namespace.infra"
+  queue: "root.uat.infra"
 
+# Ressource configuration for spark driver.
 nodes:
-  metastore:
+  # Client deployment diff
+  thrift:
+    # Number of pods for the client
     replicas: 1
+    # CPU settings for the driver  
     cpu:
-      min: '100m'
-      max: '4000m'
-    memory: '4Gi'
-    storage:
-      capacity: '10Gi'
-    logLevel: "INFO"
+      min: "3000m"
+      max: "3000m"
+    # Memory for the Spark driver.
+    memory: "3Gi"
+    # Funky dev calculated value
+    # 80 procent of the total pod allocation
+    heapSize: "2456m"
+    # Ports used to create service
+    ports: 
+      thrift:
+        appPort: 9090
+        nodePort: 31990
 
-# Connection to Hive's postgres DB
-hiveDB:
-  db: ""
-  name: ""
-  user: ""
-  password: ""
+hdfs:
+  clusterName: "gbif-hdfs"
+
+hive:
+  clusterName: "gbif-hive-metastore"
+
+hbase:
+  clusterName: "gbif-hbase"

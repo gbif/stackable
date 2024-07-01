@@ -5,6 +5,11 @@ metadata:
 spec:
   version: {{ default "8.5.3" .Chart.AppVersion }}
   count: {{ .Values.nodes.kibana.replicas }}
+  # Disables ssl for kibana as there is ssl termination enabled
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
   elasticsearchRef:
     name: {{ include "gbif-chart-lib.name" . }}
   podTemplate:

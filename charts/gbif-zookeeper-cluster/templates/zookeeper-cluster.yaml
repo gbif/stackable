@@ -15,8 +15,8 @@ spec:
         maxClientCnxns: {{ .Values.client.maxConnections | quote }}
         minSessionTimeout: {{ .Values.client.minSessionTimeout | quote }}
         maxSessionTimeout: {{ .Values.client.maxSessionTimeout | quote }}
-{{- if .Values.yunikorn.enabled }}
     podOverrides:
+{{- if .Values.yunikorn.enabled }}
       metadata:
         labels:
 {{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}

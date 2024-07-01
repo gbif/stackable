@@ -26,16 +26,16 @@ spec:
 {{- end }}
     roleGroups:
       default:
-        replicas: {{ .Values.nodes.supersetnode.replicas }}
+        replicas: {{ .Values.nodes.node.replicas }}
         config:
           rowLimit: 10000
           webserverTimeout: 300
           resources:
             cpu:
-              min: {{ .Values.nodes.supersetnode.cpu.min }}
-              max: {{ .Values.nodes.supersetnode.cpu.max }}
+              min: {{ .Values.nodes.node.cpu.min }}
+              max: {{ .Values.nodes.node.cpu.max }}
             memory:
-              limit: {{ .Values.nodes.supersetnode.memory }}
+              limit: {{ .Values.nodes.node.memory }}
 {{- if .Values.logging.enabled  }}
           logging:
             enableVectorAgent: true
