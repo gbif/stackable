@@ -7,7 +7,7 @@ fullnameOverride: ""
 
 # Stackable versioning to override the version of the Stack component.
 stackProduct: "3.3.4"
-stackVersion: "23.11.0"
+stackVersion: "24.3.0"
 
 # Uses the stackProduct value to tell the operator what version of configurations to use with the custom image
 # custom image allows customer to change the repository if they want to their own acting as a proxy or
@@ -39,6 +39,9 @@ useDataNodeHostName: "true"
 # For making node available for nodename, add label namenodes=enabled to the node
 # For making node available for datanode, add label datanodes=enabled to the node
 useNodeAffinity: true
+
+# Listenerclass for the stackable component
+listenerClass: "cluster-internal"
 
 # Enable logging via the vector aggregator
 # Needs the name of configmap for discovery of the aggregator

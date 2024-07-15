@@ -53,7 +53,7 @@ spec:
 {{- end }}
   regionServers:
     config:
-      affinity:
+      podAffinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
           - labelSelector:

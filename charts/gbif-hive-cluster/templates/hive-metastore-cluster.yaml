@@ -9,6 +9,7 @@ spec:
 {{- if .Values.logging.enabled  }}     
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}
+    listenerClass: {{ .Values.listenerClass }}
     hdfs:
       configMap: {{ .Values.hdfsClusterName }}
     database:

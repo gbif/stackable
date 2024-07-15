@@ -9,7 +9,6 @@ metadata:
   labels:
     {{- include "gbif-chart-lib.labels" . | nindent 4 }}
 spec:
-  version: {{ .Chart.AppVersion | quote }}
 {{- if .Values.image }}
   image: {{ cat .Values.image.repository .Values.image.name ":" .Values.image.version | nospace }}
 {{- else }}

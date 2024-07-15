@@ -12,7 +12,7 @@ label: "httpfs"
 product:
   repository: "docker.gbif.org"
   artifact: "extended-stackable/hadoop"
-  version: "3.3.4-stackable23.11.0"
+  version: "3.3.4-stackable24.3.0"
 
 hdfs:
   clusterId: "gbif-hdfs"

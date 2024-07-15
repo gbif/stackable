@@ -6,8 +6,8 @@ nameOverride: ""
 fullnameOverride: ""
 
 # Stackable versioning to override the version of the Stack component.
-stackProduct: "3.0.1"
-stackVersion: "23.11.0"
+stackProduct: "3.1.0"
+stackVersion: "24.3.0"
 
 # Uses the stackProduct value to tell the operator what version of configurations to use with the custom image
 # custom image allows customer to change the repository if they want to their own acting as a proxy or
@@ -52,8 +52,8 @@ logging:
   # Configured which vector itself logs on its own.
   vectorLogLevel: "WARN"
 
-# ListenerClassName for Stackable to create the service from
-exposure: cluster-internal
+# Listenerclass for the stackable component
+listenerClass: "cluster-internal"
 
 # Support for Yunikorn queuing
 # By default it is disabled.

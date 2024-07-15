@@ -6,6 +6,7 @@ spec:
   image:
 {{ include "gbif-chart-lib.stackableImage" . | indent 4 }}
   clusterConfig:
+    listenerClass: {{ .Values.listenerClass }}
 {{- if .Values.logging.enabled  }}     
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}

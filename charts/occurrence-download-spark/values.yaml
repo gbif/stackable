@@ -21,7 +21,7 @@ image:
   alwaysPull: false
 
 # Stackable versioning to override the version of the Stack component.
-stackProduct: "3.5.0"
+stackProduct: "3.5.1"
 stackVersion: "23.7.0"
 
 # Uses the stackProduct value to tell the operator what version of configurations to use with the custom image

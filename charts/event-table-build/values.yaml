@@ -1,6 +1,6 @@
 # Default values for GBIF Spark application for process data and prepare map tiles.
 # Name of the application, chart uses the name to find the .jar file.
-appName: "gridded-datasets"
+appName: "occurrence-table-build"
 
 # Override name of the cluster
 nameOverride: ""
@@ -16,8 +16,8 @@ fullnameOverride: ""
 #  version: "1.0.0"
 image: 
   repository: "docker.gbif.org/"
-  name: "gridded-datasets"
-  version: "1.1.0-SNAPSHOT"
+  name: "occurrence-table-build-spark"
+  version: "0.195.0-H3-SNAPSHOT"
   alwaysPull: false
 
 # Stackable versioning to override the version of the Stack component.
@@ -41,7 +41,7 @@ customImage:
 # Spark running mode, currently only cluster is supported.
 mode: cluster
 # Main class for starting the Spark process.
-mainClass: org.gbif.gridded.datasets.GriddedDatasets
+mainClass: org.gbif.occurrence.table.backfill.TableBackfill
 
 # The list of arguments to pass to the spark process
 # Example
@@ -49,7 +49,9 @@ mainClass: org.gbif.gridded.datasets.GriddedDatasets
 #  - my_first_argument
 #  - my_second_argument
 args:
-  - "config.yaml"
+  - "/etc/gbif/config.yaml"
+  - "CREATE"
+  - "ALL"
 # deps describes the dependencies the spark-submit pod should pull before starting execution
 # the section consists on a list of repositories and a list of packages
 # Example 
@@ -106,9 +108,9 @@ nodes:
     # CPU settings for the driver 
     cpu: 
       min: "1000m"
-      max: "2000m"
+      max: "4000m"
     # Memory for the Spark driver.
-    memory: "2Gi"
+    memory: "3Gi"
     # Log level for driver
     logLevel: "INFO"
 
@@ -120,7 +122,7 @@ nodes:
       min: "1000m" 
       max: "4000m"
     # Memory for each executor.
-    memory: "6Gi"
+    memory: "8Gi"
     # Number of executors.
     replicas: 2
     # Log level for executor
@@ -159,26 +161,38 @@ customProperties: {}
 hdfs:
   # Name of the Stackable HdfsCluster in the namespace.
   clusterName: gbif-hdfs
+  # Directory of the source data, needs to be created beforehand in the HDFS cluster.
+  sourceDir: /data/hdfsview/
+  # Source directory of the data loaded into the HDFS cluster.
+  sourceSubDir: event
+  # Target directory for the produced HFiles from the Spark application. Currently needs to be cleaned afeter each run.
+  targetDir: /hive/
+  # Space in zookeeper to place the lock
+  namespace: KUBE_index
+  # Path to place the lock
+  lockPath: /hive/
+  # Lock name
+  lockName: hdfsview
+  # Timeout time for each try, set in ms.
+  sleepMs: 100
+  # Number of retries
+  retries: 5
 
-# Application configs
+zookeeper:
+  quorum: ""
+  
 hive:
+  # Name of the hive database
+  databaseName: gbif
+  # Name of the table to create and store the information in
+  tableName: KUBE
+  # Number of partitioning to use for the table - Set to nothing if you want to disable partitioning of the table
+  # Set 0 to disable
+  partition: 0
   # Name of the hive cluster
   clusterName: gbif-hive-metastore
-  # Name of the hive database
-  schema: dev
-  # Name of the table to get the information from
-  table: occurrence
 
 hbase:
   # Name of the hbase cluster
   clusterName: gbif-hbase
-
-registry:
-  # JDBC connection string
-  jdbc: ""
-  # JDBC connection username
-  user: ""
-  # JDBC connection password
-  password: ""
-  # Table name to which to push the data
-  table: public.dataset_gridded
+  

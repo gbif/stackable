@@ -7,7 +7,7 @@ spec:
 {{ include "gbif-chart-lib.stackableImage" . | indent 4 }}
   clusterConfig:
     credentialsSecret: gbif-superset-credentials
-    listenerClass: {{ .Values.exposure }}
+    listenerClass: {{ .Values.listenerClass }}
 {{- if .Values.logging.enabled  }}     
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}

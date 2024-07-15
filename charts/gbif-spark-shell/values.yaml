@@ -6,8 +6,8 @@ fullnameOverride: ""
 label: "spark-shell"
 
 # Stackable versioning to override the version of the Stack component.
-stackProduct: "3.5.0"
-stackVersion: "23.11.0"
+stackProduct: "3.5.1"
+stackVersion: "24.3.0"
 
 # Logging isn't implemented for the spark-client yet as it requires to volume / init container magic to properly work
 # Configuration for a bucket to store logs in
