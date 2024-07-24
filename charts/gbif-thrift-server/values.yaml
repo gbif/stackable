@@ -28,7 +28,7 @@ customImage:
 # Needs the name of configmap for discovery of the aggregator
 logging:
   # property for enable vector logging
-  enabled: true
+  enabled: false
   # Service that access the vector aggregator
   vectorService: gbif-vector-aggregator
   # Configured which vector itself logs on its own.
@@ -42,7 +42,7 @@ yunikorn:
   # Name of the overall application for all the pods within the queue
   appId: "hbase"
   # Queue to place the pods in
-  queue: "root.uat.infra"
+  queue: "root.default"
 
 # Ressource configuration for spark driver.
 nodes:

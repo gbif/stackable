@@ -62,7 +62,7 @@ spec:
                   "flask_appbuilder":
                     level: {{ .Values.nodes.webserver.logLevel }}
 {{- end }}
-  celeryExecutors:
+  kubernetesExecutors:
 {{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:

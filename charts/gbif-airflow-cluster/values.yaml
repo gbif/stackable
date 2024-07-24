@@ -104,7 +104,6 @@ nodes:
     # Port for setting up node port given node - Leave empty to not setup port
     ports: {}
   workers:
-    replicas: 1
     cpu:
       min: '100m'
       max: '3000m'

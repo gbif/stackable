@@ -12,6 +12,16 @@ spec:
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}
   masters:
+    config:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: hbase
+                app.kubernetes.io/instance: {{ include "gbif-chart-lib.name" . }}
+                app.kubernetes.io/component: master
+            topologyKey: kubernetes.io/hostname
 {{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
@@ -53,7 +63,7 @@ spec:
 {{- end }}
   regionServers:
     config:
-      podAffinity:
+      affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
           - labelSelector:
