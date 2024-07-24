@@ -19,8 +19,6 @@ spec:
 {{- if .Values.git.auth }}
         credentialsSecret: {{ include "gbif-chart-lib.name" . }}-gitsync
 {{- end }}
-        gitSyncConf: 
-          --rev: HEAD 
 {{- end }}
 {{- if .Values.logging.enabled  }}     
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
@@ -75,7 +73,6 @@ spec:
 {{- "envOverrides:" | nindent 8 }}
 {{- tpl (.Values.airflowEnvOverrides | toYaml) . | nindent 10 }}
 {{- end }}
-        replicas: {{ .Values.nodes.workers.replicas }}
         config:
           resources:
             cpu: 
