@@ -147,3 +147,7 @@ hdfs:
 zookeeper:
   # Name of the Stackable zookeeper cluster in the namespace.
   clusterName: "gbif-zookeeper"
+
+clusterOperation:
+  reconciliationPaused: false
+  stopped: false

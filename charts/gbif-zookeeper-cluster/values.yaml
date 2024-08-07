@@ -97,3 +97,7 @@ nodes:
     #         app.kubernetes.io/component: server
     #     topologyKey: kubernetes.io/hostname
     podAntiAffinity: {}
+
+clusterOperation:
+  reconciliationPaused: false
+  stopped: false

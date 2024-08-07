@@ -72,3 +72,7 @@ hiveDB:
   name: ""
   user: ""
   password: ""
+
+clusterOperation:
+  reconciliationPaused: false
+  stopped: false

@@ -115,3 +115,7 @@ nodes:
     ports: []
   
 nodeSelector: {}
+
+clusterOperation:
+  reconciliationPaused: false
+  stopped: false

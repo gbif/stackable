@@ -213,3 +213,7 @@ nodes:
       capacity: '15Gi'
     # Currently no support for external port in our service template for journalnode exposure
     ips: []
+
+clusterOperation:
+  reconciliationPaused: false
+  stopped: false

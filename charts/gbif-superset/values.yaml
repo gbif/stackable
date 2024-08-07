@@ -88,3 +88,7 @@ supersetConfigOverride: {}
 # Used to provide a custom defined set of envrionment variable to provide for superset pods
 # Used across all the different role groups
 supersetEnvOverride: {}
+
+clusterOperation:
+  reconciliationPaused: false
+  stopped: false
