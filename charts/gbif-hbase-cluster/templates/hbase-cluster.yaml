@@ -8,6 +8,7 @@ spec:
   clusterConfig:
     hdfsConfigMapName: {{ .Values.hdfs.clusterName }}
     zookeeperConfigMapName: {{ .Values.zookeeper.clusterName }}-znode
+    listenerClass: {{ .Values.listenerClass }}
 {{- if .Values.logging.enabled  }}     
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}

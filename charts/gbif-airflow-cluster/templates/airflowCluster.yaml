@@ -60,7 +60,7 @@ spec:
                   "flask_appbuilder":
                     level: {{ .Values.nodes.webserver.logLevel }}
 {{- end }}
-  kubernetesExecutors:
+  celeryExecutors:
 {{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
@@ -73,6 +73,7 @@ spec:
 {{- "envOverrides:" | nindent 8 }}
 {{- tpl (.Values.airflowEnvOverrides | toYaml) . | nindent 10 }}
 {{- end }}
+        replicas: {{ .Values.nodes.workers.replicas }}
         config:
           resources:
             cpu: 

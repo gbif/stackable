@@ -12,6 +12,8 @@ spec:
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}
   nameNodes:
+    config:
+      listenerClass: {{ .Values.listenerClass }}
 {{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
@@ -48,7 +50,7 @@ spec:
                     level: {{ .Values.nodes.namenode.logLevel }}
 {{- end }}
 {{- if eq .Values.useNodeAffinity true}}
-          nodeAffinity:
+          affinity:
             nodeAffinity: 
               requiredDuringSchedulingIgnoredDuringExecution:
                 nodeSelectorTerms:
@@ -57,7 +59,6 @@ spec:
                     operator: In
                     values:
                     - enabled
-          listenerClass: {{ .Values.listenerClass }}
 {{- end }}
         configOverrides:
           hdfs-site.xml:
@@ -95,7 +96,7 @@ spec:
                 level: {{ .Values.nodes.datanode.logLevel }}
 {{- end }}
 {{- if eq .Values.useNodeAffinity true }}
-      nodeAffinity:
+      affinity:
         nodeAffinity: 
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:

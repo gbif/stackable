@@ -33,6 +33,9 @@ logging:
   # Configured which vector itself logs on its own.
   vectorLogLevel: "WARN"
 
+# Listenerclass for the stackable component
+listenerClass: "cluster-internal"
+
 # Support for Yunikorn queuing
 # By default it is disabled.
 # The idea with enabling yunikorn for components is that we can fence the infrastructure components from works done in Spark, Trino etc.
