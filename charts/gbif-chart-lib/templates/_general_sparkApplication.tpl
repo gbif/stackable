@@ -6,6 +6,7 @@ apiVersion: spark.stackable.tech/v1alpha1
 kind: SparkApplication
 metadata:
   name: {{ include "gbif-chart-lib.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gbif-chart-lib.labels" . | nindent 4 }}
 spec:

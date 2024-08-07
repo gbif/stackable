@@ -63,6 +63,26 @@ nodes:
       capacity: '4Gi'
     # Currently no support in the service template for external ip ports for master node
     ips: []
+    # Example of how nodeAffinity could look
+    # nodeAffinity: 
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #     nodeSelectorTerms:
+    #     - matchExpressions:
+    #       - key: hbase
+    #         operator: In
+    #         values:
+    #         - enabled
+    nodeAffinity: {}
+    # Example of how podAntiAffinity could look
+    # podAntiAffinity:
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #   - labelSelector:
+    #       matchLabels:
+    #         app.kubernetes.io/name: hbase
+    #         app.kubernetes.io/instance: gbif-hbase-cluster
+    #         app.kubernetes.io/component: master
+    #     topologyKey: kubernetes.io/hostname
+    podAntiAffinity: {}
   region:
     replicas: 3
     cpu:
@@ -80,6 +100,26 @@ nodes:
     #  - server2_ip
     #  - server1_ip
     ips: []
+    # Example of how nodeAffinity could look
+    # nodeAffinity: 
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #     nodeSelectorTerms:
+    #     - matchExpressions:
+    #       - key: hbase
+    #         operator: In
+    #         values:
+    #         - enabled
+    nodeAffinity: {}
+    # Example of how podAntiAffinity could look
+    # podAntiAffinity:
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #   - labelSelector:
+    #       matchLabels:
+    #         app.kubernetes.io/name: hbase
+    #         app.kubernetes.io/instance: gbif-hbase-cluster
+    #         app.kubernetes.io/component: region
+    #     topologyKey: kubernetes.io/hostname
+    podAntiAffinity: {}
   rest:
     replicas: 1
     cpu:

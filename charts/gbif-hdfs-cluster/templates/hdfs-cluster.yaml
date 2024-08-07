@@ -2,6 +2,7 @@ apiVersion: hdfs.stackable.tech/v1alpha1
 kind: HdfsCluster
 metadata:
   name: {{ include "gbif-chart-lib.name" . }}
+  namespace: {{ .Release.Namespace }}
 spec:
   image:
 {{ include "gbif-chart-lib.stackableImage" . | indent 4 }}
@@ -49,16 +50,16 @@ spec:
                   ROOT:
                     level: {{ .Values.nodes.namenode.logLevel }}
 {{- end }}
-{{- if eq .Values.useNodeAffinity true}}
+{{- if (or .Values.nodes.namenode.nodeAffinity .Values.nodes.namenode.podAntiAffinity)}}
           affinity:
-            nodeAffinity: 
-              requiredDuringSchedulingIgnoredDuringExecution:
-                nodeSelectorTerms:
-                - matchExpressions:
-                  - key: namenodes
-                    operator: In
-                    values:
-                    - enabled
+{{- with .Values.nodes.namenode.nodeAffinity }}
+            nodeAffinity:
+{{- toYaml . | nindent 14 }}
+{{- end }}
+{{- with .Values.nodes.namenode.podAntiAffinity }}
+            podAntiAffinity:
+{{- toYaml . | nindent 14 }}
+{{- end }}
 {{- end }}
         configOverrides:
           hdfs-site.xml:
@@ -95,17 +96,16 @@ spec:
               ROOT:
                 level: {{ .Values.nodes.datanode.logLevel }}
 {{- end }}
-{{- if eq .Values.useNodeAffinity true }}
-      affinity:
-        nodeAffinity: 
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: datanodes
-                operator: In
-                values:
-                - enabled
-      listenerClass: {{ .Values.listenerClass }}
+{{- if (or .Values.nodes.datanode.nodeAffinity .Values.nodes.datanode.podAntiAffinity)}}
+          affinity:
+{{- with .Values.nodes.datanode.nodeAffinity }}
+            nodeAffinity:
+{{- toYaml . | nindent 14 }}
+{{- end }}
+{{- with .Values.nodes.datanode.podAntiAffinity }}
+            podAntiAffinity:
+{{- toYaml . | nindent 14 }}
+{{- end }}
 {{- end }}
     configOverrides:
       hdfs-site.xml:

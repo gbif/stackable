@@ -2,6 +2,7 @@ apiVersion: zookeeper.stackable.tech/v1alpha1
 kind: ZookeeperCluster
 metadata:
   name: {{ include "gbif-chart-lib.name" . }}
+  namespace: {{ .Release.Namespace }}
 spec:
   image:
 {{ include "gbif-chart-lib.stackableImage" . | indent 4 }}
@@ -53,20 +54,14 @@ spec:
                   org.apache.zookeeper.server.NettyServerCnxn:
                     level: NONE
 {{- end }}
+{{- if (or .Values.nodes.server.nodeAffinity .Values.nodes.server.podAntiAffinity)}}
           affinity:
-            nodeAffinity: 
-              requiredDuringSchedulingIgnoredDuringExecution:
-                nodeSelectorTerms:
-                - matchExpressions:
-                  - key: zookeeper
-                    operator: In
-                    values:
-                    - enabled
+{{- with .Values.nodes.server.nodeAffinity }}
+            nodeAffinity:
+{{- toYaml . | nindent 14 }}
+{{- end }}
+{{- with .Values.nodes.server.podAntiAffinity }}
             podAntiAffinity:
-              requiredDuringSchedulingIgnoredDuringExecution:
-              - labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/name: zookeeper
-                    app.kubernetes.io/instance: {{ include "gbif-chart-lib.name" . }}
-                    app.kubernetes.io/component: server
-                topologyKey: kubernetes.io/hostname
+{{- toYaml . | nindent 14 }}
+{{- end }}
+{{- end }}

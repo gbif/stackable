@@ -2,6 +2,7 @@ apiVersion: spark.stackable.tech/v1alpha1
 kind: SparkHistoryServer
 metadata:
   name: {{ include "gbif-chart-lib.name" . }}
+  namespace: {{ .Release.Namespace }}
 spec:
   image:
 {{ include "gbif-chart-lib.stackableImage" . | indent 4 }}

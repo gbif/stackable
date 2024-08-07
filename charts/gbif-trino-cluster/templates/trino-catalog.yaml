@@ -4,6 +4,7 @@ apiVersion: trino.stackable.tech/v1alpha1
 kind: TrinoCatalog
 metadata:
   name: hive
+  namespace: {{ .Release.Namespace }}
   labels:
 {{ include "gbif-chart-lib.selectorLabels" . | indent 4}}
 spec:
@@ -20,6 +21,7 @@ apiVersion: trino.stackable.tech/v1alpha1
 kind: TrinoCatalog
 metadata:
   name: psql
+  namespace: {{ .Release.Namespace }}
   labels:
 {{ include "gbif-chart-lib.selectorLabels" . | indent 4}}
 spec:
@@ -45,6 +47,7 @@ apiVersion: trino.stackable.tech/v1alpha1
 kind: TrinoCatalog
 metadata:
   name: tpch
+  namespace: {{ .Release.Namespace }}
   labels:
 {{ include "gbif-chart-lib.selectorLabels" . | indent 4}}
 spec:
@@ -59,6 +62,7 @@ apiVersion: trino.stackable.tech/v1alpha1
 kind: TrinoCatalog
 metadata:
   name: iceberg
+  namespace: {{ .Release.Namespace }}
   labels:
 {{ include "gbif-chart-lib.selectorLabels" . | indent 4}}
 spec:

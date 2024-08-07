@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "gbif-chart-lib.releaseName" . }}-pod-templates
+  namespace: {{ .Release.Namespace }}
 data:
   executor-pod-template.yaml: |
     apiVersion: v1

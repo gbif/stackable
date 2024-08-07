@@ -77,3 +77,23 @@ nodes:
     #  - server2_ip
     #  - server1_ip
     ips: []
+    # Example of how nodeAffinity could look
+    # nodeAffinity: 
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #     nodeSelectorTerms:
+    #     - matchExpressions:
+    #       - key: zookeeper
+    #         operator: In
+    #         values:
+    #         - enabled
+    nodeAffinity: {}
+    # Example of how podAntiAffinity could look
+    # podAntiAffinity:
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #   - labelSelector:
+    #       matchLabels:
+    #         app.kubernetes.io/name: zookeeper
+    #         app.kubernetes.io/instance: gbif-zookeeper-cluster
+    #         app.kubernetes.io/component: server
+    #     topologyKey: kubernetes.io/hostname
+    podAntiAffinity: {}

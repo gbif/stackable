@@ -2,7 +2,6 @@ apiVersion: authentication.stackable.tech/v1alpha1
 kind: AuthenticationClass
 metadata:
   name: {{ include "gbif-chart-lib.name" . }}-auth
-  namespace: {{ .Release.Namespace }}
 spec:
   provider:
     static:

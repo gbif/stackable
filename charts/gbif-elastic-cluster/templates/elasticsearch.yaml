@@ -2,6 +2,7 @@ apiVersion: elasticsearch.k8s.elastic.co/v1
 kind: Elasticsearch
 metadata:
   name: {{ include "gbif-chart-lib.name" . }}
+  namespace: {{ .Release.Namespace }}
 spec:
   version: {{ .Chart.AppVersion | default "8.5.3" | quote }}
   # Currently disabled tls on the http port to make it easier to connect vector

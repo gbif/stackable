@@ -142,6 +142,27 @@ nodes:
       #  #  - server2_ip
       #  #  - server1_ip
       #  ips: []
+
+    # Example of how nodeAffinity could look
+    # nodeAffinity: 
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #     nodeSelectorTerms:
+    #     - matchExpressions:
+    #       - key: datanodes
+    #         operator: In
+    #         values:
+    #         - enabled
+    nodeAffinity: {}
+    # Example of how podAntiAffinity could look
+    # podAntiAffinity:
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #   - labelSelector:
+    #       matchLabels:
+    #         app.kubernetes.io/name: hdfs
+    #         app.kubernetes.io/instance: gbif-hdfs-cluster
+    #         app.kubernetes.io/component: datanode
+    #     topologyKey: kubernetes.io/hostname
+    podAntiAffinity: {}
   namenode:
     replicas: 1
     cpu:
@@ -161,6 +182,26 @@ nodes:
     #  - server2_ip
     #  - server1_ip
     ips: []
+    # Example of how nodeAffinity could look
+    # nodeAffinity: 
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #     nodeSelectorTerms:
+    #     - matchExpressions:
+    #       - key: namenodes
+    #         operator: In
+    #         values:
+    #         - enabled
+    nodeAffinity: {}
+    # Example of how podAntiAffinity could look
+    # podAntiAffinity:
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #   - labelSelector:
+    #       matchLabels:
+    #         app.kubernetes.io/name: hdfs
+    #         app.kubernetes.io/instance: gbif-hdfs-cluster
+    #         app.kubernetes.io/component: namenode
+    #     topologyKey: kubernetes.io/hostname
+    podAntiAffinity: {}
   journalnode:
     replicas: 3
     cpu:

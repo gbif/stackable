@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "gbif-chart-lib.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gbif-chart-lib.labels" . | nindent 4 }}
 spec:

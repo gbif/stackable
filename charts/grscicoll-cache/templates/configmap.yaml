@@ -3,6 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "gbif-chart-lib.name" . }}-conf
+  namespace: {{ .Release.Namespace }}
 data:
   config.properties: |
     apiBaseUrl={{ .Values.api.baseUrl }}

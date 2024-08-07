@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "gbif-chart-lib.releaseName" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
 {{- toYaml .Values.label | nindent 4 }}
 spec:

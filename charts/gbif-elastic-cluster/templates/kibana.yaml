@@ -2,6 +2,7 @@ apiVersion: kibana.k8s.elastic.co/v1
 kind: Kibana
 metadata:
   name: {{ include "gbif-chart-lib.name" . }}
+  namespace: {{ .Release.Namespace }}
 spec:
   version: {{ default "8.5.3" .Chart.AppVersion }}
   count: {{ .Values.nodes.kibana.replicas }}

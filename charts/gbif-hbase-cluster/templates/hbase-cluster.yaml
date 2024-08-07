@@ -2,6 +2,7 @@ apiVersion: hbase.stackable.tech/v1alpha1
 kind: HbaseCluster
 metadata:
   name: {{ include "gbif-chart-lib.name" . }}
+  namespace: {{ .Release.Namespace }}
 spec:
   image:
 {{ include "gbif-chart-lib.stackableImage" . | indent 4 }}
@@ -13,16 +14,6 @@ spec:
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}
   masters:
-    config:
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchLabels:
-                app.kubernetes.io/name: hbase
-                app.kubernetes.io/instance: {{ include "gbif-chart-lib.name" . }}
-                app.kubernetes.io/component: master
-            topologyKey: kubernetes.io/hostname
 {{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
@@ -58,21 +49,22 @@ spec:
                   ROOT:
                     level: {{ .Values.nodes.master.logLevel }}
 {{- end }}
+{{- if (or .Values.nodes.master.nodeAffinity .Values.nodes.master.podAntiAffinity)}}
+          affinity:
+{{- with .Values.nodes.master.nodeAffinity }}
+            nodeAffinity:
+{{- toYaml . | nindent 14 }}
+{{- end }}
+{{- with .Values.nodes.master.podAntiAffinity }}
+            podAntiAffinity:
+{{- toYaml . | nindent 14 }}
+{{- end }}
+{{- end }}
 {{- if .Values.configOverrides }}
 {{- "configOverrides:" | nindent 8 }}
 {{- tpl (.Values.configOverrides | toYaml) . | nindent 10 }}
 {{- end }}
   regionServers:
-    config:
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchLabels:
-                app.kubernetes.io/name: hbase
-                app.kubernetes.io/instance: {{ include "gbif-chart-lib.name" . }}
-                app.kubernetes.io/component: regionserver
-            topologyKey: kubernetes.io/hostname
 {{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
@@ -107,6 +99,17 @@ spec:
                 loggers:
                   ROOT:
                     level: {{ .Values.nodes.region.logLevel }}
+{{- end }}
+{{- if (or .Values.nodes.region.nodeAffinity .Values.nodes.region.podAntiAffinity)}}
+          affinity:
+{{- with .Values.nodes.region.nodeAffinity }}
+            nodeAffinity:
+{{- toYaml . | nindent 14 }}
+{{- end }}
+{{- with .Values.nodes.region.podAntiAffinity }}
+            podAntiAffinity:
+{{- toYaml . | nindent 14 }}
+{{- end }}
 {{- end }}
 {{- if .Values.configOverrides }}
 {{- "configOverrides:" | nindent 8 }}

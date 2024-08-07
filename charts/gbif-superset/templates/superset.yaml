@@ -2,6 +2,7 @@ apiVersion: superset.stackable.tech/v1alpha1
 kind: SupersetCluster
 metadata:
   name: gbif-superset
+  namespace: {{ .Release.Namespace }}
 spec:
   image:
 {{ include "gbif-chart-lib.stackableImage" . | indent 4 }}

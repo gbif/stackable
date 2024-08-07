@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ default .Chart.Name .Values.overrideName }}-custom
+  namespace: {{ .Release.Namespace }}
 data:
   hive-site.xml: |
     <?xml version="1.0"?>

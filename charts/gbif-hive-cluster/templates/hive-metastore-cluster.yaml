@@ -2,6 +2,7 @@ apiVersion: hive.stackable.tech/v1alpha1
 kind: HiveCluster
 metadata:
   name: {{ include "gbif-chart-lib.name" . }}
+  namespace: {{ .Release.Namespace }}
 spec:
   image:
 {{ include "gbif-chart-lib.stackableImage" . | indent 4 }}
