@@ -1,9 +1,27 @@
+{{ range $n := until (len .Values.nodes.master.ips) }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-%s-%d" $.Release.Name "master-local" $n }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  selector:
+    statefulset.kubernetes.io/pod-name: {{ printf "%s-master-default-%d" ( include "gbif-chart-lib.name" $ ) $n }}
+  ports:
+  - name: gbif-tcp
+    protocol: TCP
+    port: {{ $.Values.nodes.region.tcpPort }}
+    targetPort: {{ $.Values.nodes.region.tcpPort }}
+  externalIPs: 
+  - {{ (index $.Values.nodes.region.ips $n) }}
+---
+{{ end }}
 {{ range $n := until (len .Values.nodes.region.ips) }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ printf "%s-%s-%d" $.Release.Name "region-local" $n }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ $.Release.Namespace }}
 spec:
   selector:
     statefulset.kubernetes.io/pod-name: {{ printf "%s-regionserver-default-%d" ( include "gbif-chart-lib.name" $ ) $n }}

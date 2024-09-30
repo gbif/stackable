@@ -39,6 +39,26 @@ nodes:
         class: local-path
         capacity: '25Gi'
     ports: {}
+    # Example of how nodeAffinity could look
+    # nodeAffinity: 
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #     nodeSelectorTerms:
+    #     - matchExpressions:
+    #       - key: elastic
+    #         operator: In
+    #         values:
+    #         - enabled
+    nodeAffinity: {}
+    # Example of how podAntiAffinity could look
+    # podAntiAffinity:
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #   - labelSelector:
+    #       matchLabels:
+    #         app.kubernetes.io/name: elastic
+    #         app.kubernetes.io/instance: gbif-elastic-cluster
+    #         app.kubernetes.io/component: manager
+    #     topologyKey: kubernetes.io/hostname
+    podAntiAffinity: {}
   worker:
     replicas: 1
     resources:
@@ -52,6 +72,26 @@ nodes:
         class: elastic-storage
         capacity: '100Gi'
     ports: {}
+    # Example of how nodeAffinity could look
+    # nodeAffinity: 
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #     nodeSelectorTerms:
+    #     - matchExpressions:
+    #       - key: elastic
+    #         operator: In
+    #         values:
+    #         - enabled
+    nodeAffinity: {}
+    # Example of how podAntiAffinity could look
+    # podAntiAffinity:
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #   - labelSelector:
+    #       matchLabels:
+    #         app.kubernetes.io/name: elastic
+    #         app.kubernetes.io/instance: gbif-elastic-cluster
+    #         app.kubernetes.io/component: worker
+    #     topologyKey: kubernetes.io/hostname
+    podAntiAffinity: {}
   kibana:
     replicas: 1
     resources:

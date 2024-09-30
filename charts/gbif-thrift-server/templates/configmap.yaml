@@ -288,7 +288,7 @@ data:
           - extended_logs_*
         type: remap
         source: |
-          .namespace = "uat"
+          .namespace = "{{ .Release.Namespace }}"
           .cluster = "gbif-hbase"
           .role = "regionserver"
           .roleGroup = "default"

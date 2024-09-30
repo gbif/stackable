@@ -50,6 +50,17 @@ spec:
             limits:
               memory: {{ .Values.nodes.manager.resources.memory }}Mi
               cpu: {{ .Values.nodes.manager.resources.cpu.max }}
+{{- if (or .Values.nodes.manager.nodeAffinity .Values.nodes.manager.podAntiAffinity)}}
+      affinity:
+{{- with .Values.nodes.manager.nodeAffinity }}
+        nodeAffinity:
+{{- toYaml . | nindent 10 }}
+{{- end }}
+{{- with .Values.nodes.manager.podAntiAffinity }}
+        podAntiAffinity:
+{{- toYaml . | nindent 10 }}
+{{- end }}
+{{- end }}
     volumeClaimTemplates:
     - metadata:
         name: elasticsearch-data # Points to standard mount directory
@@ -75,7 +86,7 @@ spec:
             runAsUser: 1000 # Sets to the gbif user
           env:
           - name: ES_JAVA_OPTS
-            value: -Xms{{ sub .Values.nodes.worker.resources.memory 512 }}m -Xmx{{ sub .Values.nodes.worker.resources.memory 512 }}m
+            value: -Xms{{ sub .Values.nodes.worker.resources.memory 1024 }}m -Xmx{{ sub .Values.nodes.worker.resources.memory 1024 }}m
           resources:
             requests:
               memory: {{ .Values.nodes.worker.resources.memory }}Mi
@@ -83,6 +94,17 @@ spec:
             limits:
               memory: {{ .Values.nodes.worker.resources.memory }}Mi
               cpu: {{ .Values.nodes.worker.resources.cpu.max }}
+{{- if (or .Values.nodes.worker.nodeAffinity .Values.nodes.worker.podAntiAffinity)}}
+      affinity:
+{{- with .Values.nodes.worker.nodeAffinity }}
+        nodeAffinity:
+{{- toYaml . | nindent 10 }}
+{{- end }}
+{{- with .Values.nodes.worker.podAntiAffinity }}
+        podAntiAffinity:
+{{- toYaml . | nindent 10 }}
+{{- end }}
+{{- end }}
     volumeClaimTemplates:
     - metadata:
         name: elasticsearch-data # Points to standard mount directory

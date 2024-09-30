@@ -18,6 +18,17 @@ spec:
   nameNodes:
     config:
       listenerClass: {{ .Values.listenerClass }}
+{{- if (or .Values.nodes.namenode.nodeAffinity .Values.nodes.namenode.podAntiAffinity)}}
+      affinity:
+{{- with .Values.nodes.namenode.nodeAffinity }}
+        nodeAffinity:
+{{- toYaml . | nindent 10 }}
+{{- end }}
+{{- with .Values.nodes.namenode.podAntiAffinity }}
+        podAntiAffinity:
+{{- toYaml . | nindent 10 }}
+{{- end }}
+{{- end }}
 {{- if .Values.yunikorn.enabled }}
     podOverrides:
       metadata:
@@ -52,17 +63,6 @@ spec:
                 loggers:
                   ROOT:
                     level: {{ .Values.nodes.namenode.logLevel }}
-{{- end }}
-{{- if (or .Values.nodes.namenode.nodeAffinity .Values.nodes.namenode.podAntiAffinity)}}
-          affinity:
-{{- with .Values.nodes.namenode.nodeAffinity }}
-            nodeAffinity:
-{{- toYaml . | nindent 14 }}
-{{- end }}
-{{- with .Values.nodes.namenode.podAntiAffinity }}
-            podAntiAffinity:
-{{- toYaml . | nindent 14 }}
-{{- end }}
 {{- end }}
         configOverrides:
           hdfs-site.xml:
@@ -100,14 +100,14 @@ spec:
                 level: {{ .Values.nodes.datanode.logLevel }}
 {{- end }}
 {{- if (or .Values.nodes.datanode.nodeAffinity .Values.nodes.datanode.podAntiAffinity)}}
-          affinity:
+      affinity:
 {{- with .Values.nodes.datanode.nodeAffinity }}
-            nodeAffinity:
-{{- toYaml . | nindent 14 }}
+        nodeAffinity:
+{{- toYaml . | nindent 10 }}
 {{- end }}
 {{- with .Values.nodes.datanode.podAntiAffinity }}
-            podAntiAffinity:
-{{- toYaml . | nindent 14 }}
+        podAntiAffinity:
+{{- toYaml . | nindent 10 }}
 {{- end }}
 {{- end }}
     configOverrides:

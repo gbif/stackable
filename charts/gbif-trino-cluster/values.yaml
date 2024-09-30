@@ -49,13 +49,13 @@ memPerNode: "5GB"
 # headroom + limit per-node shouldn't exceed the total memory set per worker.
 memHeadroom: "1GB"
 
-persistedGeocodeLayerStorage:
+geocodeLayer:
   # If enabled will try to create a PVC for the given storage class. The storage class should be a volume that can be accessed by multiple containers
   enabled: false
-  # Size of the pv
-  capacity: '1Gi'
-  # Storage class for the PVC to look for storage. Requirement that it can be accessed by multiple containers at the same time
-  storageClass: nfs-client
+  # Server address
+  server: localhost
+  # Path
+  mountPath: /trino/default
 
 # users that should be created for the cluster at cluster creation time
 # example of who it could look:
@@ -76,6 +76,14 @@ logging:
 
 # Listenerclass for the stackable component
 listenerClass: "cluster-internal"
+
+# Set if to use custome stackable secret backend
+# A temp function that at somepoint is going to be deprecated
+
+customSecretBackend:
+  enabled: false
+  secretName: a-secret
+  lifetime: "1d"
 
 # Support for Yunikorn queuing
 # By default it is disabled.

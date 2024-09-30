@@ -33,16 +33,16 @@ logging:
   # Configured which vector itself logs on its own.
   vectorLogLevel: "WARN"
 
-# Configurations for setting values for client connecting to the zookeeper cluster
-client:
-  maxConnections: 60
-  # Default is 2 x ticktime
-  minSessionTimeout: 6000
-  # Default is 20 x ticktime
-  maxSessionTimeout: 60000
-
 # Listenerclass for the stackable component
 listenerClass: "cluster-internal"
+
+# Set if to use custome stackable secret backend
+# A temp function that at somepoint is going to be deprecated
+
+customSecretBackend:
+  enabled: false
+  secretName: a-secret
+  lifetime: "1d"
 
 # Support for Yunikorn queuing
 # By default it is disabled.
@@ -97,6 +97,21 @@ nodes:
     #         app.kubernetes.io/component: server
     #     topologyKey: kubernetes.io/hostname
     podAntiAffinity: {}
+
+# Provides the component with a set of things that should be added (overriden if existing) in one or more files if specified
+# Example of setting three values for the zoo.cfg file
+# configOverrides:
+#    zoo.cfg:
+#      maxClientCnxns: 60
+#      minSessionTimeout: 6000
+#      maxSessionTimeout: 60000
+configOverrides: {}
+
+# Provides the component with a set of properties that should be added (overriden if existing) in the pods environment
+# Example
+# envOverrides:
+#   JVMFLAGS: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=50.0"
+envOverrides: {}
 
 clusterOperation:
   reconciliationPaused: false

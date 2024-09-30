@@ -18,7 +18,7 @@ spec:
               port: {{ .Values.bucket.connection.port }}
               accessStyle: Path
               credentials:
-                secretClass: {{ include "gbif-chart-lib.name" . }}-credentials-class
+                secretClass: {{ include "gbif-chart-lib.name" . }}-{{ .Release.Namespace }}-credentials-class
 {{- if .Values.sparkConf }}
   sparkConf:
 {{- tpl (.Values.sparkConf | toYaml) . | nindent 4 }}
