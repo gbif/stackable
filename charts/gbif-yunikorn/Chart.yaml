@@ -16,7 +16,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.1.0
+version: 0.2.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
@@ -26,7 +26,7 @@ appVersion: "1.5.0"
 
 dependencies:
 - name: gbif-chart-lib
-  version: 2.3.1
+  version: 2.5.1
   repository: https://repository.gbif.org/repository/gbif-helm-release/
 - name: yunikorn
   version: 1.5.0

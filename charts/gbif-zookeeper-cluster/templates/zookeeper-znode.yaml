@@ -2,6 +2,7 @@ apiVersion: zookeeper.stackable.tech/v1alpha1
 kind: ZookeeperZnode
 metadata:
   name: {{ include "gbif-chart-lib.name" . }}-znode
+  namespace: {{ .Release.Namespace }}
 spec:
   clusterRef:
     name: {{ include "gbif-chart-lib.name" . }}

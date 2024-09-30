@@ -10,6 +10,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ printf "%s-%s" $nodeKey "nodeport" }}
+  namespace: {{ $.Release.Namespace }}
 spec:
   type: NodePort
   selector:

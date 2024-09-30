@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "gbif-chart-lib.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "gbif-chart-lib.labels" . | nindent 4 }}
 spec:
@@ -17,6 +18,9 @@ spec:
       {{- end }}
       labels:
         {{- include "gbif-chart-lib.selectorLabels" . | nindent 8 }}
+{{- if .Values.yunikorn.enabled }}
+{{- include "gbif-chart-lib.yunikornLabels" . | nindent 8 }}
+{{- end }}
     spec:
       containers:
         - name: {{ .Chart.Name }}

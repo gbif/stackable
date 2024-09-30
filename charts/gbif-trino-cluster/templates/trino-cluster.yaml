@@ -2,38 +2,83 @@ apiVersion: trino.stackable.tech/v1alpha1
 kind: TrinoCluster
 metadata:
   name: {{ include "gbif-chart-lib.name" . }}
+  namespace: {{ .Release.Namespace }}
 spec:
   image:
 {{ include "gbif-chart-lib.stackableImage" . | indent 4 }}
+  clusterOperation:
+    reconciliationPaused: {{ .Values.clusterOperation.reconciliationPaused }}
+    stopped: {{ .Values.clusterOperation.stopped }}
   clusterConfig:
     listenerClass: {{ .Values.listenerClass }}
 {{- if .Values.logging.enabled  }}     
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}
     authentication:
-    - authenticationClass: {{ include "gbif-chart-lib.name" . }}-auth
+    - authenticationClass: {{ include "gbif-chart-lib.name" . }}-{{ .Release.Namespace }}-auth
     catalogLabelSelector:
       matchLabels:
 {{ include "gbif-chart-lib.selectorLabels" . | indent 8}}
   coordinators:
-{{- if .Values.yunikorn.enabled }}
+{{- if or .Values.yunikorn.enabled (or .Values.geocodeLayer.enabled .Values.customSecretBackend.enabled) }}
     podOverrides:
+{{- if or .Values.yunikorn.enabled }}
       metadata:
         labels:
 {{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
 {{- end }}
-{{- if .Values.persistedGeocodeLayerStorage.enabled }}
+{{- end }}
+{{- if or .Values.geocodeLayer.enabled .Values.customSecretBackend.enabled }}
       spec:
+{{- if or .Values.geocodeLayer.enabled }}
         containers:
         - name: trino
           volumeMounts:
           - name: gbif-geocode-layers
             mountPath: /gbif/geocode-layers
+{{- end }}
         volumes:
+{{- if or .Values.geocodeLayer.enabled }}
         - name: gbif-geocode-layers
-          persistentVolumeClaim:
-            claimName: {{ include "gbif-chart-lib.name" .}}-geocode-layers
-            readOnly: false
+          nfs:
+            server: {{ .Values.geocodeLayer.server }}
+            path: {{ .Values.geocodeLayer.mountPath }}
+            readOnly: true
+{{- end }}
+{{- if .Values.customSecretBackend.enabled }}
+        - name: "server-tls-mount"
+          ephemeral:
+            volumeClaimTemplate:
+              metadata:
+                annotations:
+                  secrets.stackable.tech/class: {{ .Values.customSecretBackend.secretName }} 
+                  secrets.stackable.tech/scope: node,pod
+                  secrets.stackable.tech/format: tls-pkcs12
+                  secrets.stackable.tech/backend.autotls.cert.lifetime: {{ .Values.customSecretBackend.lifetime }}
+              spec:
+                storageClassName: secrets.stackable.tech 
+                accessModes: 
+                  - ReadWriteOnce
+                resources: 
+                  requests:
+                    storage: "1"
+        - name: "internal-tls-mount"
+          ephemeral:
+            volumeClaimTemplate:
+              metadata:
+                annotations:
+                  secrets.stackable.tech/class: {{ .Values.customSecretBackend.secretName }} 
+                  secrets.stackable.tech/scope: node,pod
+                  secrets.stackable.tech/format: tls-pkcs12
+                  secrets.stackable.tech/backend.autotls.cert.lifetime: {{ .Values.customSecretBackend.lifetime }}
+              spec:
+                storageClassName: secrets.stackable.tech 
+                accessModes: 
+                  - ReadWriteOnce
+                resources: 
+                  requests:
+                    storage: "1"
+{{- end }}
 {{- end }}
     roleGroups:
       default:
@@ -69,24 +114,65 @@ spec:
       config.properties:
         query.max-memory-per-node: {{ .Values.memPerNode }}
         memory.heap-headroom-per-node: {{ .Values.memHeadroom }}
-{{- if .Values.yunikorn.enabled }}
+{{- if or .Values.yunikorn.enabled (or .Values.geocodeLayer.enabled .Values.customSecretBackend.enabled) }}
     podOverrides:
+{{- if or .Values.yunikorn.enabled }}
       metadata:
         labels:
 {{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
 {{- end }}
-{{- if .Values.persistedGeocodeLayerStorage.enabled }}
+{{- end }}
+{{- if or .Values.geocodeLayer.enabled .Values.customSecretBackend.enabled }}
       spec:
+{{- if or .Values.geocodeLayer.enabled }}
         containers:
         - name: trino
           volumeMounts:
           - name: gbif-geocode-layers
             mountPath: /gbif/geocode-layers
+{{- end }}
         volumes:
+{{- if or .Values.geocodeLayer.enabled }}
         - name: gbif-geocode-layers
-          persistentVolumeClaim:
-            claimName: {{ include "gbif-chart-lib.name" .}}-geocode-layers
-            readOnly: false
+          nfs:
+            server: {{ .Values.geocodeLayer.server }}
+            path: {{ .Values.geocodeLayer.mountPath }}
+            readOnly: true
+{{- end }}
+{{- if .Values.customSecretBackend.enabled }}
+        - name: "server-tls-mount"
+          ephemeral:
+            volumeClaimTemplate:
+              metadata:
+                annotations:
+                  secrets.stackable.tech/class: {{ .Values.customSecretBackend.secretName }} 
+                  secrets.stackable.tech/scope: node,pod
+                  secrets.stackable.tech/format: tls-pkcs12
+                  secrets.stackable.tech/backend.autotls.cert.lifetime: {{ .Values.customSecretBackend.lifetime }}
+              spec:
+                storageClassName: secrets.stackable.tech 
+                accessModes: 
+                  - ReadWriteOnce
+                resources: 
+                  requests:
+                    storage: "1"
+        - name: "internal-tls-mount"
+          ephemeral:
+            volumeClaimTemplate:
+              metadata:
+                annotations:
+                  secrets.stackable.tech/class: {{ .Values.customSecretBackend.secretName }} 
+                  secrets.stackable.tech/scope: node,pod
+                  secrets.stackable.tech/format: tls-pkcs12
+                  secrets.stackable.tech/backend.autotls.cert.lifetime: {{ .Values.customSecretBackend.lifetime }}
+              spec:
+                storageClassName: secrets.stackable.tech 
+                accessModes: 
+                  - ReadWriteOnce
+                resources: 
+                  requests:
+                    storage: "1"
+{{- end }}
 {{- end }}
     roleGroups:
       default:

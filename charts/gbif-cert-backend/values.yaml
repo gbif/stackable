@@ -1,0 +1,7 @@
+nameOverride: ""
+
+fullnameOverride: ""
+
+caLifetime: "300d"
+
+maxCertLifetime: "1d"

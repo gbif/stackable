@@ -2,9 +2,13 @@ apiVersion: airflow.stackable.tech/v1alpha1
 kind: AirflowCluster
 metadata:
   name: {{ include "gbif-chart-lib.name" . }}
+  namespace: {{ .Release.Namespace }}
 spec:
   image:
 {{ include "gbif-chart-lib.stackableImage" . | indent 4 }}
+  clusterOperation:
+    reconciliationPaused: {{ .Values.clusterOperation.reconciliationPaused }}
+    stopped: {{ .Values.clusterOperation.stopped }}
   clusterConfig:
     loadExamples: {{ .Values.examples }}
     exposeConfig: {{ .Values.exposeConfigs }}

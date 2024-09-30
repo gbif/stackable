@@ -2,25 +2,68 @@ apiVersion: zookeeper.stackable.tech/v1alpha1
 kind: ZookeeperCluster
 metadata:
   name: {{ include "gbif-chart-lib.name" . }}
+  namespace: {{ .Release.Namespace }}
 spec:
   image:
 {{ include "gbif-chart-lib.stackableImage" . | indent 4 }}
+  clusterOperation:
+    reconciliationPaused: {{ .Values.clusterOperation.reconciliationPaused }}
+    stopped: {{ .Values.clusterOperation.stopped }}
   clusterConfig:
     listenerClass: {{ .Values.listenerClass }}
 {{- if .Values.logging.enabled  }}     
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}
   servers:
-    configOverrides:
-      zoo.cfg:
-        maxClientCnxns: {{ .Values.client.maxConnections | quote }}
-        minSessionTimeout: {{ .Values.client.minSessionTimeout | quote }}
-        maxSessionTimeout: {{ .Values.client.maxSessionTimeout | quote }}
+{{- if .Values.configOverrides }}
+{{- "configOverrides:" | nindent 4 }}
+{{- tpl (.Values.configOverrides | toYaml) . | nindent 6 }}
+{{- end }}
+{{- if .Values.envOverrides }}
+{{- "envOverrides:" | nindent 4 }}
+{{- tpl (.Values.envOverrides | toYaml) . | nindent 6 }}
+{{- end }}
     podOverrides:
 {{- if .Values.yunikorn.enabled }}
       metadata:
         labels:
 {{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
+{{- if .Values.customSecretBackend.enabled }}
+      spec:
+        volumes:
+          - name: "server-tls"
+            ephemeral:
+              volumeClaimTemplate:
+                metadata:
+                  annotations:
+                    secrets.stackable.tech/class: {{ .Values.customSecretBackend.secretName }} 
+                    secrets.stackable.tech/scope: node,pod
+                    secrets.stackable.tech/format: tls-pkcs12
+                    secrets.stackable.tech/backend.autotls.cert.lifetime: {{ .Values.customSecretBackend.lifetime }}
+                spec:
+                  storageClassName: secrets.stackable.tech 
+                  accessModes: 
+                    - ReadWriteOnce
+                  resources: 
+                    requests:
+                      storage: "1"
+          - name: "quorum-tls"
+            ephemeral:
+              volumeClaimTemplate:
+                metadata:
+                  annotations:
+                    secrets.stackable.tech/class: {{ .Values.customSecretBackend.secretName }} 
+                    secrets.stackable.tech/scope: node,pod
+                    secrets.stackable.tech/format: tls-pkcs12
+                    secrets.stackable.tech/backend.autotls.cert.lifetime: {{ .Values.customSecretBackend.lifetime }}
+                spec:
+                  storageClassName: secrets.stackable.tech 
+                  accessModes: 
+                    - ReadWriteOnce
+                  resources: 
+                    requests:
+                      storage: "1"
 {{- end }}
     roleGroups:
       default:
@@ -53,20 +96,14 @@ spec:
                   org.apache.zookeeper.server.NettyServerCnxn:
                     level: NONE
 {{- end }}
+{{- if (or .Values.nodes.server.nodeAffinity .Values.nodes.server.podAntiAffinity)}}
           affinity:
-            nodeAffinity: 
-              requiredDuringSchedulingIgnoredDuringExecution:
-                nodeSelectorTerms:
-                - matchExpressions:
-                  - key: zookeeper
-                    operator: In
-                    values:
-                    - enabled
+{{- with .Values.nodes.server.nodeAffinity }}
+            nodeAffinity:
+{{- toYaml . | nindent 14 }}
+{{- end }}
+{{- with .Values.nodes.server.podAntiAffinity }}
             podAntiAffinity:
-              requiredDuringSchedulingIgnoredDuringExecution:
-              - labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/name: zookeeper
-                    app.kubernetes.io/instance: {{ include "gbif-chart-lib.name" . }}
-                    app.kubernetes.io/component: server
-                topologyKey: kubernetes.io/hostname
+{{- toYaml . | nindent 14 }}
+{{- end }}
+{{- end }}
