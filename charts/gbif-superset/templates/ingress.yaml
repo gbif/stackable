@@ -20,5 +20,5 @@ spec:
           service: 
             name: {{ include "gbif-chart-lib.name" . }}-node-default
             port:
-              number: 8080
+              number: 8088
 {{- end }}
