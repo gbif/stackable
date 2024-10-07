@@ -12,6 +12,11 @@ spec:
   clusterConfig:
     zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}-znode
     dfsReplication: {{ .Values.dataReplication }}
+    listenerClass: {{ .Values.listenerClass }}
+{{- with .Values.rackAwareness }}
+    rackAwareness:
+{{- toYaml . | nindent 6 }}
+{{- end }}
 {{- if .Values.logging.enabled  }}     
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}

@@ -31,7 +31,7 @@ dataReplication: 2
 
 # Controls if the datanode should use hostname to resolve each others addresses. 
 # Used so clients outside the cluster can resolve the IPs locally instead of the internal IPs of the Kubernetes cluster.
-useDataNodeHostName: "true"
+useDataNodeHostName: "false"
 
 # Value for enabling node affinity.
 # A specific label is used on the nodes to indicate if namenode and/or datanode should be running on the node
@@ -217,3 +217,10 @@ nodes:
 clusterOperation:
   reconciliationPaused: false
   stopped: false
+
+# Set what the HDFS operator should use to create the topology used for Hadoop rack awareness
+# Example
+# rackAwareness:
+#   - nodeLabel: topology.kubernetes.io/zones
+#   - podLabel: app.kubernetes.io/role-group
+rackAwareness: []
