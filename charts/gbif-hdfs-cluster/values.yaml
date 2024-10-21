@@ -29,19 +29,12 @@ zookeeperClusterName: "gbif-zookeeper"
 # Number of times data should be replicated in the HDFS cluster
 dataReplication: 2
 
-# Controls if the datanode should use hostname to resolve each others addresses. 
-# Used so clients outside the cluster can resolve the IPs locally instead of the internal IPs of the Kubernetes cluster.
-useDataNodeHostName: "false"
-
 # Value for enabling node affinity.
 # A specific label is used on the nodes to indicate if namenode and/or datanode should be running on the node
 # It is done in case you need a specific range of servers to expose the nodes outside the cluster
 # For making node available for nodename, add label namenodes=enabled to the node
 # For making node available for datanode, add label datanodes=enabled to the node
 useNodeAffinity: true
-
-# Listenerclass for the stackable component
-listenerClass: "cluster-internal"
 
 # Enable logging via the vector aggregator
 # Needs the name of configmap for discovery of the aggregator
@@ -80,19 +73,12 @@ yunikorn:
   # Queue to place the pods in
   queue: "root.namespace.infra"
 
-ingress:
-  enabled: false
-  # Domain to create the ingress entry with
-  domain: example.org
-
 nodes:
   datanode:
     logLevel: "INFO"
     # Allow for specifying nodeports for exposing the pods to VMs outside the kubenetes cluster on the internal network
-    ports:
-      tcpPort: 9864
-      icpPort: 9867
-      dataPort: 9866
+    # ListenerClass for the datanode
+    listenerClass: "cluster-internal"
     groups:
       default:
         replicas: 1
@@ -110,13 +96,6 @@ nodes:
           class: hdfs-datanode-storage
           capacity: '100Gi'
           type: "Disk"
-        # List of IPs hosting the specific nodes.
-        # Example server1 host datanode2 and server2 host datanode1
-        # Then it should look like:
-        # ips:
-        #  - server2_ip
-        #  - server1_ip
-        ips: []
       # Example of how to add an additional group with a different type of disk
       #ssdmachines:
       #  replicas: 1
@@ -134,14 +113,6 @@ nodes:
       #    class: hdfs-datanode-ssd-storage
       #    capacity: '300Gi'
       #    type: "SSD"
-      #  # List of IPs hosting the specific nodes.
-      #  # Since the actual pods aren't hardcoded to a specific node but the general storageClass - Create the pods first then add the ips to create the services
-      #  # Example server1 host datanode2 and server2 host datanode1
-      #  # Then it should look like:
-      #  # ips:
-      #  #  - server2_ip
-      #  #  - server1_ip
-      #  ips: []
 
     # Example of how nodeAffinity could look
     # nodeAffinity: 
@@ -172,16 +143,8 @@ nodes:
     logLevel: "INFO"
     storage:
       capacity: '15Gi'
-    # Allow for specifying nodeports for exposing the pods to VMs outside the kubenetes cluster on the internal network
-    tcpPort: 9870
-    rcpPort: 8020
-    # List of IPs hosting the specific nodes.
-    # Example server1 host namenode2 and server2 host namenodenode1
-    # Then it should look like:
-    # ips:
-    #  - server2_ip
-    #  - server1_ip
-    ips: []
+    # ListenerClass for the namenode
+    listenerClass: "cluster-internal"
     # Example of how nodeAffinity could look
     # nodeAffinity: 
     #   requiredDuringSchedulingIgnoredDuringExecution:
@@ -211,8 +174,6 @@ nodes:
     logLevel: "INFO"
     storage:
       capacity: '15Gi'
-    # Currently no support for external port in our service template for journalnode exposure
-    ips: []
 
 clusterOperation:
   reconciliationPaused: false

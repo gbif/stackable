@@ -12,7 +12,6 @@ spec:
   clusterConfig:
     zookeeperConfigMapName: {{ .Values.zookeeperClusterName }}-znode
     dfsReplication: {{ .Values.dataReplication }}
-    listenerClass: {{ .Values.listenerClass }}
 {{- with .Values.rackAwareness }}
     rackAwareness:
 {{- toYaml . | nindent 6 }}
@@ -22,7 +21,7 @@ spec:
 {{- end }}
   nameNodes:
     config:
-      listenerClass: {{ .Values.listenerClass }}
+      listenerClass: {{ .Values.nodes.namenode.listenerClass }}
 {{- if (or .Values.nodes.namenode.nodeAffinity .Values.nodes.namenode.podAntiAffinity)}}
       affinity:
 {{- with .Values.nodes.namenode.nodeAffinity }}
@@ -71,8 +70,6 @@ spec:
 {{- end }}
         configOverrides:
           hdfs-site.xml:
-            dfs.client.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
-            dfs.datanode.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
             nfs.superuser: "{{ .Values.gateway.nfs.user }}"
             nfs.dump.dir: "{{ .Values.gateway.nfs.localDirectory }}"
             nfs.exports.allowed.hosts: "{{ .Values.gateway.nfs.exportAccess }}"
@@ -88,6 +85,7 @@ spec:
 {{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
 {{- end }}
     config:
+      listenerClass: {{ .Values.nodes.datanode.listenerClass }}
 {{- if .Values.logging.enabled  }}
       logging:
         enableVectorAgent: true
@@ -117,8 +115,6 @@ spec:
 {{- end }}
     configOverrides:
       hdfs-site.xml:
-        dfs.client.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
-        dfs.datanode.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
         nfs.superuser: "{{ .Values.gateway.nfs.user }}"
         nfs.dump.dir: "{{ .Values.gateway.nfs.localDirectory }}"
         nfs.exports.allowed.hosts: "{{ .Values.gateway.nfs.exportAccess }}"
@@ -190,8 +186,6 @@ spec:
 {{- end }}
         configOverrides:
           hdfs-site.xml:
-            dfs.client.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
-            dfs.datanode.use.datanode.hostname: "{{ .Values.useDataNodeHostName }}"
             nfs.superuser: "{{ .Values.gateway.nfs.user }}"
             nfs.dump.dir: "{{ .Values.gateway.nfs.localDirectory }}"
             nfs.exports.allowed.hosts: "{{ .Values.gateway.nfs.exportAccess }}"
