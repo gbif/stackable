@@ -83,6 +83,13 @@ nodes:
     #         app.kubernetes.io/component: master
     #     topologyKey: kubernetes.io/hostname
     podAntiAffinity: {}
+    # Node to provide configuration overrides
+    # Example of how to provide properties to the hbase-site.xml file
+    # configOverrides:
+    #   "hbase-site.xml":
+    #     "hbase.rest.threads.min": "4"
+    #     "hbase.rootdir": "hdfs://gbif-hdfs/hbase"
+    configOverrides: {}
   region:
     replicas: 3
     cpu:
@@ -120,6 +127,13 @@ nodes:
     #         app.kubernetes.io/component: region
     #     topologyKey: kubernetes.io/hostname
     podAntiAffinity: {}
+    # Node to provide configuration overrides
+    # Example of how to provide properties to the hbase-site.xml file
+    # configOverrides:
+    #   "hbase-site.xml":
+    #     "hbase.rest.threads.min": "4"
+    #     "hbase.rootdir": "hdfs://gbif-hdfs/hbase"
+    configOverrides: {}
   rest:
     replicas: 1
     cpu:
@@ -131,14 +145,13 @@ nodes:
       capacity: '2Gi'
     # Currently no support in the service template for external ip ports for rest node
     ips: []
-
-# Node to provide configuration overrides
-# Example of who to provde configurations to hbase-site.xml
-# configOverrides:
-#   "hbase-site.xml":
-#     "hbase.rest.threads.min": "4"
-#     "hbase.rootdir": "hdfs://gbif-hdfs/hbase"
-configOverrides: {}
+    # Node to provide configuration overrides
+    # Example of how to provide properties to the hbase-site.xml file
+    # configOverrides:
+    #   "hbase-site.xml":
+    #     "hbase.rest.threads.min": "4"
+    #     "hbase.rootdir": "hdfs://gbif-hdfs/hbase"
+    configOverrides: {}
 
 hdfs:
   # Name of the Stackable HdfsCluster in the namespace.

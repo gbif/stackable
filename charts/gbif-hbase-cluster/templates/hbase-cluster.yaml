@@ -63,9 +63,9 @@ spec:
 {{- toYaml . | nindent 14 }}
 {{- end }}
 {{- end }}
-{{- if .Values.configOverrides }}
+{{- if .Values.nodes.master.configOverrides }}
 {{- "configOverrides:" | nindent 8 }}
-{{- tpl (.Values.configOverrides | toYaml) . | nindent 10 }}
+{{- tpl (.Values.nodes.master.configOverrides | toYaml) . | nindent 10 }}
 {{- end }}
   regionServers:
 {{- if .Values.yunikorn.enabled }}
@@ -114,9 +114,9 @@ spec:
 {{- toYaml . | nindent 14 }}
 {{- end }}
 {{- end }}
-{{- if .Values.configOverrides }}
+{{- if .Values.nodes.region.configOverrides }}
 {{- "configOverrides:" | nindent 8 }}
-{{- tpl (.Values.configOverrides | toYaml) . | nindent 10 }}
+{{- tpl (.Values.nodes.region.configOverrides | toYaml) . | nindent 10 }}
 {{- end }}
   restServers:
 {{- if .Values.yunikorn.enabled }}
@@ -154,7 +154,7 @@ spec:
                   ROOT:
                     level: {{ .Values.nodes.rest.logLevel }}
 {{- end }}
-{{- if .Values.configOverrides }}
+{{- if .Values.nodes.rest.configOverrides }}
 {{- "configOverrides:" | nindent 8 }}
-{{- tpl (.Values.configOverrides | toYaml) . | nindent 10 }}
+{{- tpl (.Values.nodes.rest.configOverrides | toYaml) . | nindent 10 }}
 {{- end }}
