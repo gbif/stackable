@@ -13,6 +13,7 @@ data:
     tilesThreshold: {{ .Values.map.tileThreshold }}
     hiveDB: {{ .Values.hive.schema }}
     maxZoom: {{ .Values.map.zoom }}
+    projectionParallelism: {{ .Values.map.projectionParallelism }}
     tileSize: {{ .Values.map.tileSize }}
     tileBufferSize: {{ .Values.map.tileBuffer }}
     metadataPath: {{ .Values.map.metadataPath }}
