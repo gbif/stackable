@@ -7,7 +7,7 @@ label:
   app.kubernetes.io/component: thrift
   app.kubernetes.io/instance: gbif-thrift-server
 # Stackable tag to override the version of the Stack component.
-stackProduct: "2.4.12"
+stackProduct: "2.4.17"
 stackVersion: "24.3.0"
 
 # Uses the stackProduct value to tell the operator what version of configurations to use with the custom image
@@ -38,7 +38,7 @@ logging:
 # By default it is disabled.
 # The idea with enabling yunikorn for components is that we can fence the infrastructure components from works done in Spark, Trino etc.
 yunikorn:
-  enabled: true
+  enabled: false
   # Name of the overall application for all the pods within the queue
   appId: "hbase"
   # Queue to place the pods in
@@ -52,7 +52,7 @@ nodes:
     replicas: 1
     # CPU settings for the driver  
     cpu:
-      min: "3000m"
+      min: "1000m"
       max: "3000m"
     # Memory for the Spark driver.
     memory: "3Gi"
@@ -64,6 +64,24 @@ nodes:
       thrift:
         appPort: 9090
         nodePort: 31990
+    # Example of how nodeAffinity could look
+    # nodeAffinity: 
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #     nodeSelectorTerms:
+    #     - matchExpressions:
+    #       - key: a_label
+    #         operator: In
+    #         values:
+    #         - some_value
+    nodeAffinity: {}
+    # Example of how podAntiAffinity could look
+    # podAntiAffinity:
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #   - labelSelector:
+    #       matchLabels:
+    #         app.kubernetes.io/name: thrift
+    #     topologyKey: kubernetes.io/hostname
+    podAntiAffinity: {}
 
 hdfs:
   clusterName: "gbif-hdfs"

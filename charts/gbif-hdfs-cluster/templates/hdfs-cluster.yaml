@@ -68,15 +68,10 @@ spec:
                   ROOT:
                     level: {{ .Values.nodes.namenode.logLevel }}
 {{- end }}
-        configOverrides:
-          hdfs-site.xml:
-            nfs.superuser: "{{ .Values.gateway.nfs.user }}"
-            nfs.dump.dir: "{{ .Values.gateway.nfs.localDirectory }}"
-            nfs.exports.allowed.hosts: "{{ .Values.gateway.nfs.exportAccess }}"
-            nfs.export.point: "{{ .Values.gateway.nfs.directoryToExport }}"
-          core-site.xml:
-            hadoop.proxyuser.stackable.hosts: "{{ .Values.gateway.httpfs.proxyHosts }}"
-            hadoop.proxyuser.stackable.groups: "{{ .Values.gateway.httpfs.proxyGroup }}"
+{{- if .Values.nodes.namenode.configOverrides }}
+{{- "configOverrides:" | nindent 8 }}
+{{- tpl (.Values.nodes.namenode.configOverrides | toYaml) . | nindent 10 }}
+{{- end }}
   dataNodes:
 {{- if .Values.yunikorn.enabled }}
     podOverrides:
@@ -113,15 +108,10 @@ spec:
 {{- toYaml . | nindent 10 }}
 {{- end }}
 {{- end }}
-    configOverrides:
-      hdfs-site.xml:
-        nfs.superuser: "{{ .Values.gateway.nfs.user }}"
-        nfs.dump.dir: "{{ .Values.gateway.nfs.localDirectory }}"
-        nfs.exports.allowed.hosts: "{{ .Values.gateway.nfs.exportAccess }}"
-        nfs.export.point: "{{ .Values.gateway.nfs.directoryToExport }}"
-      core-site.xml:
-        hadoop.proxyuser.stackable.hosts: "{{ .Values.gateway.httpfs.proxyHosts }}"
-        hadoop.proxyuser.stackable.groups: "{{ .Values.gateway.httpfs.proxyGroup }}"
+{{- if .Values.nodes.datanode.configOverrides }}
+{{- "configOverrides:" | nindent 6 }}
+{{- tpl (.Values.nodes.datanode.configOverrides | toYaml) . | nindent 8 }}
+{{- end }}
     roleGroups:
 {{- range $datanodeKey, $datanodeValue := .Values.nodes.datanode.groups }}
       {{ $datanodeKey }}:
@@ -155,6 +145,19 @@ spec:
         labels:
 {{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
 {{- end }}
+    config:
+      listenerClass: {{ .Values.nodes.journalnode.listenerClass }}
+{{- if (or .Values.nodes.journalnode.nodeAffinity .Values.nodes.journalnode.podAntiAffinity)}}
+      affinity:
+{{- with .Values.nodes.journalnode.nodeAffinity }}
+        nodeAffinity:
+{{- toYaml . | nindent 10 }}
+{{- end }}
+{{- with .Values.nodes.journalnode.podAntiAffinity }}
+        podAntiAffinity:
+{{- toYaml . | nindent 10 }}
+{{- end }}
+{{- end }}
     roleGroups:
       default:
         replicas: {{ .Values.nodes.journalnode.replicas }}
@@ -184,12 +187,7 @@ spec:
                   ROOT:
                     level: {{ .Values.nodes.journalnode.logLevel }}
 {{- end }}
-        configOverrides:
-          hdfs-site.xml:
-            nfs.superuser: "{{ .Values.gateway.nfs.user }}"
-            nfs.dump.dir: "{{ .Values.gateway.nfs.localDirectory }}"
-            nfs.exports.allowed.hosts: "{{ .Values.gateway.nfs.exportAccess }}"
-            nfs.export.point: "{{ .Values.gateway.nfs.directoryToExport }}"
-          core-site.xml:
-            hadoop.proxyuser.stackable.hosts: "{{ .Values.gateway.httpfs.proxyHosts }}"
-            hadoop.proxyuser.stackable.groups: "{{ .Values.gateway.httpfs.proxyGroup }}"
+{{- if .Values.nodes.journalnode.configOverrides }}
+{{- "configOverrides:" | nindent 8 }}
+{{- tpl (.Values.nodes.journalnode.configOverrides | toYaml) . | nindent 10 }}
+{{- end }}

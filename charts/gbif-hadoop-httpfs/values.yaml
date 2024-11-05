@@ -43,3 +43,21 @@ nodes:
       http:
         appPort: 14000
         nodePort: 31400
+    # Example of how nodeAffinity could look
+    # nodeAffinity: 
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #     nodeSelectorTerms:
+    #     - matchExpressions:
+    #       - key: a_label
+    #         operator: In
+    #         values:
+    #         - some_value
+    nodeAffinity: {}
+    # Example of how podAntiAffinity could look
+    # podAntiAffinity:
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #   - labelSelector:
+    #       matchLabels:
+    #         app.kubernetes.io/name: httpfs
+    #     topologyKey: kubernetes.io/hostname
+    podAntiAffinity: {}

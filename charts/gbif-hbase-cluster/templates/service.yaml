@@ -10,10 +10,10 @@ spec:
   ports:
   - name: gbif-tcp
     protocol: TCP
-    port: {{ $.Values.nodes.region.tcpPort }}
-    targetPort: {{ $.Values.nodes.region.tcpPort }}
+    port: {{ $.Values.nodes.master.tcpPort }}
+    targetPort: {{ $.Values.nodes.master.tcpPort }}
   externalIPs: 
-  - {{ (index $.Values.nodes.region.ips $n) }}
+  - {{ (index $.Values.nodes.master.ips $n) }}
 ---
 {{ end }}
 {{ range $n := until (len .Values.nodes.region.ips) }}

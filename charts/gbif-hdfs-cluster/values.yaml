@@ -74,6 +74,46 @@ yunikorn:
   queue: "root.namespace.infra"
 
 nodes:
+  namenode:
+    replicas: 1
+    cpu:
+      min: '100m'
+      max: '2000m'
+    memory: '3Gi'
+    logLevel: "INFO"
+    storage:
+      capacity: '15Gi'
+    # ListenerClass for the namenode
+    listenerClass: "cluster-internal"
+    # Example of how nodeAffinity could look
+    # nodeAffinity: 
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #     nodeSelectorTerms:
+    #     - matchExpressions:
+    #       - key: namenodes
+    #         operator: In
+    #         values:
+    #         - enabled
+    nodeAffinity: {}
+    # Example of how podAntiAffinity could look
+    # podAntiAffinity:
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #   - labelSelector:
+    #       matchLabels:
+    #         app.kubernetes.io/name: hdfs
+    #         app.kubernetes.io/instance: gbif-hdfs-cluster
+    #         app.kubernetes.io/component: namenode
+    #     topologyKey: kubernetes.io/hostname
+    podAntiAffinity: {}
+    # Node to provide configuration overrides
+    # Example of how to provide override properties to hdfs file
+    # configOverrides:
+    #   "hdfs-site.xml:":
+    #     "nfs.superuser": "test"
+    #     "nfs.exports.allowed.hosts": "my_server"
+    #   "core-site.xml":
+    #     "hadoop.proxyuser.stackable.hosts": "my_server"
+    configOverrides: {}
   datanode:
     logLevel: "INFO"
     # Allow for specifying nodeports for exposing the pods to VMs outside the kubenetes cluster on the internal network
@@ -134,12 +174,21 @@ nodes:
     #         app.kubernetes.io/component: datanode
     #     topologyKey: kubernetes.io/hostname
     podAntiAffinity: {}
-  namenode:
-    replicas: 1
+    # Node to provide configuration overrides
+    # Example of how to provide override properties to hdfs file
+    # configOverrides:
+    #   "hdfs-site.xml:":
+    #     "nfs.superuser": "test"
+    #     "nfs.exports.allowed.hosts": "my_server"
+    #   "core-site.xml":
+    #     "hadoop.proxyuser.stackable.hosts": "my_server"
+    configOverrides: {}
+  journalnode:
+    replicas: 3
     cpu:
       min: '100m'
       max: '2000m'
-    memory: '3Gi'
+    memory: '2Gi'
     logLevel: "INFO"
     storage:
       capacity: '15Gi'
@@ -150,7 +199,7 @@ nodes:
     #   requiredDuringSchedulingIgnoredDuringExecution:
     #     nodeSelectorTerms:
     #     - matchExpressions:
-    #       - key: namenodes
+    #       - key: datanodes
     #         operator: In
     #         values:
     #         - enabled
@@ -162,18 +211,18 @@ nodes:
     #       matchLabels:
     #         app.kubernetes.io/name: hdfs
     #         app.kubernetes.io/instance: gbif-hdfs-cluster
-    #         app.kubernetes.io/component: namenode
+    #         app.kubernetes.io/component: datanode
     #     topologyKey: kubernetes.io/hostname
     podAntiAffinity: {}
-  journalnode:
-    replicas: 3
-    cpu:
-      min: '100m'
-      max: '2000m'
-    memory: '2Gi'
-    logLevel: "INFO"
-    storage:
-      capacity: '15Gi'
+    # Node to provide configuration overrides
+    # Example of how to provide override properties to hdfs file
+    # configOverrides:
+    #   "hdfs-site.xml:":
+    #     "nfs.superuser": "test"
+    #     "nfs.exports.allowed.hosts": "my_server"
+    #   "core-site.xml":
+    #     "hadoop.proxyuser.stackable.hosts": "my_server"
+    configOverrides: {}
 
 clusterOperation:
   reconciliationPaused: false

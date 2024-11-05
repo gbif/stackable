@@ -185,6 +185,8 @@ map:
   tileSize: 512
   # zoom levels goes from 0 up to limit underneath
   zoom: 16
+  # run projection tasks in parallel
+  projectionParallelism: 1
   # Name of Zookeper node to write metadata for the table
   metadataPath: "/dev2_maps/meta"
 

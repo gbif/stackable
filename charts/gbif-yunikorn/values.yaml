@@ -25,12 +25,12 @@ yunikorn:
 
   image:
     repository: apache/yunikorn
-    tag: scheduler-1.5.0
+    tag: scheduler-1.6.0
     pullPolicy: Always
 
   pluginImage:
     repository: apache/yunikorn
-    tag: scheduler-plugin-1.5.0
+    tag: scheduler-plugin-1.6.0
     pullPolicy: Always
 
   nodeSelector:
@@ -46,7 +46,7 @@ yunikorn:
     priorityClassName: ""
     image:
       repository: apache/yunikorn
-      tag: admission-1.5.0
+      tag: admission-1.6.0
       pullPolicy: Always
     # Increase to setup HA for admissionController - Needed for higher env in the future
     replicaCount: 1
@@ -76,7 +76,7 @@ yunikorn:
   web:
     image:
       repository: apache/yunikorn
-      tag: web-1.5.0
+      tag: web-1.6.0
       pullPolicy: Always
     resources:
       requests:
@@ -129,12 +129,10 @@ yunikorn:
   podLabels: {}
   podAnnotations: {}
 
-# GBIF section to generate a service exposing the web frontend on a nodeport
-# In future it could be relevant to download the charts and expand to follow the same format as the rest of the repo
-# Better option would properly be using the loadbalancer section
-nodes:
-  yunikorn:
-    # Port for setting up node port given node - Leave empty to not setup port
-    ports:
-      appPort: 9889
-      nodePort: 31988
+# Node for enabling ingress
+ingress:
+  enabled: false
+  # Domain to create the ingress entry with
+  domain: example.org
+  # Port to use on the service
+  port: 80

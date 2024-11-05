@@ -18,6 +18,17 @@ spec:
 {{- include "gbif-chart-lib.yunikornLabels" . | nindent 8 }}
 {{- end }}
     spec:
+{{- if (or .Values.nodes.thrift.nodeAffinity .Values.nodes.thrift.podAntiAffinity) }}
+      affinity:
+{{- with .Values.nodes.thrift.nodeAffinity }}
+        nodeAffinity:
+{{- toYaml . | nindent 10 }}
+{{- end }}
+{{- with .Values.nodes.thrift.podAntiAffinity }}
+        podAntiAffinity:
+{{- toYaml . | nindent 10 }}
+{{- end }}
+{{- end }}
       serviceAccountName: {{ include "gbif-chart-lib.releaseName" . }}
       securityContext:
         fsGroup: 1000

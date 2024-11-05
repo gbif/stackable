@@ -19,6 +19,17 @@ spec:
 {{- include "gbif-chart-lib.yunikornLabels" . | nindent 8 }}
 {{- end }}
     spec:
+{{- if (or .Values.nodes.httpfs.nodeAffinity .Values.nodes.httpfs.podAntiAffinity) }}
+      affinity:
+{{- with .Values.nodes.httpfs.nodeAffinity }}
+        nodeAffinity:
+{{- toYaml . | nindent 10 }}
+{{- end }}
+{{- with .Values.nodes.httpfs.podAntiAffinity }}
+        podAntiAffinity:
+{{- toYaml . | nindent 10 }}
+{{- end }}
+{{- end }}
       serviceAccountName: {{ default .Chart.Name .Values.overrideName }}
       securityContext:
         fsGroup: 101

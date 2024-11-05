@@ -6,7 +6,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 # Stackable tag to override the version of the Stack component.
-stackProduct: "2.4.12"
+stackProduct: "2.4.17"
 stackVersion: "24.3.0"
 
 # Uses the stackProduct value to tell the operator what version of configurations to use with the custom image
