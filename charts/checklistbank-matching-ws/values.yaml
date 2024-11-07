@@ -5,7 +5,7 @@ replicaCount: 1
 
 image:
   repository: docker.gbif.org/matching-ws
-  pullPolicy: always
+  pullPolicy: Always
   tag: ""
 
 nameOverride: ""
@@ -15,7 +15,7 @@ podAnnotations: {}
 
 # Service for the web application for exposing port internally in the cluster
 service:
-  type: NodePort
+  type: ClusterIP
   port: 8080
   targetPort: 8080
   nodePort: 30080
@@ -31,3 +31,10 @@ resources:
 
 nodeSelector: {}
 
+yunikorn:
+  enabled: false
+
+ingress:
+  enabled: true
+  domain: "gbif-dev2.org"
+  subdomain: "matching"

@@ -1,0 +1,24 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "gbif-chart-lib.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: {{ .Values.ingress.subdomain }}.{{ .Values.ingress.domain }}
+    http:
+      paths:
+      - pathType: ImplementationSpecific
+        path: {{ .Values.ingress.path }}
+        backend:
+          service: 
+            name: {{ include "gbif-chart-lib.fullname" . }}
+            port:
+              number: 8080
+{{- end }}
