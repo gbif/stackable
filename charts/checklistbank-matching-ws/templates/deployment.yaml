@@ -31,10 +31,18 @@ spec:
               containerPort: 8080
               protocol: TCP
           env:
+            - name: APP_NAME
+              value: "{{ .Values.appName }}"
             - name: JAVA_OPTS
               value: "{{ .Values.javaOpts }}"
             - name: SERVLET_CONTEXT_PATH
               value: "{{ .Values.ingress.path }}"
+            - name: ZK_ENABLED
+              value: "{{ .Values.zookeeper.enabled }}"
+            - name: ZK_CONNECT_STRING
+              value: "{{ .Values.zookeeper.connectString }}"
+            - name: ZK_DISCOVERY_ROOT
+              value: "{{ .Values.zookeeper.discoveryRoot }}"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

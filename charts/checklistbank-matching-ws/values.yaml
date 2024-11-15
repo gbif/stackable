@@ -1,6 +1,9 @@
 # Default values for matching-ws.
 # This is a YAML-formatted file.
 
+# appName - used by ZK discovery
+appName: "matching-ws"
+
 replicaCount: 1
 
 image:
@@ -38,3 +41,8 @@ ingress:
   enabled: true
   domain: "gbif-dev2.org"
   subdomain: "matching"
+
+zookeeper:
+  enabled: false
+  connectString: ""
+  discoveryRoot: ""
