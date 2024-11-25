@@ -48,6 +48,11 @@ spec:
               max: {{ .Values.nodes.webserver.cpu.max }}
             memory: 
               limit: {{ .Values.nodes.webserver.memory }}
+{{- if .Values.storageClass }}
+            storage:
+              data:
+                storageClass: {{ .Values.storageClass }}
+{{- end }}
 {{- if .Values.logging.enabled  }}
           logging:
             enableVectorAgent: true
@@ -85,6 +90,11 @@ spec:
               max: {{ .Values.nodes.workers.cpu.max }}
             memory: 
               limit: {{ .Values.nodes.workers.memory }}
+{{- if .Values.storageClass }}
+            storage:
+              data:
+                storageClass: {{ .Values.storageClass }}
+{{- end }}
 {{- if .Values.logging.enabled  }}
           logging:
             enableVectorAgent: true
@@ -122,6 +132,11 @@ spec:
               max: {{ .Values.nodes.schedulers.cpu.max }}
             memory: 
               limit: {{ .Values.nodes.schedulers.memory }}
+{{- if .Values.storageClass }}
+            storage:
+              data:
+                storageClass: {{ .Values.storageClass }}
+{{- end }}
 {{- if .Values.logging.enabled  }}
           logging:
             enableVectorAgent: true

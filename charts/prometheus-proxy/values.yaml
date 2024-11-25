@@ -1,0 +1,29 @@
+
+image:
+  # Address of the repository
+  repository: "docker.io"
+  # Name of the image, prefix with folder
+  # Example:
+  # my_folder/haproxy
+  name: "haproxy"
+  # Leave empty to use appVersion in Chart.yaml
+  version: ""
+
+# Resources for each for the haproxy
+resources:
+  cpu:
+    request: 100m
+    limit: 250m
+  memory:
+    request: 125Mi
+    limit: 250Mi
+
+# Support for Yunikorn queuing
+# By default it is disabled.
+# The idea with enabling yunikorn for components is that we can fence the infrastructure components from works done in Spark, Trino etc.
+yunikorn:
+  enabled: false
+  # Name of the overall application for all the pods within the queue
+  appId: "prometheus-metrics-proxy"
+  # Queue to place the pods in
+  queue: "root.namespace.infra"

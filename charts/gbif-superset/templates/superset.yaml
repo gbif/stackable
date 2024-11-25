@@ -40,6 +40,11 @@ spec:
               max: {{ .Values.nodes.node.cpu.max }}
             memory:
               limit: {{ .Values.nodes.node.memory }}
+{{- if .Values.storageClass }}
+            storage:
+              data:
+                storageClass: {{ .Values.storageClass }}
+{{- end }}
 {{- if .Values.logging.enabled  }}
           logging:
             enableVectorAgent: true

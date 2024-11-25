@@ -92,3 +92,7 @@ supersetEnvOverride: {}
 clusterOperation:
   reconciliationPaused: false
   stopped: false
+
+# Added possiblity to set a specfic stoargeClass to use for object
+# Leave empty to use clusters default storageClass
+storageClass:
