@@ -1,8 +1,6 @@
-# Helm chart based on the solution made by user c4tz found in the Github issue: https://github.com/kubermatic/kubeone/issues/1215#issuecomment-992471229
-
 apiVersion: v2
-name: prometheus-proxy
-description: Chart to deploy a haproxy on every node for allowing the prometheus-kube-stack project to collect metrics from the nodes without having to reconfigure kubelet to expose it on all interfaces.
+name: gbif-configmaps
+description: Simple chart for managing a config map used for sparkjobs and batchjobs within Gbif Kubernetes cluster.
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -23,7 +21,7 @@ version: 1.0.0
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: "3.0.6-alpine"
+appVersion: "1.0.0"
 
 dependencies:
 - name: gbif-chart-lib

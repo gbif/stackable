@@ -72,6 +72,8 @@ spec:
         configMap: {{ .Values.catalogs.iceberg.metastoreName }}
       hdfs:
         configMap: {{ .Values.catalogs.iceberg.hdfsClusterName }}
+  configOverrides:
+    iceberg.register-table-procedure.enabled: "true"
 ---
 {{- end }}
 {{- end }}
