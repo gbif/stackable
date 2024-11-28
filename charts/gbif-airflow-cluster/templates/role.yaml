@@ -24,3 +24,13 @@ rules:
   - get
   - list
   - delete
+- apiGroups:
+  - batch
+  resources:
+  - Jobs
+  - Job
+  verbs:
+  - create
+  - get
+  - list
+  - delete

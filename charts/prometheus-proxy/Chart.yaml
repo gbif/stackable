@@ -1,6 +1,9 @@
+# Helm chart based on the solution made by user c4tz found in the Github issue: https://github.com/kubermatic/kubeone/issues/1215#issuecomment-992471229
+
 apiVersion: v2
-name: gbif-superset
-description: Chart for deploying a Stackable Superset in the GBIF context.
+name: prometheus-proxy
+description: Chart to deploy a haproxy on every node for allowing the prometheus-kube-stack project to collect metrics from the nodes without having to reconfigure kubelet to expose it on all interfaces.
+
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
@@ -14,13 +17,13 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.6.2
+version: 1.0.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: "3.0.1"
+appVersion: "3.0.6-alpine"
 
 dependencies:
 - name: gbif-chart-lib

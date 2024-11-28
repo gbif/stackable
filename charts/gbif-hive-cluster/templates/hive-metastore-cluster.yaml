@@ -44,6 +44,9 @@ spec:
             storage:
               data:
                 capacity: {{ .Values.nodes.metastore.storage.capacity }}
+{{- if .Values.storageClass }}
+                storageClass: {{ .Values.storageClass }}
+{{- end }}
             memory:
               limit: {{ .Values.nodes.metastore.memory }}
 {{- if .Values.logging.enabled  }}

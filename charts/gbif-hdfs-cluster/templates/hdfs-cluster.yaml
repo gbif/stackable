@@ -50,6 +50,9 @@ spec:
             storage:
               data:
                 capacity: {{ .Values.nodes.namenode.storage.capacity }}
+{{- if .Values.storageClass }}
+                storageClass: {{ .Values.storageClass }}
+{{- end }}
             memory:
               limit: {{ .Values.nodes.namenode.memory }}
 {{- if .Values.logging.enabled  }}
@@ -171,6 +174,9 @@ spec:
             storage:
               data:
                 capacity: {{ .Values.nodes.journalnode.storage.capacity }}
+{{- if .Values.storageClass }}
+                storageClass: {{ .Values.storageClass }}
+{{- end }}
 {{- if .Values.logging.enabled  }}
           logging:
             enableVectorAgent: true

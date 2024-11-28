@@ -76,6 +76,9 @@ spec:
             storage:
               data:
                 capacity: {{ .Values.nodes.server.storage }}
+{{- if .Values.storageClass }}
+                storageClass: {{ .Values.storageClass }}
+{{- end }}
             memory:
               limit: {{ .Values.nodes.server.memory }}
 {{- if .Values.logging.enabled  }}

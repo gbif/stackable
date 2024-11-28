@@ -1,0 +1,10 @@
+
+# additionalConfigMap
+# Simple node for creating a configmap with some properties. 
+# Used mainly to enable us to manage our config maps via helmfile so we can start sparkApplication without having to manage configmaps during execution.
+# Example
+# config:
+#   a_config.properties: |
+#     my.property-1=something
+#     my.property-2=a_name
+config: {}

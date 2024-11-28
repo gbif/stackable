@@ -93,6 +93,9 @@ spec:
             storage:
               data:
                 capacity: {{ .Values.nodes.coordinator.storage.capacity }}
+{{- if .Values.storageClass }}
+                storageClass: {{ .Values.storageClass }}
+{{- end }}
 {{- if .Values.logging.enabled  }}
           logging:
             enableVectorAgent: true
@@ -187,6 +190,9 @@ spec:
             storage:
               data:
                 capacity: {{ .Values.nodes.worker.storage.capacity }}
+{{- if .Values.storageClass }}
+                storageClass: {{ .Values.storageClass }}
+{{- end }}
 {{- if .Values.logging.enabled  }}
           logging:
             enableVectorAgent: true

@@ -234,3 +234,7 @@ clusterOperation:
 #   - nodeLabel: topology.kubernetes.io/zones
 #   - podLabel: app.kubernetes.io/role-group
 rackAwareness: []
+
+# Added possiblity to set a specfic stoargeClass to use for object
+# Leave empty to use clusters default storageClass
+storageClass:
