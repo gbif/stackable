@@ -20,6 +20,7 @@ data:
     hbase:
       keySaltModulus: {{ .Values.hbase.saltModulus }}
       tableName: {{ .Values.hbase.tableName }}
+      maxFileSize: {{ .Values.hbase.maxFileSize }}
     hdfsLockConfig:
       namespace: {{ .Values.hdfs.namespace }}
       lockingPath: {{ .Values.hdfs.lockPath }}
