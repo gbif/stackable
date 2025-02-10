@@ -27,8 +27,8 @@ rules:
 - apiGroups:
   - batch
   resources:
-  - Jobs
-  - Job
+  - jobs
+  - job
   verbs:
   - create
   - get

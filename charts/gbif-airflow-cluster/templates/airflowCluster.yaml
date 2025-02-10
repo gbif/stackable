@@ -28,11 +28,23 @@ spec:
     vectorAggregatorConfigMapName: {{ .Values.logging.discoveryMap }}
 {{- end }}
   webservers:
-{{- if .Values.yunikorn.enabled }}
+{{- if or .Values.yunikorn.enabled .Values.git.enhancedLimits }}
     podOverrides:
+{{- if .Values.yunikorn.enabled }}
       metadata:
         labels:
 {{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
+{{- if .Values.git.enhancedLimits }}
+      spec:
+        containers:
+        - name: gitsync-1
+          resources:
+            requests:
+              cpu: 100m
+            limits:
+              cpu: 500m
+{{- end }}
 {{- end }}
     roleGroups:
       default:
@@ -70,11 +82,23 @@ spec:
                     level: {{ .Values.nodes.webserver.logLevel }}
 {{- end }}
   celeryExecutors:
-{{- if .Values.yunikorn.enabled }}
+{{- if or .Values.yunikorn.enabled .Values.git.enhancedLimits }}
     podOverrides:
+{{- if .Values.yunikorn.enabled }}
       metadata:
         labels:
 {{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
+{{- if .Values.git.enhancedLimits }}
+      spec:
+        containers:
+        - name: gitsync-1
+          resources:
+            requests:
+              cpu: 100m
+            limits:
+              cpu: 500m
+{{- end }}
 {{- end }}
     roleGroups:
       default:
@@ -112,11 +136,23 @@ spec:
                     level: {{ .Values.nodes.workers.logLevel }}
 {{- end }}
   schedulers:
-{{- if .Values.yunikorn.enabled }}
+{{- if or .Values.yunikorn.enabled .Values.git.enhancedLimits }}
     podOverrides:
+{{- if .Values.yunikorn.enabled }}
       metadata:
         labels:
 {{- include "gbif-chart-lib.yunikornLabels" . | nindent 10 }}
+{{- end }}
+{{- if .Values.git.enhancedLimits }}
+      spec:
+        containers:
+        - name: gitsync-1
+          resources:
+            requests:
+              cpu: 100m
+            limits:
+              cpu: 500m
+{{- end }}
 {{- end }}
     roleGroups:
       default:

@@ -43,6 +43,8 @@ exposeConfigs: false
 #   auth:
 #     user: a_github_user
 #     token: a_token
+#   # If set to true, overwrites the gitsync container to use a higher cpu limit to not throttling when syncing
+#   enhancedLimits: false
 #     
 
 git: {}
