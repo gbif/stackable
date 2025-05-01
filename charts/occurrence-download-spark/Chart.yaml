@@ -25,5 +25,5 @@ appVersion: "0.195.0-H3-SNAPSHOT"
 
 dependencies:
 - name: gbif-chart-lib
-  version: 2.5.1
+  version: 2.5.2
   repository: https://repository.gbif.org/repository/gbif-helm-release/
