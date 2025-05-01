@@ -194,6 +194,7 @@ hive:
   warehouseDir: ""
 occurrence:
   download:
+    defaultChecklistKey: ""
     bionomiaReducer:
       memory: ""
       opts: ""

@@ -30,6 +30,7 @@ data:
     hive.warehouse.dir={{ .Values.hive.warehouseDir }}
     occurrence.download.bionomia.reducer.memory={{ .Values.occurrence.download.bionomiaReducer.memory }}
     occurrence.download.bionomia.reducer.opts={{ .Values.occurrence.download.bionomiaReducer.opts }}
+    occurrence.download.default_checklist_key={{ .Values.occurrence.download.defaultChecklistKey }}
     occurrence.download.file.max_records={{ .Values.occurrence.download.fileMaxRecords }}
     occurrence.download.hdfs.tmp.dir={{ .Values.occurrence.download.hdfsTmpDir }}
     occurrence.download.hdfsOutputPath={{ .Values.occurrence.download.hdfsOutputPath }}
