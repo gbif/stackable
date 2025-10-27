@@ -18,7 +18,8 @@ data:
     tileBufferSize: {{ .Values.map.tileBuffer }}
     metadataPath: {{ .Values.map.metadataPath }}
     hbase:
-      keySaltModulus: {{ .Values.hbase.saltModulus }}
+      keySaltModulusPoints: {{ .Values.hbase.saltModulusPoints }}
+      keySaltModulusTiles: {{ .Values.hbase.saltModulusTiles }}
       tableName: {{ .Values.hbase.tableName }}
       maxFileSize: {{ .Values.hbase.maxFileSize }}
     hdfsLockConfig:

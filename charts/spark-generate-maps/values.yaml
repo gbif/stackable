@@ -202,4 +202,5 @@ hbase:
   # Table name in HBase, needs to be created first with the correct number of regions
   tableName: dev_maps
   # Modulus for doing the salts in hbase
-  saltModulus: 10
+  saltModulusPoints: 10
+  saltModulusTiles: 10
