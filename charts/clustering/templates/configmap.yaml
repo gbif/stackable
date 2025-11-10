@@ -6,6 +6,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   config.properties: |
+    hiveWarehousePath={{ .Values.hive.warehousePath }}
     hiveDB={{ .Values.hive.hiveDB }}
     sourceTable={{ .Values.sourceTable }}
     hiveTablePrefix={{ .Values.hive.hiveTablePrefix }}
