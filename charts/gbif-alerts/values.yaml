@@ -1,0 +1,6 @@
+# Remember to set the proper label that your Prometheus instance is looking for
+labels:
+  release: prometheus-stack
+
+# List the alerts you want deployed in your rule
+alerts: []
