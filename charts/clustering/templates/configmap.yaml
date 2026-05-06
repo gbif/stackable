@@ -15,4 +15,5 @@ data:
     hbaseZK={{ .Values.ZK }}
     targetDir={{ .Values.targetDir }}
     hashCountThreshold={{ .Values.hashCountThreshold }}
+    checklistKey={{ .Values.checklistKey }}
 {{- end }}
