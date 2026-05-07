@@ -7,8 +7,6 @@ metadata:
 data:
   config.yaml: |
     appName: map-builder
-    snapshotDirectory: hdfs://{{ .Values.hdfs.clusterName }}/{{ .Values.hdfs.snapshotDir }}
-    sourceSubdirectory: {{ .Values.hdfs.sourceSubDir }}
     targetDirectory: hdfs://{{ .Values.hdfs.clusterName }}/{{ .Values.hdfs.targetDir }}
     tilesThreshold: {{ .Values.map.tileThreshold }}
     hiveDB: {{ .Values.hive.schema }}
@@ -22,10 +20,4 @@ data:
       keySaltModulusTiles: {{ .Values.hbase.saltModulusTiles }}
       tableName: {{ .Values.hbase.tableName }}
       maxFileSize: {{ .Values.hbase.maxFileSize }}
-    hdfsLockConfig:
-      namespace: {{ .Values.hdfs.namespace }}
-      lockingPath: {{ .Values.hdfs.lockPath }}
-      lockName: {{ .Values.hdfs.lockName }}
-      sleepTimeMs: {{ .Values.hdfs.sleepMs }}
-      maxRetries: {{ .Values.hdfs.retries }}
 {{- end }}
